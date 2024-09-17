@@ -1,0 +1,196 @@
+﻿@model SMAT_Inventory.Models.assetsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Assets</p>
+                        <h4 class="mb-0" id="assets_count">@Model.assetcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Current Book Value</p>
+                        <h4 class="mb-0" id="assets_bookValue">Rs.@Model.currentbookvalue.ToString("N2")/=</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="pagination">
+                    @{
+                        var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                    }
+
+                    @for (var i = 1; i <= pageCount; i++)
+                    {
+                        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetslist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Asset List</h4>
+                <table id="assets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                        @*@if (auth()->check() && auth()->user()->hasRole("admin"))*@
+                        <tr>
+                            <th>ID</th>
+                            <th>Tag ID</th>
+                            <th>Tag Count</th>
+                            <th>Tag Balance</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Current BV</th>
+                            <th>Total Cost</th>
+                            <th>Action</th>
+                        </tr>
+                        @*@else
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Current BV</th>
+                            <th>Total Cost</th>
+                            @if (!(auth()->user()->cannot(["Assets-Edit", "Assets-Delete"])))
+                            <th>Action</th>
+                            endif
+                        </tr>
+                        @endif*@
+
+                    </thead>
+                    @foreach (var rl in Model.assetlist)
+                    {
+                        <tr>
+                            <td>@rl.id</td>
+                            <td>@rl.tag_id</td>
+                            <td>@rl.Tagcount</td>
+                            <td>@rl.TagcountRemain</td>
+                            <td>@rl.asset_id</td>
+                            <td>@rl.asset_name</td>
+                            <td>@rl.net_value</td>
+                            <td>@rl.total_cost</td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="">
+                                        <li>
+                                            <a href="@Url.Action("assetadd", "Assets",new { id = rl.id})" class="dropdown-item"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit Asset</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item btn btn-danger disable-asset" data-id="@rl.id"><i class="mdi mdi-trash-can-outline font-size-16 text-danger me-1"></i> Delete Asset</a>
+                                        </li>
+                                        <li><a class="dropdown-item permanent-delete-asset" data-id="@rl.id"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Permanently Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="pagination">
+    @{
+        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    }
+
+    @for (var i = 1; i <= pageCountd; i++)
+    {
+        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetslist", new { page = i, pageSize = Model.PageSize })">@i</a>
+    }
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".disable-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Asset?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetdelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+        $(document).on("click", ".permanent-delete-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Asset permanently?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetpermanentlydelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>

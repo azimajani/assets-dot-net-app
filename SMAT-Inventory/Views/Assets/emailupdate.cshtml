@@ -1,0 +1,192 @@
+﻿@model SMAT_Inventory.Models.emailupdateViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">No. Of Branches</p>
+                        <h4 class="mb-0">@Model.branchcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                            <span class="avatar-title">
+                                <i class="bx bx-copy-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">No. Of Groups</p>
+                        <h4 class="mb-0">@Model.groupcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Update Email</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="update-email-form" action="{{ route('branchGroup.email.update') }}" method="post" x-data="{updateFor:'', listItems:''}">
+
+                    <p x-text="listItems"></p>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="updateFor" class="form-label">Update Email for</label>
+                                <select id="updateFor" name="updateFor" class="form-control updateFor" x-model="updateFor" x-on:change.debounce="listUpdate($event)" required>
+                                    <option disabaled selected>Select</option>
+                                    <option value="Group">Group</option>
+                                    <option value="Branch">Branch</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6" x-show="updateFor!=''">
+                            <div class="mb-3">
+                                <label for="items" class="form-label" x-text="'Select '+updateFor">Select {{ 'updateFor' }}</label>
+                                <select name="items" id="items" class="form-control" x-model="items" x-on:change.debounce="getEmail($event)" required>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="email" name="email" placeholder="Enter email here" value="" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button" class="btn btn-primary waves-effect waves-light" id="UpdateEmail">Update Email</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+     $(document).ready(function () {
+        // Serialize the branches from the server model to JavaScript
+
+
+        // Event listener for zone select change
+         $('#updateFor').change(function () {
+
+            var GorB = $(this).val();
+            //alert(GorB);
+            if (GorB == 'Branch') {
+                var branches = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.branch));
+                // Clear existing options
+                $('#items').empty().append('<option disabled selected>Select Branch</option>');
+
+                // Filter branches based on selected zone
+                var filteredBranches = branches;
+
+                // Populate branch select with filtered branches
+                $.each( filteredBranches, function (index, branch) {
+                    $('#items').append($('<option></option>').val(branch.id).text(branch.name));
+                });
+            }
+
+            if (GorB == 'Group') {
+                var groups = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.group));
+                // Clear existing options
+                $('#items').empty().append('<option disabled selected>Select Group</option>');
+
+                // Filter branches based on selected zone
+                var filteredGroups = groups;
+
+                // Populate branch select with filtered branches
+                $.each(filteredGroups, function (index, group) {
+                    $('#items').append($('<option></option>').val(group.id).text(group.name));
+                });
+            }
+         });
+
+         
+
+         $('#UpdateEmail').on('click', function () {
+             //alert('0');
+             var GorB = $('#updateFor').val();
+             var itemid = $('#items').val();
+             var email = $('#email').val();
+
+             //var vali = JSON.stringify(selectedBranches);
+             //vali = vali.replace(/"/g, '\\"');
+             //alert(email);
+             //var FId = Model.branch.id;
+
+             //var Fn = { id: FId, zone_id: zone_id, code: code, name: name, phone1: phone1, phone2: phone2, phone3: phone3, email: email, address: address, city_id: city_id, postalcode: postalcode, googleMapId: googleMapId };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/emailupdateSave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'GorB': GorB, 'itemid': itemid, 'email': email }),
+                 async: false,
+                 success: function (data) {
+                     window.location.reload(true);
+                 }
+
+             });
+
+
+         });
+    });
+
+</script>

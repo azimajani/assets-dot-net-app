@@ -1,0 +1,102 @@
+﻿@model SMAT_Inventory.Models.messagesViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            @if (Model.message.id != 0)
+            {<h4 class="mb-sm-0 font-size-18">Update Message</h4> }
+            else
+            {<h4 class="mb-sm-0 font-size-18">Add Message</h4>}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form action="add" method="post">
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Enter Subject Here</label>
+                            <input type="text" name="subject" class="form-control" id="subject" value="@Model.message.subject" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Enter Message Here</label>
+                            <textarea name="message" class="form-control" id="message" rows="5" required>@Model.message.message</textarea>
+                            @*<input type="text" name="message" class="form-control" id="message" value="@Model.message.message" required>*@
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dateFrom" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startdate" name="startdate" value="@Model.message.startdate.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dateTo" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="enddate" name="enddate" value="@Model.message.enddate.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        @if (Model.message.id != 0)
+                        {<button type="button" action="edit" class="btn btn-primary w-md" id="btnSave">Update Message</button>}
+                        else
+                        {<button type="button" action="add" class="btn btn-primary w-md" id="btnSave">Add Message</button>}
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+
+             alert('0');
+             var subject = $('#subject').val();
+             var Id = @Model.message.id;
+             var message = $('#message').val();
+             var startdate = $('#startdate').val();
+             var enddate = $('#enddate').val();
+
+             //alert(FId);
+             //alert(Name);
+             var Fn = { id: Id, subject: subject, message: message, startdate: startdate, enddate: enddate};
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/messagesave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     window.location.reload(true);
+                 }
+
+             });
+
+
+         });
+     });
+</script>

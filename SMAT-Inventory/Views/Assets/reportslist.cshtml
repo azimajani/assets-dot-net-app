@@ -1,0 +1,216 @@
+﻿@model SMAT_Inventory.Models.reportslsitViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Reporting</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+
+
+                <form id="fetch-reports" name="fetch-reports" method="post">
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="zone-input" class="form-label">Select Zone</label>
+                            <select class="form-select select2" id="zone" name="zone" required>
+                                <option disabled selected>Select Zone</option>
+                                @foreach (var zone in Model.zone)
+                                {
+                                    <option value="@zone.id">@zone.name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="branch-input" class="form-label">Select Branch</label>
+                            <select class="form-select select2" id="branch" name="branch">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateFrom" class="form-label">Date From</label>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateTo" class="form-label">Date To</label>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light" value="view_report">Get Reports</button>
+                        </div>
+                    </div>
+
+                    
+                </form>
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Report List</h4>
+                <table id="reports-list" class="table dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>Report #</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                        @foreach(var rl in Model.reportlist)
+                        {
+                            <tr>
+                                <td>@rl.report_no</td>
+                                <td>
+                                <td>
+                                    <a href="@Url.Content("../app_data/reports/")@rl.report" class="btn btn-success"><i class="mdi mdi-eye"></i> View</a>
+                                    <a href="https://sma-techno.com/fresh1/storage/app/public/reports/FR10003-1200-29052024-R.pdf" download="" class="btn btn-primary download-report" data-id="198"><i class="mdi mdi-file-download"></i> Download</a>
+                                    <a class="btn btn-primary email-report" data-id="198"><i class="mdi mdi-mail"></i> Email</a>
+                                </td>
+                                </td>
+                            </tr>
+                        }
+                    
+                    
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    //alert(zone_id);
+    //$('#fromdate').val(fromdate);
+
+    $(document).ready(function () {
+        // Serialize the branches from the server model to JavaScript
+        var branches = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.branch));
+
+        // Event listener for zone select change
+        $('#zone').change(function () {
+            var selectedZoneId = $(this).val();
+
+            // Clear existing options
+            $('#branch').empty().append('<option disabled selected>Select Branch</option>');
+
+            // Filter branches based on selected zone
+            var filteredBranches = branches.filter(function (branch) {
+                return branch.zone_id == selectedZoneId;
+            });
+
+            // Populate branch select with filtered branches
+            $.each(filteredBranches, function (index, branch) {
+                $('#branch').append($('<option></option>').val(branch.id).text(branch.name));
+            });
+        });
+    });
+
+            var reportsList = "";
+
+    $(document).on("submit", "#fetch-reports", function(e) {
+        e.preventDefault();
+        //var formData = $(this).serializeArray();
+        var fromdate = $('#dateFrom').val();
+        var todate = $('#dateTo').val();
+        var zone_id = $('#zone').val();
+        var branch_id = $('#branch').val();
+
+        //var FId = Model.branch.id;
+        //alert(zone_id);
+
+        if (branch_id == null) {branch_id = 0; }
+
+
+        var vlink = "/Assets/reportslist?zone_id=" + zone_id + "&branch_id=" + branch_id
+        vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
+        //vlink = vlink + "&FilterDateTF=" + FilterDateTF
+
+        window.location.href = vlink;
+
+    });
+
+
+    function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    }
+
+
+
+    var zone_id = getUrlParameter('zone_id');
+
+    var branches = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.branch));
+    $('#branch').empty().append('<option disabled selected>Select Branch</option>');
+
+    // Filter branches based on selected zone
+    var filteredBranches = branches.filter(function (branch) {
+        return branch.zone_id == zone_id;
+    });
+
+    // Populate branch select with filtered branches
+    $.each(filteredBranches, function (index, branch) {
+        $('#branch').append($('<option></option>').val(branch.id).text(branch.name));
+    });
+
+
+    $('#zone').val(zone_id).change();
+    $('#branch').val(getUrlParameter('branch_id')).change();
+    $('#dateFrom').val(getUrlParameter('fromdate')).change();
+    $('#dateTo').val(getUrlParameter('todate')).change();
+
+
+    
+</script>

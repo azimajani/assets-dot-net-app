@@ -1,0 +1,244 @@
+﻿@model SMAT_Inventory.Models.groupViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Reporting</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="add-branch-form" action="{{ route('group.reporting') }}" method="post">
+
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="zone-input" class="form-label">Select Group</label>
+                            <select class="form-select select2" id="group" name="group" required>
+                                <option disabled selected>Select Group</option>
+                                @foreach (var group in Model.grouplist)
+                                {
+                                    <option value="@group.id">@group.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateFrom" class="form-label">Date From</label>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateTo" class="form-label">Date To</label>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo">
+                            </div>
+                        </div>
+                        <br>
+                        <label><code>* Select Dates otherwise it assumed the last report.</code></label>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="d-flex flex-wrap gap-4">
+                            <div class="form-check">
+                                <label class="form-check-label" for="calculation">
+                                    <input class="form-check-input" name="calculation" type="checkbox" id="calculation">
+                                    Report with Calculations
+                                </label>
+                            </div>
+
+                            <label class="form-check-label" for="summary_report">
+                                <input class="form-check-input" name="report_type" value="summary_report" type="radio" id="summary_report">
+                                Summary Report
+                            </label>
+
+                            <label class="form-check-label" for="detailed_report">
+                                <input class="form-check-input" name="report_type" value="detailed_report" type="radio" id="detailed_report" checked>
+                                Detailed Report
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light" value="view_report">View</button>
+
+                            <button type="submit" name="download" class="btn btn-primary waves-effect waves-light" value="download_report">Download</button>
+
+                            <button type="submit" name="email" class="btn btn-primary waves-effect waves-light" value="email_report">Email</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<!-- <div class="row">
+<div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Asset List</h4>
+                <table id="assets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                   @* @if(auth()->check() && auth()->user()->hasRole("admin"))
+                        <tr>
+                            <th>ID</th>
+                            <th>Tag ID</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Invoice Cost</th>
+                            <th>Total Cost</th>
+                            <th>location</th>
+                            <th>Remaining Years</th>
+                            <th>Action</th>
+                        </tr>
+                    @else
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Invoice Cost</th>
+                            <th>Total Cost</th>
+                            <th>location</th>
+                            <th>Remaining Years</th>
+                            <th>Action</th>
+                        </tr>
+                    @endif
+                   *@
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<script>
+            var assetsDatatable = $('#assets-datatable').DataTable({
+                scrollX: true,
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('/asset/list') }}",
+                columns: [
+                    @*@if(auth()->check() && auth()->user()->hasRole("admin"))
+                        {data: 'id', name: 'id'},
+                        {data: 'tag_id', name: 'tag_id'},
+                        {data: 'asset_id', name: 'asset_id'},
+                        {data: 'asset_name', name: 'asset_name'},
+                        {data: 'invoice_cost', name: 'invoice_cost'},
+                        {data: 'total_cost', name: 'total_cost'},
+                        {data: 'location', name: 'location'},
+                        {data: 'remaining_years', name: 'remaining_years'},
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
+                    @else
+                        {data: 'id', name: 'id'},
+                        {data: 'asset_id', name: 'asset_id'},
+                        {data: 'asset_name', name: 'asset_name'},
+                        {data: 'invoice_cost', name: 'invoice_cost'},
+                        {data: 'total_cost', name: 'total_cost'},
+                        {data: 'location', name: 'location'},
+                        {data: 'remaining_years', name: 'remaining_years'},
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
+                    @endif
+                        *@
+                ]
+            });
+
+
+            $(document).on("change", ".disable-asset", function(event) {
+                var flag = confirm('Do want to Remove Asset?');
+                if (flag) {
+                    var id = $(this).data('id');
+
+                    $.ajax({
+                        url: '{{ route("/asset/delete-asset") }}',
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+
+                            console.log(data);
+                            let result = JSON.parse(data);
+                            $('.message').html('<div class="alert alert-' + result.type +
+                                ' alert-dismissible fade show" role="alert"><i class="mdi ' + result.icon +
+                                ' me-2"></i>' + result.message +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>'
+                            );
+
+                            assetsDatatable.ajax.reload( null, false );
+                        },
+                        error: function(data) {
+                            console.log(data);
+                        }
+                    });
+                } else {
+                    event.preventDefault();
+                }
+            });
+
+            //Fetch Zone wise Branches
+            $(document).on("change", "#zone", function(e) {
+                let zone = $(this).val();
+
+                $.ajax({
+                    url: '{{ route("/branch/zone_wise_branches") }}',
+                    type: 'POST',
+                    data: {
+                        zone_id: zone
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.success) {
+                            console.log(data.branches.length);
+                            const branches = [];
+                            for(let i = 0; i<data.branches.length; i++) {
+                                branches[i] = '<option value="'+data.branches[i].id+'">'+data.branches[i].name+' ('+data.branches[i].code+')<option>';
+                            }
+
+                            $("#branch").html(branches.join(""));
+                            console.log(branches.toString());
+                        }
+
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            });
+</script>

@@ -1,0 +1,279 @@
+﻿@model SMAT_Inventory.Models.notificationViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                @*@if (Session::get('type') == 'success')
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-check-all me-2"></i>
+                        {{ Session::has('message') ? Session::get('message') : "" }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if (Session::get('type') == 'error')
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        {{ Session::has('message') ? Session::get('message') : "" }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if ($errors)
+                @foreach ($errors->all() as $message)
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="mdi mdi-block-helper me-2"></i>
+                    {{ $message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+                @endforeach
+                @endif
+                *@
+    <form id="fetch-notifications" name="fetch-notifications" method="post">
+        <div class="row mb-3">
+            <div class="mb-4">
+                <label>Notification Range</label>
+
+                <div class="input-daterange input-group" id="datepicker6" data-date-format="dd-M-yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container="#datepicker6">
+                    <input type="text" class="form-control" name="start" placeholder="Start Date">
+                    <input type="text" class="form-control" name="end" placeholder="End Date">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="performedBy-input" class="form-label">Performed By</label>
+                <select class="form-select select2" id="performedBy" name="performedBy" required>
+                    <option selected value="All">All</option>
+                    @foreach (var user in Model.user)
+                    {
+                        <option value="@user.id">@user.name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="branch-input" class="form-label">Select Type</label>
+                <select class="form-select select2" id="notification_type" name="notification_type">
+                    <option value="All" selected>All</option>
+                    <option value="Zone Edited">Zone Edited</option>
+                    <option value="Zone Deleted">Zone Deleted</option>
+                    <option value="Zone Restored">Zone Restored</option>
+                    <option value="Branch Edited">Branch Edited</option>
+                    <option value="Branch Deleted">Branch Deleted</option>
+                    <option value="Branch Restored">Branch Restored</option>
+                    <option value="Asset Edited">Asset Edited</option>
+                    <option value="Asset Deleted">Asset Deleted</option>
+                    <option value="Asset Restored">Asset Restored</option>
+                    <option value="Setting Updated">Setting Updated</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" name="view" class="btn btn-primary waves-effect waves-light">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- end card body -->
+</div>
+<!-- end card -->
+</div>
+<!-- end col -->
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Notifications</h4>
+                <table id="notification-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Performed By</th>
+                            <th>Read At</th>
+                            <th>View</th>
+                            <th>Performed At</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-center" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{-- <div class="row">
+                        <div class="col-6 float-right">
+                            <label for="performed-by">Performed By:</label>
+                        </div>
+                        <div class="col-6">
+                            <label for="performed" id="performed_by"></label>
+                        </div>
+                    </div> --}}
+
+                <div class="row mt-2">
+                    <div class="col-6 float-right">
+                        <label>Title:</label>
+                    </div>
+                    <div class="col-6">
+                        <label for="title" id="title"></label>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="{{ asset('assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script>
+        var usersDatatable = $('#notification-datatable').DataTable({
+            scrollX: true,
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('notification.list') }}",
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'id',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'title',
+                    name: 'title'
+                },
+                {
+                    data: 'performed_by',
+                    name: 'performed_by'
+                },
+                {
+                    data: 'view_notification',
+                    name: 'view_notification'
+                },
+                {
+                    data: 'read_at',
+                    name: 'read_at'
+                },
+                {
+                    data: 'performed_at',
+                    name: 'performed_at'
+                },
+            ],
+        });
+
+        $(document).on("submit", "#fetch-notifications", function(e) {
+                e.preventDefault();
+
+                var formData = $(this).serializeArray();
+
+                if($.fn.dataTable.isDataTable("#notification-datatable")) {
+                    usersDatatable.destroy();
+                }
+
+                usersDatatable = $(document).find('#notification-datatable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        "url": "{{ route('notification.search') }}",
+                        "type": "POST",
+                        "data": function(d) {
+                            d.form = formData,
+                            d._token = $('meta[name="csrf-token"]').attr('content')
+                        }
+                    },
+                    columns: [
+                        {
+                            data: 'DT_RowIndex',
+                            name: 'id',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'title',
+                            name: 'title'
+                        },
+                        {
+                            data: 'performed_by',
+                            name: 'performed_by'
+                        },
+                        {
+                            data: 'view_notification',
+                            name: 'view_notification'
+                        },
+                        {
+                            data: 'read_at',
+                            name: 'read_at'
+                        },
+                        {
+                            data: 'performed_at',
+                            name: 'performed_at'
+                        },
+                    ],
+                });
+
+            });
+
+        $(document).on("click", '.notification_view', function(e) {
+            e.preventDefault();
+
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: '{{ route("notification.get") }}',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if(data.success) {
+                        const notify_data = data.data;
+                        $("#title").html(notify_data.data[0].name);
+                        console.log(notify_data.data[0].name);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '{{ route("notification.read") }}',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    usersDatatable.ajax.reload( null, false );
+                    console.log(data);
+                }
+            });
+
+            $('.bs-example-modal-center').modal('show');
+        });
+</script>

@@ -1,0 +1,150 @@
+﻿@model SMAT_Inventory.Models.reportslsitViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Reporting</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form id="fetch-reports" name="fetch-reports" method="post">
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dateFrom" class="form-label">Date From</label>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dateTo" class="form-label">Date To</label>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="report_type" class="form-label">Report Type</label>
+                                <select name="report_type" class="form-control" id="report_type" required>
+                                    <option disabaled selected>Select</option>
+                                    <option value="1">Calculated</option>
+                                    <option value="0">Reviewed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light" value="view_report">Get Reports</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Report List</h4>
+                <table id="reports-list" class="table dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>Report #</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var rl in Model.reportlist)
+                        {
+                            <tr>
+                                <td>@rl.report_no</td>
+                                <td>
+                                <td>
+                                    <a href="https://sma-techno.com/fresh1/storage/app/public/reports/FR10003-1200-29052024-R.pdf" class="btn btn-success"><i class="mdi mdi-eye"></i> View</a>
+                                    <a href="https://sma-techno.com/fresh1/storage/app/public/reports/FR10003-1200-29052024-R.pdf" download="" class="btn btn-primary download-report" data-id="198"><i class="mdi mdi-file-download"></i> Download</a>
+                                    <a class="btn btn-primary email-report" data-id="198"><i class="mdi mdi-mail"></i> Email</a>
+                                </td>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    $(document).on("submit", "#fetch-reports", function (e) {
+        e.preventDefault();
+        //var formData = $(this).serializeArray();
+        var fromdate = $('#dateFrom').val();
+        var todate = $('#dateTo').val();
+        var report_type = $('#report_type').val();
+
+        var vlink = "/Assets/reportscustomlist?report_type=" + report_type
+        vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
+        //vlink = vlink + "&FilterDateTF=" + FilterDateTF
+        //alert(vlink);
+        window.location.href = vlink;
+
+    });
+
+
+    function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    }
+
+
+    $('#report_type').val(getUrlParameter('report_type')).change();
+    $('#dateFrom').val(getUrlParameter('fromdate')).change();
+    $('#dateTo').val(getUrlParameter('todate')).change();
+
+
+
+</script>

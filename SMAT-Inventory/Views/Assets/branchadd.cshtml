@@ -1,0 +1,259 @@
+﻿@model SMAT_Inventory.Models.branchViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        @if (Model.branch.id != 0)
+                        {<p class="text-muted fw-medium">Assets</p>
+                            <h4 class="mb-0">@Model.TotalCount</h4>}
+                        else
+                        {<p class="text-muted fw-medium">Branches</p>
+                            <h4 class="mb-0">@Model.TotalCount</h4>}
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            @if (Model.branch.id != 0)
+            {<h4 class="mb-sm-0 font-size-18">Update Zone</h4> }
+            else
+            {<h4 class="mb-sm-0 font-size-18">Add Zone</h4>}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="add-branch-form" action="{{ route('branch/insert') }}" method="post">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Select Zone</label>
+                                <select class="form-select" name="zone" id="zone" required>
+                                    <option disabled selected>Select Zone</option>
+                                    @foreach (var zone in Model.zonelist)
+                                    {
+                                        if (zone.id == Model.branch.zone_id)
+                                        {
+                                            <option selected value="@zone.id">@zone.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@zone.id">@zone.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        @{ 
+                            var chkSUMchecked = "";
+                            if (Model.branch.chkSUM == 1)
+                            {
+                                chkSUMchecked = "checked";
+                            }
+                        }
+                        <div class="col-md-1">
+                            <div class="mb-3">
+                                <label for="chkSUM" class="form-label">chkSUM Enable</label>
+                                <input class="form-check-input" type="checkbox" id="chkSUM" name="chkSUM" @chkSUMchecked>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="zone-input" class="form-label">Enter Branch Code Here</label>
+                        <input type="text" class="form-control" id="code" name="branchcode" required value="@Model.branch.code">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="zone-input" class="form-label">Enter Branch Name Here</label>
+                        <input type="text" class="form-control" id="name" name="branchname" required value="@Model.branch.name">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Phone</label>
+                                <input type="text" min="0" minlength="8" class="form-control" id="phone1" name="phone1" required value="@Model.branch.phone1">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Phone</label>
+                                <input type="text" min="0" minlength="8" class="form-control" id="phone2" name="phone2" value="@Model.branch.phone2">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Phone</label>
+                                <input type="text" min="0" minlength="8" class="form-control" id="phone3" name="phone3" value="@Model.branch.phone3">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Email Here</label>
+                                <input type="text" class="form-control" id="email" name="branchemail" required value="@Model.branch.email">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Branch Email Here</label>
+                                <input type="text" class="form-control" id="email" name="branchemail" required value="@Model.branch.branchemail">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="zone-input" class="form-label">Enter Address Here</label>
+                        <textarea class="form-control" name="branchaddress" id="address">@Model.branch.address</textarea>
+                        <!-- <input type="text" class="form-control" id="zone-input" name="branchaddress"> -->
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">City</label>
+                                <select class="form-select select2" name="city" id="city_id" required>
+                                    <option disabled selected>Select City</option>
+                                    @foreach (var city in Model.citylist)
+                                    {
+                                        if (city.id == Model.branch.city_id)
+                                        {
+                                            <option selected value="@city.id">@city.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@city.id">@city.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Postal Code</label>
+                                <input type="number" class="form-control" id="postalcode" name="postalcode" value="@Model.branch.postalcode">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="zone-input" class="form-label">Enter Google Map ID Here</label>
+                        <input type="text" class="form-control" id="googleMapId" name="googleMapId" value="@Model.branch.googleMapId">
+                    </div>
+
+                    <div>
+                        @if (Model.branch.id != 0)
+                        {<button type="button" action="edit" class="btn btn-primary w-md" id="btnSave">Update Branch</button>}
+                        else
+                        {<button type="button" action="add" class="btn btn-primary w-md" id="btnSave">Add Branch</button>}
+
+                        @*<button type="submit" class="btn btn-primary w-md">Add Branch</button>*@
+                    </div>
+                </form>
+
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
+            <h4 class="mb-sm-0 font-size-18">Add Branches Via CSV</h4>
+        </div>
+        <p>Click on the <a href="{{ route('sample-branch-file') }}" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form name="add-branch-csv-form" action="{{ route('branch/insert-via-csv') }}" method="post" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="file" required>
+                        <button class="btn btn-primary" type="submit" id="inputGroupFileAddon04">Upload</button>
+                    </div>
+                </form>
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+             var zone_id = $('#zone').val();
+             var code = $('#code').val();
+             var name = $('#name').val();
+             var phone1 = $('#phone1').val();
+             var phone2 = $('#phone2').val();
+             var phone3 = $('#phone3').val();
+             var email = $('#email').val();
+             var branchemail = $('#branchemail').val();
+             var address = $('#address').val();
+             var city_id = $('#city_id').val();
+             var postalcode = $('#postalcode').val();
+             var googleMapId = $('#googleMapId').val();
+
+             const chkSUM = document.getElementById('chkSUM');
+             var chkSUMVal = 0;
+             if (chkSUM.checked) {
+                 chkSUMVal = 1;
+             } 
+             
+             var FId = @Model.branch.id;
+
+             var Fn = { id: FId, zone_id: zone_id, code: code, name: name, phone1: phone1, phone2: phone2, phone3: phone3, email: email, branchemail: branchemail, address: address, city_id: city_id, postalcode: postalcode, googleMapId: googleMapId, chkSUM: chkSUMVal  };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/branchsave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     window.location.reload(true);
+                 }
+             });
+         });
+     });
+</script>
