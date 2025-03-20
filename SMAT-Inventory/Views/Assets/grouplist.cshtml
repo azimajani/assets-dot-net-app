@@ -1,0 +1,398 @@
+﻿@model SMAT_Inventory.Models.groupViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Zones</p>
+                        <h4 class="mb-0">@Model.zonecount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                            <span class="avatar-title">
+                                <i class="bx bx-copy-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Branches</p>
+                        <h4 class="mb-0">@Model.branchcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Groups</p>
+                        <h4 class="mb-0">@Model.groupcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Branch List</h4>
+                <table id="groups-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <div class="row">
+                        <div class="card mini-stats-wid">
+                            <div class="d-flex">
+                                <div class="flex-grow-1">
+                                    <div class="pagination">
+                                        @{
+                                            var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                                        }
+
+                                        @for (var i = 1; i <= pageCount; i++)
+                                        {
+                                            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/grouplist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "id", sortOrder = Model.SortColumn == "id" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    ID @(Model.SortColumn == "id" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "name", sortOrder = Model.SortColumn == "name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Group Name @(Model.SortColumn == "name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "person_name", sortOrder = Model.SortColumn == "person_name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Person Name @(Model.SortColumn == "person_name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "person_Designation", sortOrder = Model.SortColumn == "person_Designation" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Person Designation @(Model.SortColumn == "person_Designation" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "BranchesinGroup", sortOrder = Model.SortColumn == "BranchesinGroup" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Branches @(Model.SortColumn == "BranchesinGroup" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var group in Model.grouplist)
+                        {
+                            <tr>
+                                <td>@group.id</td>
+                                <td>@group.name</td>
+                                <td>@group.person_name</td>
+                                <td>@group.person_designation</td>
+                                <td><a href="#" class="btn btn-warning view-branches" data-id="@group.id">@group.BranchesinGroup</a></td>
+                                <td>
+                                    <a href="@Url.Action("groupadd", "Assets", new { id = group.id })" class="btn btn-success"><i class="mdi mdi-pencil"></i></a>
+                                    <a href="javascript::void()" class="btn btn-danger disable-group" data-id="@group.id"><i class="mdi mdi-trash-can-outline"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    @{
+                        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                    }
+
+                    @for (var i = 1; i <= pageCountd; i++)
+                    {
+                        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/grouplist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="branchModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Branch List</h5>
+                <input type="text" id="groupid" hidden />
+                <button type="button" class="close" data-dismiss="modal" id="btncross" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th> <a href="javascript:void(0);" onclick="sortTable('code')">Branch Code</a></th>
+                            <th> <a href="javascript:void(0);" onclick="sortTable('name')">Branch Name</a></th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="branchList">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#btnclose').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        $('#btncross').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+
+        $(document).on("click", ".disable-group", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Group?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("groupdelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $('.view-branches').on('click', function () {
+        //alert('0');
+        var GroupId = $(this).data('id'); // Get the zone id from the label
+        //alert(GroupId);
+        // Clear previous data in the modal
+        $('#branchList').empty();
+
+        // AJAX request to fetch branches for the selected zone
+        $.ajax({
+            url: '/Assets/GetBranchbyGroup', // Replace with your server-side URL
+            type: 'GET',
+            data: { GroupId: GroupId },
+            success: function (branches) {
+                // branches should be an array of branch objects { branchId, branchName }
+                branches.forEach(function (branch) {
+                    $('#branchList').append('<tr><td>' + branch.code + '</td><td>' + branch.name + '</td></tr>');
+                });
+
+                // Show the modal
+                $('#branchModal').modal('show');
+            },
+            error: function () {
+                alert('Error fetching branch data');
+            }
+        });
+    });
+
+</script>
+<script>
+        $(document).on("click", "#SwitchCheckSizelg", function () {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                confirmButtonClass: "btn btn-success mt-2",
+                cancelButtonClass: "btn btn-danger ms-2 mt-2",
+                buttonsStyling: !1,
+            }).then(function (t) {
+                t.value
+                    ? Swal.fire({ title: "Deleted!", text: "Your file has been deleted.", icon: "success" })
+                    : t.dismiss === Swal.DismissReason.cancel && Swal.fire({ title: "Cancelled", text: "Your imaginary file is safe :)", icon: "error" });
+            });
+        });
+
+
+       
+
+
+        $(document).on("click", ".disable-group", function(event) {
+            var flag = confirm('Do want to Remove Group?');
+            if (flag) {
+                var id = $(this).data('id');
+
+               /*  $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                }); */
+
+                $.ajax({
+                    url: '{{ route("group.delete-group") }}',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data) {
+
+                        console.log(data);
+                        let result = JSON.parse(data);
+                        $('.message').html('<div class="alert alert-' + result.type +
+                            ' alert-dismissible fade show" role="alert"><i class="mdi ' + result.icon +
+                            ' me-2"></i>' + result.message +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>'
+                        );
+
+                        branchDatatable.ajax.reload( null, false );
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            } else {
+                event.preventDefault();
+            }
+        });
+
+        $(document).on("click", ".view-branches", function(event) {
+            let group_id = $(this).attr("data-id");
+
+            document.getElementById('groupid').value = group_id;
+            //alert(group_id);
+            $.ajax({
+                url: '{{ route("group.wise.branches") }}',
+                type: 'GET',
+                data: {
+                    id: group_id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if(data.success) {
+                        const branches = data.data.group_branches;
+                        let listBranches = "";
+                        branches.forEach(function(e){
+                            listBranches += '<span class="btn btn-primary btn-sm">' + e.name + ' ('+e.code+')</span>';
+                        });
+                        //console.log(data.data.branches);
+
+                        $(document).find("#branches").html(listBranches);
+
+                        $('.bs-example-modal-center').modal('show');
+                    }
+                    //let result = JSON.parse(data);
+                    //const branches = result.branches;
+
+
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+
+        });
+</script>
+<script>
+    let currentSortColumn = 'code';
+    let currentSortOrder = 'asc'; // Default sort order
+
+    function sortTable(column) {
+        if (currentSortColumn === column) {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortColumn = column;
+            currentSortOrder = 'asc'; // Default to ascending when changing columns
+        }
+        filterBranches();
+    }
+
+     function filterBranches() {
+         var GroupId = $('#groupid').val();
+         
+     //const searchTerm = $("#searchTerm").val();
+     // Clear previous data in the modal
+     $('#branchList').empty();
+     //document.getElementById('zoneid').value = zoneId;
+         //alert(currentSortColumn);
+     $.ajax({
+         url: '/Assets/GetBranchbyGroup',
+         data: {
+             GroupId: GroupId,
+             currentSortColumn: currentSortColumn,
+             currentSortOrder: currentSortOrder
+         },
+         success: function (branches) {
+             // branches should be an array of branch objects { branchId, branchName }
+             branches.forEach(function (branch) {
+                 $('#branchList').append('<tr><td>' + branch.code + '</td><td>' + branch.name + '</td></tr>');
+             });
+         },
+         error: function () {
+             alert('Error fetching branch data');
+         }
+     });
+ }
+
+</script>

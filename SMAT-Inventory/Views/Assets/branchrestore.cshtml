@@ -1,0 +1,136 @@
+﻿@model SMAT_Inventory.Models.branchViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Branch List</p>
+                        <h4 class="mb-0" id="Branhes_count">@Model.TotalCount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<table class="table table-bordered dt-responsive nowrap w-100">
+    <div class="row">
+        <div class="card mini-stats-wid">
+            <div class="d-flex">
+                <div class="flex-grow-1">
+                    <div class="pagination">
+                        @{
+                            var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                        }
+
+                        @for (var i = 1; i <= pageCount; i++)
+                        {
+                            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/branchrestore", new { page = i, pageSize = Model.PageSize })">@i</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <thead>
+        <tr>
+            <th>
+                <a href="@Url.Action("/branchrestore", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Id", sortOrder = Model.SortColumn == "Id" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    ID @(Model.SortColumn == "Id" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/branchrestore", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Code", sortOrder = Model.SortColumn == "Code" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Code @(Model.SortColumn == "Code" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/branchrestore", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Name", sortOrder = Model.SortColumn == "Name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Name @(Model.SortColumn == "Name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/branchrestore", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Phone1", sortOrder = Model.SortColumn == "Phone1" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Phone @(Model.SortColumn == "Phone1" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/branchrestore", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "email", sortOrder = Model.SortColumn == "email" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Email @(Model.SortColumn == "email" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var branch in Model.branchlist)
+        {
+            <tr>
+                <td>@branch.id</td>
+                <td>@branch.code</td>
+                <td>@branch.name</td>
+                <td>@branch.phone1</td>
+                <td>@branch.email</td>
+
+                <td>
+                    <a href="#" class="btn btn-success restore-branch" data-id="@branch.id"><i class="bx bx-archive-out"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="pagination">
+    @{
+        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    }
+
+    @for (var i = 1; i <= pageCountd; i++)
+    {
+        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/branchrestore", new { page = i, pageSize = Model.PageSize })">@i</a>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".restore-branch", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do want to Restore Branch?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("branchrestorenow", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+

@@ -1,0 +1,230 @@
+﻿@model SMAT_Inventory.Models.notificationViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                @*@if (Session::get('type') == 'success')
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-check-all me-2"></i>
+                            {{ Session::has('message') ? Session::get('message') : "" }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (Session::get('type') == 'error')
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-block-helper me-2"></i>
+                            {{ Session::has('message') ? Session::get('message') : "" }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors)
+                    @foreach ($errors->all() as $message)
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                    @endforeach
+                    @endif
+                *@
+                <form id="fetch-notifications" name="fetch-notifications" method="post">
+                    <div class="row mb-3">
+                        <div class="mb-4">
+                            <label>Notification Range</label>
+
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="dateFrom" class="form-label">Date From</label>
+                                        <input type="date" class="form-control" id="dateFrom" name="dateFrom" required value="@Model.datefrom">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="dateTo" class="form-label">Date To</label>
+                                        <input type="date" class="form-control" id="dateTo" name="dateTo" required value="@Model.dateto">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-3">
+                            <label for="performedBy-input" class="form-label">Performed By</label>
+                            <select class="form-select select2" id="performedBy" name="performedBy" required>
+                                <option selected value="0">All</option>
+                                @foreach (var user in Model.user)
+                                {
+                                    if (user.id == Model.performedBy){
+                                        <option selected value="@user.id">@user.name</option>
+                                        }
+                                    else{
+                                        <option value="@user.id">@user.name</option>
+                                        }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="branch-input" class="form-label">Select Type</label>
+                            <select class="form-select select2" id="notification_type" name="notification_type">
+                                <option value="All" selected>All</option>
+                                @foreach (var notificationtype in Model.notificationTypelist)
+                                {
+                                    if (notificationtype.name == Model.notification_type)
+                                    {
+                                        <option selected value="@notificationtype.name">@notificationtype.name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@notificationtype.name">@notificationtype.name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Notifications</h4>
+                <table id="notification-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Performed By</th>
+                            <th>Read At</th>
+                            <th>View</th>
+                            <th>Performed At</th>
+                        </tr>
+                    </thead>
+                    @{ int i = 1;
+                      }
+                    @foreach (var noti in Model.notificationlist)
+                    {
+                        string isView = "Not Read";
+                        if (noti.read_at != DateTime.MinValue) { isView = noti.read_at.ToString("yyyy-MM-dd hh:mm:ss"); }
+                        <tr>
+                            <td>@i</td>
+                            <td>@noti.name</td>
+                            <td>@noti.username</td>
+                            <td><button type="button" data-id="@noti.id" class="btn btn-success notification_view" id="btnView"><i class="mdi mdi-eye"></i>View</button></td>
+                            <td>@isView</td>
+                            <td>@noti.created_at.ToString("yyyy-MM-dd hh:mm:ss")</td>
+                        </tr>
+                        i = i + 1;
+                    }
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-center" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{-- <div class="row">
+                        <div class="col-6 float-right">
+                            <label for="performed-by">Performed By:</label>
+                        </div>
+                        <div class="col-6">
+                            <label for="performed" id="performed_by"></label>
+                        </div>
+                    </div> --}}
+
+                <div class="row mt-2">
+                    <div class="col-6 float-right">
+                        <label>Title:</label>
+                    </div>
+                    <div class="col-6">
+                        <label for="title" id="title"></label>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on("submit", "#fetch-notifications", function (e) {
+        e.preventDefault();
+        //var formData = $(this).serializeArray();
+        var datefrom = $('#dateFrom').val();
+        var dateto = $('#dateTo').val();
+        var performedBy = $('#performedBy').val();
+        var notification_type = $('#notification_type').val();
+
+        var vlink = "/Assets/notification?datefrom=" + datefrom + "&dateto=" + dateto + "&performedBy=" + performedBy + "&notification_type=" + notification_type
+        //vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
+        //vlink = vlink + "&FilterDateTF=" + FilterDateTF
+
+        window.location.href = vlink;
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', '.notification_view', function () {
+            //var zone_id = $('#zone').val();
+            //alert('ddd');
+            var Notificationid = $(this).data('id'); //this.getAttribute("data-id");
+            //alert(Notificationid);
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/notificationViewed",
+                dataType: "json",
+                data: JSON.stringify({ Notificationid: Notificationid}),
+                async: false,
+                success: function (data) {
+                    if (data.success) {
+                        //alert("Branch Add/Updated Successfully");
+                        window.location.reload(true);
+                    }
+                    else {
+                        alert("Error: " + data.message);
+                    }
+                }
+            });
+        });
+    });
+</script>

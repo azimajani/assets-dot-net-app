@@ -1,0 +1,529 @@
+﻿@model SMAT_Inventory.Models.zoneViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Zone List</p>
+                        <h4 class="mb-0" id="zones_count">@Model.TotalCount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            @{
+                var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                var currentPage = Model.CurrentPage;
+                var startPage = Math.Max(1, currentPage - 5);
+                var endPage = Math.Min(pageCount, currentPage + 5);
+                var skip = 11; // Number of pages to skip
+                var sel10 = "";
+                var sel25 = "";
+                var sel50 = "";
+                var sel100 = "";
+                if (Model.PageSize == 10) { sel10 = "selected"; }
+                if (Model.PageSize == 25) { sel25 = "selected"; }
+                if (Model.PageSize == 50) { sel50 = "selected"; }
+                if (Model.PageSize == 100) { sel100 = "selected"; }
+            }
+            <div>
+                <select id="pagesize">
+                    <option @sel10 value="10">10</option>
+                    <option @sel25 value="25">25</option>
+                    <option @sel50 value="50">50</option>
+                    <option @sel100 value="100">100</option>
+                </select>
+            </div>
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = Math.Max(1, currentPage - skip), pageSize = Model.PageSize })"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = currentPage - 1, pageSize = Model.PageSize })"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("zonelist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = currentPage + 1, pageSize = Model.PageSize })">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize })">>></a>
+                        }
+                    </div>
+
+                </div>
+
+                <form method="get" action="@Url.Action("zonelist", new { page = Math.Min(pageCount, currentPage), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"] })">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <input type="text" name="searchTerm" class="form-control" id="searchTerm" placeholder="Search by Tag ID, Asset ID, or Asset Name" value="@Request.QueryString["searchTerm"]" />
+                        </div>
+                        <div class="col-md-1  mt-2">
+                            <button type="button" class="btn btn-primary" id="searchbut" style="margin-top: -5px; margin-left: 2px;">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<table class="table table-bordered dt-responsive nowrap w-100">
+
+
+    <thead>
+        <tr>
+            <th>
+                <a href="@Url.Action("/zonelist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Id", sortOrder = Model.SortColumn == "Id" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    ID @(Model.SortColumn == "Id" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/zonelist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Name", sortOrder = Model.SortColumn == "Name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Name @(Model.SortColumn == "Name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/zonelist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Branches", sortOrder = Model.SortColumn == "Branches" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Branches @(Model.SortColumn == "Branches" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/zonelist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "staffcount", sortOrder = Model.SortColumn == "staffcount" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Staff @(Model.SortColumn == "staffcount" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var zone in Model.zonelist)
+        {
+            <tr>
+                <td>@zone.id</td>
+                <td><label class="rounded-1 bg-transparent zone" data-zone="@zone.id">@zone.name</label></td>
+                <td><label class="badge rounded-pill bg-success zone-branches" data-zone="@zone.id">@zone.Branches</label></td>
+                <td><label class="badge rounded-pill bg-success staff-branches" data-zone="@zone.id">@zone.staffcount</label></td>
+                <td>
+
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="">
+                            <li><a href="@Url.Action("zoneadd", "Assets", new { id = zone.id })" class="dropdown-item btn btn btn-success" data-id="1"><i class="mdi mdi-pencil font-size-16 text-danger me-1"></i> Edit Zone</a></li>
+                            <li><a class="dropdown-item btn btn-danger disable-zone" data-id="@zone.id"><i class="mdi mdi-trash-can-outline font-size-16 text-danger me-1"></i> Delete Zone</a></li>
+                        </ul>
+                    </div>
+                    @*@<button class="btn btn-sm btn-danger disable-zone" data-id="@zone.id">Disable</button>
+                        <button class="btn btn-sm btn-info zone-branches" data-zone="@zone.id">View Branches</button>
+                    *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
+
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = Math.Max(1, currentPage - skip), pageSize = Model.PageSize })"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = currentPage - 1, pageSize = Model.PageSize })"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("zonelist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = currentPage + 1, pageSize = Model.PageSize })">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("zonelist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize })">>></a>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="branchModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Branch List</h5>
+                <input type="text" id="searchBox" placeholder="Search by Branch Code or Name" />
+                <button type="button" class="btn btn-primary w-md" id="btnShowMap">Show Map</button>
+                <input type="text" id="zoneid" hidden />
+                <button type="button" class="close" data-dismiss="modal" id="btncross" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="javascript:void(0);" onclick="sortTable('code')">Branch Code</a>
+                            </th>
+                            <th>
+                                <a href="javascript:void(0);" onclick="sortTable('name')">Branch Name</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="branchList">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Modal -->
+<div class="modal fade" id="staffModal" tabindex="-1" role="dialog" aria-labelledby="staffModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staffModalLabel">Staff List</h5>
+                @*<input type="text" id="searchBox" placeholder="Search by Branch Code or Name" />
+                <button type="button" class="btn btn-primary w-md" id="btnShowMap">Show Map</button>*@
+                <input type="text" id="zoneid" hidden />
+                <button type="button" class="close" data-dismiss="modal" id="btncrosss" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="javascript:void(0);" onclick="sortTable('code')">ID</a>
+                            </th>
+                            <th>
+                                <a href="javascript:void(0);" onclick="sortTable('name')">Name</a>
+                            </th>
+                            <th>
+                                <a href="javascript:void(0);" onclick="sortTable('name')">Email</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffList">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btncloses" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manager Modal -->
+<div class="modal fade" id="ManagerModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Manager Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" id="btncrossm" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                        </tr>
+                    </thead>
+                    <tbody id="ManagerDetail">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnclosem" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#btnclose').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        $('#btncross').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        $('#btncloses').on('click', function () {
+            $('#staffModal').modal('hide');
+        });
+        $('#btncrosss').on('click', function () {
+            $('#staffModal').modal('hide');
+        });
+
+        $('#btnclosem').on('click', function () {
+            $('#ManagerModal').modal('hide');
+        });
+        $('#btncrossm').on('click', function () {
+            $('#ManagerModal').modal('hide');
+        });
+
+        $(document).on("click", ".disable-zone", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this zone?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("zonedelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    let currentSortColumn = 'code';
+    let currentSortOrder = 'asc'; // Default sort order
+
+    $('.zone-branches').on('click', function () {
+        var zoneId = $(this).data('zone'); // Get the zone id from the label
+
+        // Clear previous data in the modal
+        $('#branchList').empty();
+        document.getElementById('zoneid').value = zoneId;
+
+        // AJAX request to fetch branches for the selected zone
+        $.ajax({
+            url: '/Assets/GetBranchbyZone', // Replace with your server-side URL
+            type: 'GET',
+            data: { zoneId: zoneId },
+            success: function (branches) {
+                // branches should be an array of branch objects { branchId, branchName }
+                branches.forEach(function (branch) {
+                    $('#branchList').append('<tr><td>' + branch.code + '</td><td>' + branch.name + '</td></tr>');
+                });
+
+                // Show the modal
+                $('#branchModal').modal('show');
+            },
+            error: function () {
+                alert('Error fetching branch data');
+            }
+        });
+    });
+
+    $('.staff-branches').on('click', function () {
+        var zoneId = $(this).data('zone'); // Get the zone id from the label
+
+        // Clear previous data in the modal
+        $('#staffList').empty();
+        document.getElementById('zoneid').value = zoneId;
+
+        // AJAX request to fetch branches for the selected zone
+        $.ajax({
+            url: '/Assets/GetStaffbyZone', // Replace with your server-side URL
+            type: 'GET',
+            data: { zoneId: zoneId },
+            success: function (staffs) {
+                // branches should be an array of branch objects { branchId, branchName }
+                staffs.forEach(function (staff) {
+                    $('#staffList').append('<tr><td>' + staff.id + '</td><td>' + staff.name + '</td><td>' + staff.email + '</td></tr>');
+                });
+
+                // Show the modal
+                $('#staffModal').modal('show');
+            },
+            error: function () {
+                alert('Error fetching branch data');
+            }
+        });
+    });
+
+    $('.zone').on('click', function () {
+        var zoneId = $(this).data('zone'); // Get the zone id from the label
+        //alert(zoneId);
+        // Clear previous data in the modal
+        $('#ManagerDetail').empty();
+        document.getElementById('zoneid').value = zoneId;
+
+        // AJAX request to fetch branches for the selected zone
+        $.ajax({
+            url: '/Assets/GetManagerforZone', // Replace with your server-side URL
+            type: 'GET',
+            data: { Id: zoneId },
+            success: function (users) {
+                // branches should be an array of branch objects { branchId, branchName }
+
+                $('#ManagerDetail').append('<tr><td> Name: </td><td>' + users.name + '</td></tr>');
+                $('#ManagerDetail').append('<tr><td> eMail: </td><td>' + users.email + '</td></tr>');
+                $('#ManagerDetail').append('<tr><td> Phone: </td><td>' + users.phone + '</td></tr>');
+
+                // Show the modal
+                $('#ManagerModal').modal('show');
+            },
+            error: function () {
+                alert('Error fetching Manager data');
+            }
+        });
+    });
+
+
+
+    $('#btnShowMap').on('click', function () {
+        var zoneId = $('#zoneid').val();
+
+        // Open GoogleMapView in a new tab with the zoneId parameter
+        window.open('/Assets/GoogleMapView?zoneId=' + zoneId, '_blank');
+    });
+
+
+
+    $(document).ready(function () {
+        // Handle typing in the search box
+        $("#searchBox").on("input", function () {
+            filterBranches();
+        });
+    });
+
+    function sortTable(column) {
+        if (currentSortColumn === column) {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortColumn = column;
+            currentSortOrder = 'asc'; // Default to ascending when changing columns
+        }
+        filterBranches();
+    }
+
+    function filterBranches() {
+        var zoneId = $('#zoneid').val();
+        const searchTerm = $("#searchTerm").val();
+        // Clear previous data in the modal
+        $('#branchList').empty();
+        //document.getElementById('zoneid').value = zoneId;
+        //alert(zoneId);
+        $.ajax({
+            url: '@Url.Action("GetBranchbyZone", "Assets")',
+            data: {
+                zoneId: zoneId,
+                currentSortColumn: currentSortColumn,
+                currentSortOrder: currentSortOrder,
+                searchTerm: searchTerm
+            },
+            success: function (branches) {
+                // branches should be an array of branch objects { branchId, branchName }
+                branches.forEach(function (branch) {
+                    $('#branchList').append('<tr><td>' + branch.code + '</td><td>' + branch.name + '</td></tr>');
+                });
+            },
+            error: function () {
+                alert('Error fetching branch data');
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#searchbut').click(function () {
+            //alert(1);
+            var searchTerm = $('#searchTerm').val();
+            var currentPage = '@currentPage'; // Current page variable
+            var pageSize = $('#pagesize').val();
+
+            window.location.href = '@Url.Action("zonelist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;','') + '&searchTerm=' + searchTerm;
+        });
+         $('#pagesize').change(function() {
+            var searchTerm = $('#searchTerm').val();
+            var currentPage = '@currentPage'; // Current page variable
+             var pageSize = $('#pagesize').val();
+
+            window.location.href = '@Url.Action("zonelist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;','') + '&searchTerm=' + searchTerm;
+       });
+    });
+</script>

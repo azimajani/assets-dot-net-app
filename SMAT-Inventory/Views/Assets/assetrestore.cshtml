@@ -1,0 +1,163 @@
+﻿@model SMAT_Inventory.Models.assetsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Assets</p>
+                        <h4 class="mb-0" id="assets_count">@Model.assetcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Current Book Value</p>
+                        <h4 class="mb-0" id="assets_bookValue">Rs.@Model.currentbookvalue.ToString("N2")/=</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="pagination">
+                    @{
+                        var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                    }
+
+                    @for (var i = 1; i <= pageCount; i++)
+                    {
+                        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetrestore", new { page = i, pageSize = Model.PageSize })">@i</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Asset List</h4>
+                <table id="assets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tag ID</th>
+                            <th>Tag Count</th>
+                            <th>Tag Balance</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Current BV</th>
+                            <th>Total Cost</th>
+                            <th>Action</th>
+                        </tr>
+                        @*@else
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>Current BV</th>
+                            <th>Total Cost</th>
+                            @if (!(auth()->user()->cannot(["Assets-Edit", "Assets-Delete"])))
+                            <th>Action</th>
+                            endif
+                        </tr>
+                        @endif*@
+
+                    </thead>
+                    @foreach (var rl in Model.assetlist)
+                    {
+                        <tr>
+                            <td>@rl.id</td>
+                            <td>@rl.tag_id</td>
+                            <td>@rl.Tagcount</td>
+                            <td>@rl.TagcountRemain</td>
+                            <td>@rl.asset_id</td>
+                            <td>@rl.asset_name</td>
+                            <td>@rl.net_value</td>
+                            <td>@rl.total_cost</td>
+                            <td>
+                                <a href="#" class="btn btn-success restore-asset" data-id="@rl.id"><i class="bx bx-archive-out"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="pagination">
+    @{
+        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    }
+
+    @for (var i = 1; i <= pageCountd; i++)
+    {
+        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetrestore", new { page = i, pageSize = Model.PageSize })">@i</a>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".restore-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do want to Restore Asset?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetrestorenow", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>

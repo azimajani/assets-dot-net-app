@@ -1,0 +1,80 @@
+﻿@model SMAT_Inventory.Models.messagesViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            @if (Model.message.id != 0)
+            {<h4 class="mb-sm-0 font-size-18">Message</h4> }
+            else
+            {<h4 class="mb-sm-0 font-size-18">Add Message</h4>}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject: @Model.message.subject</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message: </label>
+                            <label for="message" class="form-label">@Model.message.message</label>
+                            @*<input type="text" name="message" class="form-control" id="message" value="@Model.message.message" required>*@
+                        </div>
+                    </div>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+
+
+             var Name = $('#zone-input').val();
+             var FId = @Model.message.id;
+             var managerid = $('#managerid').val();
+             var staffid = $('#staffid').val();
+             var email = $('#email').val();
+             var mobile = $('#mobile').val();
+             var alternate_no = $('#alternate_no').val();
+
+             //alert(FId);
+             //alert(Name);
+             var Fn = { id: FId, name: Name, managerid: managerid, staffid: staffid, email: email, mobile: mobile, alternate_no: alternate_no  };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/zoneasave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     window.location.reload(true);
+                 }
+
+             });
+
+
+         });
+     });
+</script>

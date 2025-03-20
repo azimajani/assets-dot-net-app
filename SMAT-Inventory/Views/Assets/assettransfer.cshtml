@@ -1,0 +1,154 @@
+﻿@model SMAT_Inventory.Models.assetsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Asset Transfer</h4>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="add-branch-form" action="" method="post" x-data="{dep_type:''}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Asset ID Here</label>
+                                <input type="text" class="form-control" id="asset_id" name="asset_id" placeholder="Enter Asset ID Here" required value="@Model.asset.asset_id" onkeydown="checkEnter(event)">
+                            </div>
+                        </div>
+
+                    </div>
+                    @{string branchname = ""; }
+                    @foreach (var branch in Model.branchlist)
+                    {
+                        if (branch.id == Model.asset.branch_id)
+                        {
+                            branchname = branch.name;
+                        }
+                    }
+                    @if (Model.asset.asset_id != "")
+                    {
+                        <div style="background-color: lightgray; color: black;">
+                            <div>
+                                <label for="zone-input" class="form-label">Asset: @Model.asset.asset_name</label>
+                            </div>
+                            <div>
+                                <label for="zone-input" class="form-label">Branch: @branchname </label>
+                            </div>
+                            <div>
+                                <label for="zone-input" class="form-label">Location: @Model.asset.location </label>
+                            </div>
+                            <div>
+                                <label for="zone-input" class="form-label">Enter Manufacturer S#: @Model.asset.serial_no </label>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="zone-input" class="form-label">Transfer To:</label>
+                                    <select class="form-select select2" name="branch_id" id="branch_id" required>
+                                        <option disabled selected>Select Branch</option>
+                                        @foreach (var branch in Model.branchlist)
+                                        {
+                                            if (branch.id == Model.asset.branch_id)
+                                            {
+                                                <option value="@branch.id">@branch.name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@branch.id">@branch.name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-2">
+                                    <label for="zone-input" class="form-label">Enter Asset Location Here</label>
+                                    <input type="text" class="form-control" id="location" name="location" placeholder="Enter Asset Location Here" required value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-2">
+                                    <label for="zone-input" class="form-label">Enter Description Here</label>
+                                    <textarea type="text" rows="4" class="form-control" id="Description" name="Description" placeholder="Enter Description Here" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary w-md" id="btnSave">Transfer</button>
+                        </div>
+                    }
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+         $('#btnSave').on('click', function () {
+             var AssetId = @Model.asset.id;
+             var frombranchcode= @Model.asset.branch_id;
+             var fromlocation= "@Model.asset.location";
+             var tobranchcode = $('#branch_id').val();
+             var tolocation = $('#location').val();
+             var Description = $('#Description').val();
+
+
+             //var Fn = { id: id, branch_id: branch_id, tag_id: tag_id, asset_id: asset_id, assetOld_id: assetOld_id, asset_name: asset_name, invoice_cost: invoice_cost, total_cost: total_cost, date_of_purchase: date_of_purchase, vendor_id: vendor_id, vendor: vendor, part_warranty: part_warranty, service_warranty: service_warranty, serial_no: serial_no, dep_type: dep_type, net_value: net_value, remaining_years: remaining_years, life_in_year: life_in_year, salvage_value: salvage_value, generic_name: generic_name, custom_field: custom_field, Tagcount: Tagcount };
+             
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/assettransfersave",
+                 dataType: "json",
+                 data: JSON.stringify({ AssetId: AssetId, frombranchcode: frombranchcode, fromlocation: fromlocation, tobranchcode: tobranchcode, tolocation: tolocation, Description: Description }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         alert("Asset Transfer Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+             });
+         });
+     });
+</script>
+
+
+<script>
+    function checkEnter(event) {
+        if (event.key === "Enter") { // Check if the Enter key is pressed
+            var asset_id = $('#asset_id').val();
+
+            window.location.href = '@Url.Action("assettransfer")?asset_id=' + asset_id;
+
+
+            //alert(asset_id);
+
+        }
+    }
+</script>

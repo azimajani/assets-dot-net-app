@@ -1,0 +1,213 @@
+﻿@model SMAT_Inventory.Models.messagesViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            @if (Model.message.id != 0)
+            {<h4 class="mb-sm-0 font-size-18">Update Message</h4> }
+            else
+            {<h4 class="mb-sm-0 font-size-18">Add Message</h4>}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form action="add" method="post">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Select Branch</label>
+                                <select class="form-select select2" name="branch_id" id="branch_id">
+                                    <option disabled selected>Select Branch</option>
+                                    @foreach (var branch in Model.branchlist)
+                                    {
+                                        if (branch.id == Model.message.branch_id)
+                                        {
+                                            <option selected value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="zone-input" class="form-label">Select Zone</label>
+                                <select class="form-select select2" name="zone_id" id="zone_id">
+                                    <option disabled selected>Select Zone</option>
+                                    @foreach (var zone in Model.zonelist)
+                                    {
+                                        if (zone.id == Model.message.branch_id)
+                                        {
+                                            <option selected value="@zone.id">@zone.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@zone.id">@zone.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="zone-input" class="form-label">Select Group</label>
+                                <select class="form-select select2" name="group" id="group_id">
+                                    <option disabled selected>Select Group</option>
+                                    @foreach (var group in Model.grouplist)
+                                    {
+                                        if (group.id == Model.message.group_id)
+                                        {
+                                            <option selected value="@group.id">@group.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@group.id">@group.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="zone-input" class="form-label">Select City</label>
+                                <select class="form-select select2" name="city" id="city_id">
+                                    <option disabled selected>Select Group</option>
+                                    @foreach (var city in Model.citylist)
+                                    {
+                                        if (city.id == Model.message.city_id)
+                                        {
+                                            <option selected value="@city.id">@city.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@city.id">@city.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="formrow-color-input" class="form-label">Message Color</label>
+                                <select class="form-select" style="color:@Model.message.displaycolor" name="displaycolor" id="displaycolor" onchange="changeColor(this)">
+                                    <option style="color: #000000;" value="#000000">███████████</option>
+                                    <option style="color:#ff0000;" value="#ff0000">███████████</option>
+                                    <option style="color:#4800ff;" value="#4800ff">███████████</option>
+                                    <option style="color:#ffd800;" value="#ffd800">███████████</option>
+                                    <option style="color:#4cff00;" value="#4cff00">███████████</option>
+                                </select>
+                            </div>
+                        </div>
+                        @*
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="formrow-color-input" class="form-label">Message Color</label>
+                                <input type="color" class="form-control" id="displaycolor" placeholder="Select Primary Color Here" name="displaycolor" value="@Model.message.displaycolor" required>
+
+                            </div>
+                        </div>
+                            *@
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Enter Subject Here</label>
+                                <input type="text" name="subject" class="form-control" id="subject" value="@Model.message.subject" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Enter Message Here</label>
+                                <textarea name="message" class="form-control" id="message" rows="5" required>@Model.message.message</textarea>
+                                @*<input type="text" name="message" class="form-control" id="message" value="@Model.message.message" required>*@
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="dateFrom" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startdate" name="startdate" value="@Model.message.startdate.ToString("yyyy-MM-dd")">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="dateTo" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="enddate" name="enddate" value="@Model.message.enddate.ToString("yyyy-MM-dd")">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            @if (Model.message.id != 0)
+                            {<button type="button" action="edit" class="btn btn-primary w-md" id="btnSave">Update Message</button>}
+                            else
+                            {<button type="button" action="add" class="btn btn-primary w-md" id="btnSave">Add Message</button>}
+                        </div>
+</form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function changeColor(selectElement) {
+        // Get the selected value
+        const selectedColor = selectElement.value;
+        // Change the dropdown text color
+        selectElement.style.color = selectedColor;
+    }
+</script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+
+             var subject = $('#subject').val();
+             var Id = @Model.message.id;
+             var message = $('#message').val();
+             var startdate = $('#startdate').val();
+             var enddate = $('#enddate').val();
+             var branch_id = $('#branch_id').val();
+             var group_id = $('#group_id').val();
+             var zone_id = $('#zone_id').val();
+             var city_id = $('#city_id').val();
+             var displaycolor = $('#displaycolor').val();
+
+             //alert(FId);
+             //alert(Name);
+             var Fn = { id: Id, subject: subject, message: message, startdate: startdate, enddate: enddate, branch_id: branch_id, group_id: group_id, zone_id: zone_id, city_id: city_id, displaycolor: displaycolor };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/messagesave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     alert('Message Updated successful')
+                     window.location.reload(true);
+                 }
+
+             });
+
+
+         });
+     });
+</script>

@@ -1,0 +1,412 @@
+﻿@model SMAT_Inventory.Models.emailupdateViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">No. Of Branches</p>
+                        <h4 class="mb-0">@Model.branchcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                            <span class="avatar-title">
+                                <i class="bx bx-copy-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">No. Of Groups</p>
+                        <h4 class="mb-0">@Model.groupcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Update Email</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="update-email-form" action="{{ route('branchGroup.email.update') }}" method="post" x-data="{updateFor:'', listItems:''}">
+                    <p x-text="listItems"></p>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="updateFor" class="form-label">Update Email for</label>
+                                <select id="updateFor" name="updateFor" class="form-control updateFor" x-model="updateFor"  required>
+                                    <option disabaled>Select</option>
+                                    <option value="Group">Group</option>
+                                    <option value="Branch">Branch</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6" x-show="updateFor!=''">
+                            <div class="mb-3">
+                                <label for="items" class="form-label" x-text="'Select '+updateFor"></label>
+                                <select name="items" id="items" class="form-control" x-model="items" required>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div id="emailist" class="mb-3">
+                                @*<label for="email" class="form-label">Email</label>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div class="row">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary waves-effect waves-light" id="UpdateEmail">Update Email</button>
+                            </div>
+                        </div>*@
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="headerDetail">
+                <h5 class="modal-title" id="branchModalLabel">Add Email:</h5>
+            </div>
+            <div class="modal-body" id="BodyDetail">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary w-md" id="btnSaveAdd">Save</button>
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+     $(document).ready(function () {
+         /*
+         var params = new URLSearchParams(window.location.search);
+
+         // Check if 'GorB' parameter exists
+         if (params.has('GorB')) {
+             var gorbValue = params.get('GorB');  // Get the 'GorB' parameter value
+             //alert(gorbValue);
+             // Set the dropdown value based on 'GorB' parameter
+             setTimeout(function () {
+                 $('#updateFor').val(gorbValue);
+             }, 1000);
+             //alert('1');
+             // Delay the trigger to ensure the change handler is properly attached
+             setTimeout(function () {
+                 $('#updateFor').trigger('change');
+             }, 1000); // Adjust time as needed
+             //alert('2');
+         }*/
+
+         $('#btnclose').on('click', function () {
+             $('#AddModal').modal('hide');
+         });
+        // Event listener for zone select change
+         $('#updateFor').change(function () {
+             $('#emailist').empty();
+             var GorB = $('#updateFor').val();
+
+            if (GorB == 'Branch') {
+                var branches = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.branch));
+
+                // Clear existing options
+                $('#items').empty().append('<option disabled selected>Select Branch</option>');
+                ;
+                // Filter branches based on selected zone
+                var filteredBranches = branches;
+
+                // Populate branch select with filtered branches
+                $.each(filteredBranches, function (index, branch) {
+                    var cn = '(' + branch.code + ') - ' + branch.name;
+                    var se = "";
+                    $('#items').append($('<option></option>').val(branch.id).text(cn));
+                });
+            }
+
+            if (GorB == 'Group') {
+                var groups = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.group));
+                // Clear existing options
+                $('#items').empty().append('<option disabled selected>Select Group</option>');
+
+                // Filter branches based on selected zone
+                var filteredGroups = groups;
+
+                // Populate branch select with filtered branches
+                $.each(filteredGroups, function (index, group) {
+                    $('#items').append($('<option></option>').val(group.id).text(group.name));
+                });
+            }
+         });
+
+         $('#items').change(function () {
+
+             var GorB = $('#updateFor').val();
+             var item = $('#items').val();
+
+             //alert(GorB);
+            if (GorB == 'Branch') {
+                 
+                 $.ajax({
+                     url: '/Assets/ReloadBranches', // Replace with your actual controller and action
+                     type: 'GET',
+                     success: function (branches) {
+                    var filteredBranches = branches.filter(function (branch) { return branch.id == item; }) //branches;
+
+                   // Populate branch select with filtered branches
+                        $.each(filteredBranches, function (index, branch) {
+                            var emails = branch.email.split(',');
+                            $('#emailist').empty();
+                            $('#emailist').append('<div><label for="email" class="form-label">Email</label></div>');
+                            emails.forEach(function (email) {
+                                $('#emailist').append('<div class="form-label">');
+                                $('#emailist').append('<button type="button"  class="btn btn-sm btn-danger disable-branch btnDeleteEmail" data-id ="'+email.trim()+'"  title="Delete">' +
+                                                            '<i class="mdi mdi-trash-can-outline font-size-16 text-light"></i>' +
+                                                    '</button>&nbsp');
+                                let em = email.trim();
+                                if (em.charAt(0) != '{') {
+                                    $('#emailist').append('<button type="button" class="btn btn-sm btn-warning disable-branch btnDisable" data-id="' + email.trim() + '" title="Disable">' +
+                                        '<i class="mdi mdi-lock font-size-16 text-light"></i>' +
+                                        '</button>&nbsp');
+                                } else {
+                                    $('#emailist').append('<button type="button" class="btn btn-sm btn-success enable-branch btnEnable" data-id="' + email.trim() + '" title="Enable">' +
+                                        '<i class="mdi mdi-lock-open font-size-16 text-light"></i>' +
+                                        '</button>&nbsp');
+                                }
+                                $('#emailist').append(email.trim());
+
+                                $('#emailist').append('</div>');
+                            });
+
+                            $('#emailist').append('<br><button type="button" id="btnAddemail" class="btn btn-sm btn-success me-1 add-branch" data-id="" title="Add">' +
+                                                    '<i class="mdi mdi-plus font-size-16 text-light"></i>' +
+                                                '</button>');
+                            //$('#emailist').append('<label for="email" class="form-label">' + branch.email + '</label>');
+                        });
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Error reloading branches');
+                        }
+                });
+           }
+
+           if (GorB == 'Group') {
+               //var groups = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.group));
+                // Clear existing options
+                //$('#items').empty().append('<option disabled selected>Select Branch</option>');
+
+                 // Filter branches based on selected zone
+               $.ajax({
+                   url: '/Assets/ReloadGroups', // Replace with your actual controller and action
+                   type: 'GET',
+                   success: function (groups) {
+
+                     var filteredgroups = groups.filter(function (group) { return group.id == item; }) //branches;
+
+                    // Populate branch select with filtered branches
+                     $.each(filteredgroups, function (index, group) {
+                         var emails = group.person_email.split(',');
+                        $('#emailist').empty();
+                        $('#emailist').append('<div><label for="email" class="form-label">Email</label></div>');
+                        emails.forEach(function (email) {
+                            $('#emailist').append('<div class="form-label">');
+                            $('#emailist').append('<button type="button"  class="btn btn-sm btn-danger disable-branch btnDeleteEmail" data-id ="'+email.trim()+'"  title="Delete">' +
+                                                         '<i class="mdi mdi-trash-can-outline font-size-16 text-light"></i>' +
+                                                     '</button>&nbsp');
+                            let em = email.trim();
+                            if (em.charAt(0) != '{') {
+                                $('#emailist').append('<button type="button" class="btn btn-sm btn-warning disable-branch btnDisable" data-id="' + email.trim() + '" title="Disable">' +
+                                    '<i class="mdi mdi-lock font-size-16 text-light"></i>' +
+                                    '</button>&nbsp');
+                            } else {
+                                $('#emailist').append('<button type="button" class="btn btn-sm btn-success enable-branch btnEnable" data-id="' + email.trim() + '" title="Enable">' +
+                                    '<i class="mdi mdi-lock-open font-size-16 text-light"></i>' +
+                                    '</button>&nbsp');
+                            }
+
+                            $('#emailist').append(email.trim());
+
+                            $('#emailist').append('</div>');
+                        });
+
+                         $('#emailist').append('<br><button type="button" id="btnAddemail" class="btn btn-sm btn-success me-1 add-branch" data-id="" title="Add">' +
+                                                 '<i class="mdi mdi-plus font-size-16 text-light"></i>' +
+                                             '</button>');
+                        //$('#emailist').append('<label for="email" class="form-label">' + branch.email + '</label>');
+                     });
+                   },
+                   error: function (xhr, status, error) {
+                       alert('Error reloading Groups');
+                   }
+                });
+            }
+         });
+
+         $('#emailist').on('click', '#btnAddemail', function (event) {
+             event.preventDefault();
+             var GorB = $('#updateFor').val();
+             var item = $('#items').val();
+
+             $('#BodyDetail').empty();
+             $('#BodyDetail').append('<div class="col-md-5">');
+             //$('#BodyDetail').append('<label for="input1" class="form-label">Enter Contact: </label>');
+             $('#BodyDetail').append('<input type="text" id="modalemail" style="width: 30ch;" maxlength="30" value="" placeholder="Enter Email"/>');
+             $('#BodyDetail').append('<input type="text" id="modelGorB" value="' + GorB + '" hidden/>');
+             $('#BodyDetail').append('<input type="text" id="modelid" value="' + item + '" hidden/>');
+             $('#BodyDetail').append('</div>');
+
+             $('#AddModal').modal('show');
+         });
+
+         $('#btnSaveAdd').on('click', function () {
+             //alert('0');
+             var GorB = $('#modelGorB').val();
+             var itemid = $('#modelid').val();
+             var email = $('#modalemail').val();
+             var items = $('#items').val();
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/emailupdateSave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'GorB': GorB, 'itemid': itemid, 'email': email }),
+                 async: false,
+                 success: function (data) {
+                     $('#items').trigger('change');
+                     $('#AddModal').modal('hide');
+                 }
+             });
+         });
+     });
+
+    $(document).ready(function () {
+        $('#emailist').on('click', '.btnDeleteEmail', function (event) {
+        //$('.btnDeleteEmail').on('click', function (event) {
+            event.preventDefault();
+
+            var email = $(this).data('id');
+            var GorB = $('#updateFor').val();
+            var itemid = $('#items').val();
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/emaildeleteSave",
+                dataType: "json",
+                data: JSON.stringify({ 'GorB': GorB, 'itemid': itemid, 'email': email }),
+                async: false,
+                success: function (data) {
+                    $('#items').trigger('change');
+                }
+
+            });
+
+        });
+    });
+
+    $(document).ready(function () {
+        $('#emailist').on('click', '.btnDisable', function (event) {
+            //$('.btnDeleteEmail').on('click', function (event) {
+            event.preventDefault();
+
+            var email = $(this).data('id');
+            var GorB = $('#updateFor').val();
+            var itemid = $('#items').val();
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/emaildisableSave",
+                dataType: "json",
+                data: JSON.stringify({ 'GorB': GorB, 'itemid': itemid, 'email': email }),
+                async: false,
+                success: function (data) {
+                    $('#items').trigger('change');
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#emailist').on('click', '.btnEnable', function (event) {
+            //$('.btnDeleteEmail').on('click', function (event) {
+            event.preventDefault();
+
+            var email = $(this).data('id');
+            var GorB = $('#updateFor').val();
+            var itemid = $('#items').val();
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/emailenableSave",
+                dataType: "json",
+                data: JSON.stringify({ 'GorB': GorB, 'itemid': itemid, 'email': email }),
+                async: false,
+                success: function (data) {
+                    $('#items').trigger('change');
+                }
+
+            });
+
+        });
+    });
+</script>

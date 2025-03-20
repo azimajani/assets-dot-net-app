@@ -1,0 +1,178 @@
+﻿@model SMAT_Inventory.Models.zoneViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        @if (Model.zone.id != 0)
+                            { <p class="text-muted fw-medium">Branch</p>
+                            <h4 class="mb-0">@Model.TotalCount</h4>}
+                        else
+                            {<p class="text-muted fw-medium">Zone</p>
+                             <h4 class="mb-0">@Model.TotalCount</h4>}
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            @if (Model.zone.id != 0)
+                {<h4 class="mb-sm-0 font-size-18">Update Zone</h4> }
+            else
+                {<h4 class="mb-sm-0 font-size-18">Add Zone</h4>}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form action="add" method="post">
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="zone-input" class="form-label">Enter Zone Here</label>
+                            <input type="text" name="zone" class="form-control" id="zone-input" value="@Model.zone.name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Manager</label>
+                                @*<input type="text" name="manager" class="form-control" id="manager" value="@Model.zone.manager" required>*@
+                                <select class="form-select select2" name="managerid" id="managerid" required>
+                                    <option disabled selected>Select Manager</option>
+                                    @foreach (var user in Model.userlist)
+                                    {
+                                        if (user.id == Model.zone.managerid)
+                                        {
+                                            <option selected value="@user.id"  data-email="@user.email" data-id="@user.id" data-mobile="@user.phone">@user.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.id" data-email="@user.email" data-id="@user.id" data-mobile="@user.phone">@user.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Staff ID</label>
+                                <input type="text" name="staffid" class="form-control" id="staffid" value="@Model.zone.staffid" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">eMail</label>
+                                <input type="text" name="email" class="form-control" id="email" value="@Model.zone.email" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Mobile</label>
+                                <input type="text" name="mobile" class="form-control" id="mobile" value="@Model.zone.mobile" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Alternate No</label>
+                                <input type="text" name="alternate_no" class="form-control" id="alternate_no" value="@Model.zone.alternate_no" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        @if (Model.zone.id != 0)
+                        {<button type="button" action="edit" class="btn btn-primary w-md" id="btnSave">Update Zone</button>}
+                        else
+                        {<button type="button" action="add" class="btn btn-primary w-md" id="btnSave">Add Zone</button>}
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+    
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#managerid').on('change', function () {
+             // Get the selected option
+             var selectedOption = $(this).find('option:selected');
+             
+
+             // Get the data attributes for email and mobile
+             var email = selectedOption.data('email');
+             var mobile = selectedOption.data('mobile');
+             var id = selectedOption.data('id');
+
+             // Update the email and mobile fields
+             $('#email').val(email);
+             $('#mobile').val(mobile);
+             $('#staffid').val(id);
+             
+         });
+
+         $('#btnSave').on('click', function () {
+             
+
+             var Name = $('#zone-input').val();
+             var FId = @Model.zone.id;
+             var managerid = $('#managerid').val();
+             var staffid = $('#staffid').val();
+             var email = $('#email').val();
+             var mobile = $('#mobile').val();
+             var alternate_no = $('#alternate_no').val();
+
+             //alert(FId);
+             //alert(Name);
+             var Fn = { id: FId, name: Name, managerid: managerid, staffid: staffid, email: email, mobile: mobile, alternate_no: alternate_no  };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/zoneasave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         alert("Zone Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+             });
+
+
+         });
+     });
+</script>

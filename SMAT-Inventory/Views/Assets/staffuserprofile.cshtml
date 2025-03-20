@@ -1,0 +1,172 @@
+﻿@model SMAT_Inventory.Models.UserViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">User Profile</h4>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form name="add-branch-form" action="{{ route('/user/insert') }}" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="role-input" class="form-label">User Role: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.role_name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="user-input" class="form-label">Full Name: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Date of Birth: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.DOB.ToString("yyyy-MM-dd")</label>
+                            </div>
+                        </div>
+                        @{ 
+                            var Activechk = "Not Active";
+                            if (@Model.user.Active== 1){ Activechk = "Active"; }
+                        }
+                        <div class="col-md-4" style="padding-top: 30px;">
+                            <div class="mb-3">
+                                <label for="Active" class="form-label">Active: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Activechk</label>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email-input" class="form-label">Email Address: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.email</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="number-input" class="form-label">Mobile Number: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.phone</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email-input" class="form-label">Enter Address: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="number-input" class="form-label">CNIC: </label>
+                                <label style="color:blue" for="role-input" class="form-label">@Model.user.CNIC</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="branch-input" class="form-label">Zones: </label>
+                                    <label style="color:blue" for="role-input" class="form-label">@Model.user.zones</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                      
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong><label for="horizontal-Logo-input" class="col-sm-12 col-form-label">Picture Preview:</label></strong>
+                            <div class="col-sm-10">
+                                <img id="profile_picture" src="@Url.Content("~/assets/images/users/avatar-2.jpg")" class="form-control input-sm" width="160px" height="160px">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <x-error-messages-section></x-error-messages-section>
+
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function (e) {
+        $(document).on("change", '#user_picture', function () {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                $('#profile_picture').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+    });
+</script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+             var role = $('#role').val();
+             var name = $('#name').val();
+             var email = $('#email').val();
+             var phone = $('#phone').val();
+             var address = $('#address').val();
+             var CNIC = $('#CNIC').val();
+             var password = $('#password').val();
+             var id = @Model.user.id;
+             var Active = document.getElementById('Active').checked ? 1 : 0;
+             var DOB = $('#DOB').val();
+             var zones = $('#zone').val();
+             var vali = JSON.stringify(zones);
+             //alert(vali);
+
+             var Fn = { id: id, role_id: role, name: name, email: email, phone: phone, address: address, CNIC: CNIC, password: password, Active: Active, DOB: DOB, zones: vali };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/usersave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         alert("User Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+
+             });
+
+
+         });
+     });
+</script>

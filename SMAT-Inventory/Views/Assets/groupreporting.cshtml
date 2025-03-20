@@ -1,0 +1,118 @@
+﻿@model SMAT_Inventory.Models.groupViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Reporting</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form id="fetch-reports" name="fetch-reports" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="zone-input" class="form-label">Select Group</label>
+                            <select class="form-select select2" id="group" name="group" required>
+                                <option disabled selected>Select Group</option>
+                                @foreach (var group in Model.grouplist)
+                                {
+                                    <option value="@group.id">@group.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateFrom" class="form-label">Date From</label>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateTo" class="form-label">Date To</label>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                        <br>
+                        <label><code>* Select Dates otherwise it assumed the last report.</code></label>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="d-flex flex-wrap gap-4">
+                            <div class="form-check">
+                                <label class="form-check-label" for="calculation">
+                                    <input class="form-check-input" name="calculation" type="checkbox" id="calculation">
+                                    Report with Calculations
+                                </label>
+                            </div>
+
+                            <label class="form-check-label" for="summary_report">
+                                <input class="form-check-input" name="report_type" value="summary_report" type="radio" id="summary_report">
+                                Summary Report
+                            </label>
+
+                            <label class="form-check-label" for="detailed_report">
+                                <input class="form-check-input" name="report_type" value="detailed_report" type="radio" id="detailed_report" checked>
+                                Detailed Report
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light" value="view_report">View</button>
+
+                            <button type="submit" name="download" class="btn btn-primary waves-effect waves-light" value="download_report">Download</button>
+
+                            <button type="submit" name="email" class="btn btn-primary waves-effect waves-light" value="email_report">Email</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on("submit", "#fetch-reports", function (e) {
+        e.preventDefault();
+        event.preventDefault(); // Prevent default form submission
+        var group = $('#group').val();
+        //var outas = $(this).value; // Get the zone id from the label
+        //alert(outas);
+
+
+        //var vlink = "/Assets/groupreportsummary?group_id=1";
+        var vlink = "/Assets/groupreportdetail?group_id=" + group;
+        window.location.href = vlink;
+
+
+        //var vlink = "/Assets/reportslist?zone_id=" + zone_id + "&branch_id=" + branch_id
+        //vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
+
+    });
+</script>

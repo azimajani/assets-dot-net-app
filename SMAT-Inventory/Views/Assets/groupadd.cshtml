@@ -1,0 +1,327 @@
+﻿@model SMAT_Inventory.Models.groupViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Zones</p>
+                        <h4 class="mb-0">@Model.zonecount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                            <span class="avatar-title">
+                                <i class="bx bx-copy-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Branches</p>
+                        <h4 class="mb-0">@Model.branchcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Groups</p>
+                        <h4 class="mb-0">@Model.groupcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Groups</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="add-branch-form" action="" method="post">
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="group_name" class="form-label">Group Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Group name here" required value="@Model.group.name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="person_name" class="form-label">Group Head</label>
+                                <input type="text" class="form-control" id="person_name" name="person_name" placeholder="Enter Group Head here" required value="@Model.group.person_name">
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="person_designation" class="form-label">Contact Person Designation</label>
+                                <input type="text" class="form-control" id="person_designation" name="person_designation" placeholder="Enter Contact Person Designation here" required value="@Model.group.person_designation">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="person_email" class="form-label">Contact Person Email</label>
+                                <input type="text" class="form-control" id="person_email" name="person_email" placeholder="Enter Contact Person email here" required value="@Model.group.person_email">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="person_number" class="form-label">Contact Person Number</label>
+                                <input type="number" min="0" minlength="9" class="form-control" id="person_number" name="person_number" placeholder="Enter Contact Person phone here" required value="@Model.group.person_number">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="cities" class="form-label">Contact Person City</label>
+                                <select name="cities" class="form-control select2" id="city_id" required>
+                                    <option disabaled selected>Select Contact Person's City</option>
+                                    @foreach (var city in Model.citylist)
+                                    {
+                                        if (city.id == Model.group.city_id)
+                                        {
+                                            <option selected value="@city.id">@city.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@city.id">@city.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="branch-input" class="form-label">Select Branches</label>
+                                <select class="form-select select2 select2-multiple" multiple id="branch" name="branch[]">
+                                    @foreach (var branch in Model.branchlist)
+                                    {
+                                        var ids = Model.group.BranchesAll;
+
+                                        // Convert the string of IDs into an array
+                                        var idArray = ids.Split(',');
+
+                                        // Check if the branchId is in the array
+                                        if (idArray.Contains(branch.id.ToString()))
+                                        {
+
+                                            <option selected value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                    @{ 
+                        var btnSavelbl = "Create Group";
+                        if (Model.group.id !=0) { btnSavelbl = "Update Group"; }
+                    }
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" id="btnSave">@btnSavelbl</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+             var name = $('#name').val();
+             var person_name = $('#person_name').val();
+             var person_designation = $('#person_designation').val();
+             var person_email = $('#person_email').val();
+             var person_number = $('#person_number').val();
+             var city_id = $('#city_id').val();
+             var selectedBranches = $('#branch').val();
+             
+             var vali = JSON.stringify(selectedBranches);
+             vali = vali.replace(/"/g, '\\"');
+
+             var FId = @Model.group.id;
+
+             var Fn = { id: FId, name: name, person_name: person_name, person_designation: person_designation, person_email: person_email, person_number: person_number, city_id: city_id, branches: vali};
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/groupsave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         alert("Group Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+
+             });
+
+
+         });
+     });
+</script>
+
+<script>
+
+
+            //Unselecting group
+            $("#branch").on("select2:unselecting", function(e) {
+                var flag = confirm('Do want to Remove Selected Branch?');
+                if (flag) {
+                    var id = $(this).data('id');
+                } else {
+                    e.preventDefault();
+                }
+            });
+
+            $(document).on("change", ".disable-asset", function(event) {
+                var flag = confirm('Do want to Remove Asset?');
+                if (flag) {
+                    var id = $(this).data('id');
+
+                    $.ajax({
+                        url: '{{ route("/asset/delete-asset") }}',
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+
+                            console.log(data);
+                            let result = JSON.parse(data);
+                            $('.message').html('<div class="alert alert-' + result.type +
+                                ' alert-dismissible fade show" role="alert"><i class="mdi ' + result.icon +
+                                ' me-2"></i>' + result.message +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>'
+                            );
+
+                            assetsDatatable.ajax.reload( null, false );
+                        },
+                        error: function(data) {
+                            console.log(data);
+                        }
+                    });
+                } else {
+                    event.preventDefault();
+                }
+            });
+
+            //Fetch Zone wise Branches
+            $(document).on("change", "#zone", function(e) {
+                let zone = $(this).val();
+
+                $.ajax({
+                    url: '{{ route("/branch/zone_wise_branches") }}',
+                    type: 'POST',
+                    data: {
+                        zone_id: zone
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.success) {
+                            console.log(data.branches.length);
+                            const branches = [];
+                            for(let i = 0; i<data.branches.length; i++) {
+                                branches[i] = '<option value="'+data.branches[i].id+'">'+data.branches[i].name+' ('+data.branches[i].code+')<option>';
+                            }
+
+                            $("#branch").html(branches.join(""));
+                            console.log(branches.toString());
+                        }
+
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            });
+</script>

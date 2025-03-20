@@ -1,0 +1,113 @@
+﻿@model SMAT_Inventory.Models.assetscanViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Bulk Asset Delete</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="uploadForm" name="add-asset-csv-form" class="repeater" action="" method="post" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="deleteType" class="form-label">Delete Type</label>
+                            <select class="form-select" id="deleteType" name="deleteType" required>
+                                <option value="Temp" selected>Temporary Delete</option>
+                                <option value="Perm">Permanent Delete</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="update-by" class="form-label">Update By</label>
+                            <select class="form-select" id="deleteAS" name="deleteAS" required>
+                                <option disabled selected>Select Attribute</option>
+                                <option value="tag_id">Tag ID</option>
+                                <option value="asset_id">Asset ID</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div data-repeater-list="group-a" class="mb-3">
+                        <div data-repeater-item class="row mb-3">
+                            <div class="col-lg-10 align-self-center">
+                                <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="scannerFile" required>
+                            </div>
+                            <div class="col-lg-2 align-self-center">
+                                <div class="d-grid">
+                                    <input data-repeater-delete type="button" class="btn btn-primary" value="Delete" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <input data-repeater-create type="button" class="btn btn-success mt-3 mt-lg-0 mb-3" value="Add" />
+
+                    <div class="input-group" style="display:grid;">
+                        <button class="btn btn-primary" type="submit" id="uploadForm">Update Assets</button>
+                    </div>
+                </form>
+
+                <x-error-messages-section></x-error-messages-section>
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
+            <h4 class="mb-sm-0 font-size-18">Delete Assets Via CSV</h4>
+        </div>
+        <p>Click on the <a href="@Url.Action("DownloadSampleCsv", new { fileName = "sample-AssetDeleteCSV.csv", path = "~/app_data/" })" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(this); // Create FormData object from the form element
+
+            var deleteType = $('#deleteType').val(); 
+            var deleteAS = $('#deleteAS').val(); 
+
+            formData.append('deleteType', deleteType); // Add branch_id to the formData
+            formData.append('deleteAS', deleteAS); // Add calcu to the formData
+            $.ajax({
+                url: '/Assets/DeleteAssetsFromExcel', // URL of the Scan method
+                type: 'POST',
+                data: formData,
+                processData: false,  // Don't process the data
+                contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                success: function (response) {
+                    if (response.success) {
+                        alert('File uploaded successfully. Report URL: ' + response.data.url);
+                        //var fileName = response.data.fileName;
+                        //var downloadUrl = '@Url.Action("UpdateAssetsFromExcel", "Assets")' + '?fileName=' + encodeURIComponent(fileName);
+                        //window.location.href = downloadUrl;
+
+                        //window.location.href = response.data.url; // Redirect to the report URL
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred: ' + error);
+                    alert('An error occurred while processing your request.');
+                }
+            });
+        });
+    });
+</script>

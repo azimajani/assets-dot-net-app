@@ -1,0 +1,1080 @@
+﻿@model SMAT_Inventory.Models.settingsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+}
+
+@*<link href="{{ asset('assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css')}}" rel="stylesheet" type="text/css">*@
+
+<style>
+    .datepicker table tr td.disabled,
+    .datepicker table tr td.disabled:hover {
+        color: #b90000;
+    }
+</style>
+<style>
+    .stretched-btn {
+        height: 80px; /* Adjust as necessary */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Settings</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#company-information" role="tab" aria-selected="true">
+                            <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                            <span class="d-none d-sm-block">Company Information</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#reporting" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                            <span class="d-none d-sm-block">Reporting</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#heads" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                            <span class="d-none d-sm-block">Heads</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#accounting-settings" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                            <span class="d-none d-sm-block">Accounting Settings</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#export-tables" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                            <span class="d-none d-sm-block">Database</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#Controls-tables" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                            <span class="d-none d-sm-block">Controls</span>
+                        </a>
+                    </li>
+                    <li>
+                        <div>
+                            <button type="button" class="btn btn-primary w-md" id="btnSave1">Save</button>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content p-3 text-muted">
+                    <div class="tab-pane active" id="company-information" role="tabpanel">
+                        <form id="companyForm" action="" method="post" enctype="multipart/form-data">
+
+                            <div class="row mb-3">
+                                <div class="col-md-9">
+                                    <label for="company_logo" class="form-label">Company Logo</label>
+                                    <input type="file" name="company_logo" class="form-control" id="company_logo">
+                                </div>
+                                <div class="col-md-3">
+                                    <strong><label for="horizontal-Logo-input" class="col-sm-12 col-form-label">Logo Preview</label></strong>
+                                    <div class="col-sm-10">
+                                        <img id="logos" src="/@GlobalVariables.GetWebSetting("company_logo")" class="form-control input-sm" width="180px;" height="100px">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="company_name" class="form-label">Company Name</label>
+                                <input type="text" name="company_name" class="form-control" id="company_name" value="@GlobalVariables.GetWebSetting("company_name", "")">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="company_address" class="form-label">Company Address</label>
+                                <textarea name="company_address" class="form-control" id="company_address" placeholder="Add Company Address here">@GlobalVariables.GetWebSetting("company_address", "")</textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formrow-mobile-input" class="form-label">eMail</label>
+                                        <input type="text" class="form-control" id="company_eMail" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetWebSetting("company_eMail")" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
+                                        <input type="text" class="form-control" id="company_phone1" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetWebSetting("company_phone1")">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
+                                        <input type="text" class="form-control" id="company_phone2" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetWebSetting("company_phone2")">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="company_address" class="form-label">Company City</label>
+                                        <select class="form-select select2" name="company_city" id="company_city" required>
+                                            <option disabled selected>Select City</option>
+                                            @foreach (var city in Model.city)
+                                            {
+                                                if (city.id.ToString() == @GlobalVariables.GetWebSetting("company_city", ""))
+                                                {
+                                                    <option selected value="@city.id">@city.name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@city.id">@city.name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="company_currency" class="form-label">Currency</label>
+                                        <select class="form-select select2" name="company_currency" id="company_currency" required>
+                                            <option disabled selected>Select Currency</option>
+                                            @foreach (var country_Currencies in Model.country_Currencies)
+                                            {
+                                                if (country_Currencies.id.ToString() == @GlobalVariables.GetWebSetting("company_currency", ""))
+                                                {
+                                                    <option selected value="@country_Currencies.id">@country_Currencies.currency_name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@country_Currencies.id">@country_Currencies.currency_name (@country_Currencies.currency_symbol)</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formrow-color-input" class="form-label">Primary Color</label>
+                                        <input type="color" class="form-control" id="primary_color" placeholder="Select Primary Color Here" name="primary_color" value="@GlobalVariables.GetWebSetting("primary_color", "")" required>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div>
+                                    <button type="button" class="btn btn-primary w-md" id="btnSave">Save</button>
+                                </div>*@
+                        </form>
+                    </div>
+
+                    <div class="tab-pane" id="reporting" role="tabpanel">
+                        <form action="{{ route('/company/settings') }}" method="post" enctype="multipart/form-data">
+
+                            <div class="mb-3">
+                                <label for="reporting_group_summary" class="form-label">Group Summary</label>
+                                <input class="form-control" name="reporting_group_summary" placeholder="Enter Reporting Group Summary here">
+                            </div>
+
+                            @*<div>
+                                    <button type="button" class="btn btn-primary w-md" id="btnSave">Save</button>
+                                </div>*@
+                        </form>
+                    </div>
+                    @{
+                        string person1 = GlobalVariables.GetWebSetting("contact_person_1");
+                        string person2 = GlobalVariables.GetWebSetting("contact_person_2");
+                        string personadmin = GlobalVariables.GetWebSetting("contact_person_admin");
+                        string personfinance = GlobalVariables.GetWebSetting("contact_person_finance");
+                        string CustomerRelationOfficer1 = GlobalVariables.GetWebSetting("CustomerRelationOfficer1");
+                        string CustomerRelationOfficer2 = GlobalVariables.GetWebSetting("CustomerRelationOfficer2");
+                        string ManagerQualityControl = GlobalVariables.GetWebSetting("ManagerQualityControl");
+                        string ManagerOperations = GlobalVariables.GetWebSetting("ManagerOperations");
+                        string ManagerFinance = GlobalVariables.GetWebSetting("ManagerFinance");
+
+                    }
+                    <div class="tab-pane" id="heads" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <div class="col-md-3 d-flex align-items-center">
+                                        <button type="button" id="btnAddContactPER" class="btn btn-sm btn-success me-1 add-branch"
+                                                data-id="" title="Add">
+                                            <i class="mdi mdi-plus font-size-16 text-light"></i>
+                                        </button>
+                                        <label style="color:orangered">CUSTOMERS</label>
+                                    </div>
+                                    @{ var tfvalue = "0";}
+                                    @foreach (var set in Model.contactPERlist)
+                                    {
+                                        string settag = @set.tag.Substring(11);
+                                        string settagtab = @set.tag.Replace(' ', '_');
+                                        bool tf = false;
+                                        string active = "";
+
+
+                                        if (tfvalue == "0") tf = true;
+                                        if (tfvalue == "0") active = "active";
+                                        if (tfvalue == "0") tfvalue = "1";
+
+
+
+                                        <a class="nav-link mb-2 @active id="v-pills-@setagtab-tab" data-bs-toggle="pill" href="#v-pills-@settagtab" role="tab" aria-controls="v-pills-@settagtab" aria-selected="@(tf.ToString().ToLower())">@settag</a>
+                                    }
+
+
+                                </div>
+
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <div class="col-md-3 d-flex align-items-center">
+                                        <button type="button" id="btnAddContactSMA" class="btn btn-sm btn-success me-1 add-branch"
+                                                data-id="" title="Add">
+                                            <i class="mdi mdi-plus font-size-16 text-light"></i>
+                                        </button>
+                                        <label style="color:orangered">SMA_TECHNOLOGY</label>
+                                    </div>
+                                    @{ var fvalue = "0";}
+                                    @foreach (var set in Model.contactSMAlist)
+                                    {
+                                        string settag = @set.tag.Substring(11);
+                                        string settagtab = @set.tag.Replace(' ', '_');
+                                        bool tf = false;
+                                        string active = "";
+
+
+                                        if (tfvalue == "0") tf = true;
+                                        if (tfvalue == "0") active = "active";
+                                        if (tfvalue == "0") tfvalue = "1";
+
+
+
+                                        <a class="nav-link mb-2 @active id="v-pills-@setagtab-tab" data-bs-toggle="pill" href="#v-pills-@settagtab" role="tab" aria-controls="v-pills-@settagtab" aria-selected="@(tf.ToString().ToLower())">@settag</a>
+                                    }
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-9">
+                                <div class="tab-content text-muted mt-4 mt-md-0" id="v-pills-tabContent">
+                                    @{ tfvalue = "0";}
+                                    @foreach (var set in Model.contactPERlist)
+                                    {
+                                        string settag = @set.tag.Substring(11);
+                                        string settagtab = @set.tag.Replace(' ', '_');
+                                        string active = "";
+
+                                        if (tfvalue == "0") active = "active show";
+                                        if (tfvalue == "0") tfvalue = "1";
+
+
+                                        <div class="tab-pane fade @active" id="v-pills-@settagtab" role="tabpanel" aria-labelledby="v-pills-@settagtab-tab">
+                                            <div class="mb-3">
+                                                <label for="formrow-firstname-input" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="contactPER_name_@settagtab" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_name")" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
+                                                <input type="text" class="form-control" id="contactPER_designation_@settagtab" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_designation")" required>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
+                                                        <input type="text" class="form-control" id="contactPER_mobile_@settagtab" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_mobile")" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
+                                                        <input type="text" class="form-control" id="contactPER_phone1_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone1")">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
+                                                        <input type="text" class="form-control" id="contactPER_phone2_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone2")">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="formrow-email-input" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="contactPER_email_@settagtab" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_email")" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <button type="button" class="btn btn-sm btn-warning me-1 edit-branch" data-id="@set.Value" title="Edit">
+                                                    <i class="mdi mdi-pencil font-size-16 text-light"></i>
+                                                </button>
+                                                <button type="button"  class="btn btn-sm btn-danger disable-branch btnDeleteContactPER" data-id ="@set.tag"  title="Delete">
+                                                    <i class="mdi mdi-trash-can-outline font-size-16 text-light"></i>
+                                                </button>
+
+                                            </div>
+
+                                            <div>
+                                                <input type="hidden" name="contact_person" value="contact_@settagtab">
+                                                @*<button type="button" class="btn btn-primary w-md" id="btnSave1">Save</button>*@
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @{ tfvalue = "0";}
+                                    @foreach (var set in Model.contactSMAlist)
+                                    {
+                                        string settag = @set.tag.Substring(11);
+                                        string settagtab = @set.tag.Replace(' ', '_');
+                                        string active = "";
+
+                                        if (tfvalue == "0") active = "";
+                                        if (tfvalue == "0") tfvalue = "1";
+
+
+                                        <div class="tab-pane fade @active" id="v-pills-@settagtab" role="tabpanel" aria-labelledby="v-pills-@settagtab-tab">
+                                            <div class="mb-3">
+                                                <label for="formrow-firstname-input" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="contactSMA_name_@settagtab" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_name")" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
+                                                <input type="text" class="form-control" id="contactSMA_designation_@settagtab" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_designation")" required>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
+                                                        <input type="text" class="form-control" id="contactSMA_mobile_@settagtab" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_mobile")" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
+                                                        <input type="text" class="form-control" id="contactSMA_phone1_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone1")">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
+                                                        <input type="text" class="form-control" id="contactSMA_phone2_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone2")">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="formrow-email-input" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="contactSMA_email_@settagtab" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_email")" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <button type="button" class="btn btn-sm btn-warning me-1 edit-branch" data-id="@set.Value" title="Edit">
+                                                    <i class="mdi mdi-pencil font-size-16 text-light"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger disable-branch btnDeleteContactSMA" data-id="@set.tag" title="Delete">
+                                                    <i class="mdi mdi-trash-can-outline font-size-16 text-light"></i>
+                                                </button>
+
+                                            </div>
+
+                                            <div>
+                                                <input type="hidden" name="contact_person" value="contact_@settagtab">
+                                                @*<button type="button" class="btn btn-primary w-md" id="btnSave1">Save</button>*@
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="accounting-settings" role="tabpanel">
+                        <form action="{{ route('/company/settings') }}" method="post" enctype="multipart/form-data">
+                            <div class="row" style="display: flex; align-items: flex-start;">
+
+                                <div class="col-md-3">
+                                    <label for="account-closing-date" class="form-label">Account Closing Date</label>
+                                    <select id="account_closing_date_month" name="account_closing_date" class="form-control account-closing-date" required>
+                                        <option selected disabled>Select Closing Month</option>
+                                        @{
+                                            var accountClosingDate = GlobalVariables.GetWebSetting("account_closing_date");
+                                        }
+                                        @foreach (var month in months)
+                                        {
+                                            var isSelected = accountClosingDate == month ? "selected" : "";
+                                            <option value="@month" @isSelected>@month</option>
+                                        }
+                                    </select>
+                                </div>
+                                <!-- <input type="text" class="form-control account-closing-date" name="account_closing_date" value="{{ $account_closing_date->value?? ''}}" required> -->
+
+                                <div class="col-md-1">
+                                    <label for="account-closing-date" class="form-label">-</label>
+                                    <select id="account_closing_date_date" name="audit_days_before" class="form-control">
+                                        <option disabled selected>Select Mondy day</option>
+                                        @for (int days = 1; days <= 31; days++)
+                                        {
+                                            var isSelected = (GlobalVariables.GetWebSetting("account_closing_date_date") == days.ToString()) ? "selected" : "";
+                                            <option value="@days" @isSelected>@days</option>
+                                        }
+
+                                    </select>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label for="audit-days-before" class="form-label">Audit Date Allowed Before</label>
+                                    <select id="audit_days_before" name="audit_days_before" class="form-control">
+                                        <option disabled selected>Select No. of Days Before</option>
+                                        @for (int days = 1; days <= 60; days++)
+                                        {
+                                            var isSelected = (GlobalVariables.GetWebSetting("audit_days_before") == days.ToString()) ? "selected" : "";
+                                            <option value="@days" @isSelected>@days Days</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="audit-days-after" class="form-label">Audit Date Allowed After</label>
+                                <select id="audit_days_after" name="audit_days_after" class="form-control">
+                                    <option disabled selected>Select No. of Days After</option>
+                                    @for (int days = 1; days <= 60; days++)
+                                    {
+                                        var isSelected = (GlobalVariables.GetWebSetting("audit_days_after") == days.ToString()) ? "selected" : "";
+                                        <option value="@days" @isSelected>@days Days</option>
+                                    }
+                                </select>
+                            </div>
+                            @{
+                                var Auto = "";
+                                if (GlobalVariables.GetWebSetting("calculation_button") == "2") { Auto = "selected"; }
+                                var Manual = "";
+                                if (GlobalVariables.GetWebSetting("calculation_button") == "1") { Manual = "selected"; }
+                            }
+                            <div class="mb-3">
+                                <label for="calculation_button" class="form-label">Calculate Button Appearance</label>
+                                <select id="calculation_button" name="calculation_button" class="form-control">
+                                    <option disabled selected>Select Calculate appearance</option>
+                                    <option value="2" @Auto>Auto</option>
+                                    <option value="1" @Manual>Manual</option>
+                                </select>
+                            </div>
+
+                            @*<div>
+                                    <button type="button" class="btn btn-primary w-md" id="btnSave">Save</button>
+                                </div>*@
+                        </form>
+                    </div>
+
+                    <div class="tab-pane" id="export-tables" role="tabpanel">
+                        <div class="row" style="display: flex; justify-content: center; align-items: center;">
+                            <div class="col-md-2">
+                                <a href="@Url.Action("AssetExportToCSV", "Assets")" class="btn btn-primary stretched-btn">Export Assets Table</a>
+                            </div>
+
+                            <div class="col-md-2">
+                                <a href="@Url.Action("BranchExportToCSV", "Assets")" class="btn btn-primary stretched-btn">Export Branch Table</a>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="@Url.Action("AssetsRollbackExportToCSV", "Assets")" class="btn btn-primary stretched-btn">Assets Rollback Table</a>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="@Url.Action("AssetsDeletedExportToCSV", "Assets")" class="btn btn-primary stretched-btn">Assets Deleted</a>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="@Url.Action("BranchesDeletedExportToCSV", "Assets")" class="btn btn-primary stretched-btn">Branches Deleted</a>
+                            </div>
+                        </div>
+                        <div class="row" style="border: 2px solid #000; padding: 10px; margin: 20px; border-radius: 10px">
+
+                            <div class="row" style="display: flex; justify-content: center; align-items: center; text-align: center; height: 100px;">
+                                <a href="#" style="resize: both; font-weight: bold; font-size: 3em; margin-left: auto;">Backup</a>
+                            </div>
+
+
+                            <div class="row" style="align-content:center">
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Sunday </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Monday </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Thusday </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Wednesday </a>
+                                </div>
+                            </div>
+                            <div class="row" style="border: 2px hidden #808080; padding: 0px; margin: 5px; border-radius: 10px">
+                            </div>
+                            <div class="row" style="align-content:center">
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Tuesday </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Friday </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-primary stretched-btn">Saturday </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Controls-tables" role="tabpanel">
+                        <div class="row" style="display: flex; align-items: flex-start;">
+                            <div class="col-md-3">
+                                <label for="input1" class="form-label">Manual Activate </label>
+                                <input type="text" id="Manual_Activate_1" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Manual_Activate_1", "")" />-
+                                <input type="text" id="Manual_Activate_2" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Manual_Activate_2", "")" />-
+                                <input type="text" id="Manual_Activate_3" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Manual_Activate_3", "")" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="input4" class="form-label">Scan Security Level</label>
+                                <input type="text" id="Scan_Security_Level_1" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Scan_Security_Level_1", "")" />-
+                                <input type="text" id="Scan_Security_Level_2" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Scan_Security_Level_2", "")" />-
+                                <input type="text" id="Scan_Security_Level_3" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Scan_Security_Level_3", "")" />
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="activationtimestamp" class="form-label">Activation Time Stamp</label>
+                                    <input type="text" class="form-control" id="Activation_Time_Stamp" name="activationtimestamp" placeholder="" value="@GlobalVariables.GetWebSetting("Activation_Time_Stamp", "")">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-md-3">
+                                <label for="input4" class="form-label">Missing Salvage Value</label>
+                                <input type="text" id="Missing_Salvage_Value" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Missing_Salvage_Value", "")" />%
+                            </div>
+                            <div class="col-md-3">
+                                <label for="input4" class="form-label">Tag life Usage</label>
+                                <input type="text" id="Tag_life_Usage" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Tag_life_Usage", "")" />%
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="chkSUM" class="form-label">Repair Maintainance Enable</label>
+                                    <input class="form-check-input" type="checkbox" id="Repair_Maintainance_Enable" name="chkSUM" @GlobalVariables.GetWebSetting("Repair_Maintainance_Enable", "")>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="chkSUM" class="form-label">Rescan Allowed For Deprecation</label>
+                                    <input class="form-check-input" type="checkbox" id="Rescan_Allowed_For_Deprecation" name="chkSUM" @GlobalVariables.GetWebSetting("Rescan_Allowed_For_Deprecation", "")>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="chkSUM" class="form-label">Asset Limit Per Branch</label>
+                                        <input class="form-check-input" type="checkbox" id="Asset_Limit_Per_Branch" name="chkSUM" @GlobalVariables.GetWebSetting("Asset_Limit_Per_Branch", "")>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="input4" class="form-label">Limit:</label>
+                                    <input type="text" id="Asset_Limit_Per_Branch_Limit" style="width: 10ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Asset_Limit_Per_Branch_Limit", "")" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="input1" class="form-label">Scan Reversal File Deletion Days</label>
+                                <input type="text" id="Scan_Reversal_File_Deletion_Days" style="width: 4ch;" maxlength="2" value="@GlobalVariables.GetWebSetting("Scan_Reversal_File_Deletion_Days", "")" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="branchModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="headerDetail">
+
+            </div>
+            <div class="modal-body" id="BodyDetail">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary w-md" id="btnSaveAdd">Save</button>
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#btnSave1').on('click', function () {
+            //alert('i am in ...');
+            SaveSetting();
+        });
+
+        /*$('#btnSave').on('click', function () { SaveSetting(); });
+        $('#btnSave1').on('click', function () { SaveSetting(); });
+        $('#btnSave2').on('click', function () { SaveSetting(); });
+        $('#btnSave_personadmin').on('click', function () { SaveSetting(); });
+        $('#btnSave_personfinance').on('click', function () { SaveSetting(); });
+        $('#btnSave_CustomerRelationOfficer1').on('click', function () { SaveSetting(); });
+        $('#btnSave_CustomerRelationOfficer2').on('click', function () { SaveSetting(); });
+        $('#btnSave_ManagerQualityControl').on('click', function () { SaveSetting(); });
+        $('#btnSave_ManagerOperations').on('click', function () { SaveSetting(); });
+        $('#btnSave_ManagerFinance').on('click', function () { SaveSetting(); });
+        */
+
+        function SaveSetting() {
+
+            var company_name = $('#company_name').val();
+            var company_address = $('#company_address').val();
+            var company_eMail = $('#company_eMail').val();
+            var company_phone1 = $('#company_phone1').val();
+            var company_phone2 = $('#company_phone2').val();
+            var company_city = $('#company_city').val();
+            var company_currency = $('#company_currency').val();
+            var primary_color = $('#primary_color').val();
+
+
+            account_closing_date_month = $('#account_closing_date_month').val();
+            account_closing_date_date = $('#account_closing_date_date').val();
+            audit_days_before = $('#audit_days_before').val();
+            audit_days_after = $('#audit_days_after').val();
+            calculation_button = $('#calculation_button').val();
+
+            Manual_Activate_1 = $('#Manual_Activate_1').val();
+            Manual_Activate_2 = $('#Manual_Activate_2').val();
+            Manual_Activate_3 = $('#Manual_Activate_3').val();
+            Scan_Security_Level_1 = $('#Scan_Security_Level_1').val();
+            Scan_Security_Level_2 = $('#Scan_Security_Level_2').val();
+            Scan_Security_Level_3 = $('#Scan_Security_Level_3').val();
+            Activation_Time_Stamp = $('#Activation_Time_Stamp').val();
+            Missing_Salvage_Value = $('#Missing_Salvage_Value').val();
+            Tag_life_Usage = $('#Tag_life_Usage').val();
+            const Repair_Maintainance_Enable = document.getElementById('Repair_Maintainance_Enable');
+            var Repair_Maintainance_EnableVal = '';
+            if (Repair_Maintainance_Enable.checked) { Repair_Maintainance_EnableVal = 'selected'; }
+            //-------------------------------------------------------------------------------------------
+            const Rescan_Allowed_For_Deprecation = document.getElementById('Rescan_Allowed_For_Deprecation');
+            var Rescan_Allowed_For_DeprecationVal = '';
+            if (Rescan_Allowed_For_Deprecation.checked) { Rescan_Allowed_For_DeprecationVal = 'selected'; }
+            //-------------------------------------------------------------------------------------------
+            const Asset_Limit_Per_Branch = document.getElementById('Asset_Limit_Per_Branch');
+            var Asset_Limit_Per_BranchVal = '';
+            if (Asset_Limit_Per_Branch.checked) { Asset_Limit_Per_BranchVal = 'selected'; }
+            //-------------------------------------------------------------------------------------------
+            Asset_Limit_Per_Branch_Limit = $('#Asset_Limit_Per_Branch_Limit').val();
+            Scan_Reversal_File_Deletion_Days = $('#Scan_Reversal_File_Deletion_Days').val();
+
+            SaveSettingAjax("company_name", company_name);
+            SaveSettingAjax("company_address", company_address);
+            SaveSettingAjax("company_eMail", company_eMail);
+            SaveSettingAjax("company_phone1", company_phone1);
+            SaveSettingAjax("company_phone2", company_phone2);
+            SaveSettingAjax("company_city", company_city);
+            SaveSettingAjax("company_currency", company_currency);
+            SaveSettingAjax("primary_color", primary_color);
+
+
+
+
+            //update contact detail
+            // Get all input elements
+            const inputs = document.getElementsByTagName('input');
+
+            var contact_name = "";
+            var contact_designation = "";
+            var contact_mobile = "";
+            var contact_phone1 = ""
+            var contact_phone2 = "";
+            var contact_email = "";
+            let j = 0;
+            // Loop through each input element
+            for (let i = 0; i < inputs.length; i++) {
+                const input = inputs[i];
+
+                if (input.id.substring(0, 11) == 'contactPER_') {
+                    //alert(input.id);
+                    if (input.id.substring(0, 16) == 'contactPER_name_') { contact_name = input.value; }
+                    if (input.id.substring(0, 23) == 'contactPER_designation_') { contact_designation = input.value; }
+                    if (input.id.substring(0, 18) == 'contactPER_mobile_') { contact_mobile = input.value; }
+                    if (input.id.substring(0, 18) == 'contactPER_phone1_') { contact_phone1 = input.value; }
+                    if (input.id.substring(0, 18) == 'contactPER_phone2_') { contact_phone2 = input.value; }
+                    if (input.id.substring(0, 17) == 'contactPER_email_') { contact_email = input.value; }
+                    j = j + 1;
+                    if (j == 6) {
+                        j = 0;
+                        var contactPER = '{\\"contact_name\": \\"' + contact_name + '\\", \\"contact_designation\\": \\"' + contact_designation + '\\", \\"contact_mobile\\":\\"' + contact_mobile + '\\", \\"contact_phone1\\": \\"' + contact_phone1 + '\\", \\"contact_phone2\\": \\"' + contact_phone2 + '\\", \\"contact_email\\": \\"' + contact_email + '\\"}';
+                        //alert(contact_email);
+                        //alert(contactPER);
+                        var tagi = 'contactPER_' + input.id.substring(28).replace('_', ' ').replace('_', ' ').replace('_', ' ');
+                        SaveSettingAjax(tagi, contactPER);
+                    }
+
+                }
+            }
+
+            //update contact detail
+            // Get all input elements
+            const inputsS = document.getElementsByTagName('input');
+
+            j = 0;
+            // Loop through each input element
+            for (let i = 0; i < inputsS.length; i++) {
+                const input = inputsS[i];
+
+                if (input.id.substring(0, 11) == 'contactSMA_') {
+                    //alert(input.id);
+                    if (input.id.substring(0, 16) == 'contactSMA_name_') { contact_name = input.value; }
+                    if (input.id.substring(0, 23) == 'contactSMA_designation_') { contact_designation = input.value; }
+                    if (input.id.substring(0, 18) == 'contactSMA_mobile_') { contact_mobile = input.value; }
+                    if (input.id.substring(0, 18) == 'contactSMA_phone1_') { contact_phone1 = input.value; }
+                    if (input.id.substring(0, 18) == 'contactSMA_phone2_') { contact_phone2 = input.value; }
+                    if (input.id.substring(0, 17) == 'contactSMA_email_') { contact_email = input.value; }
+                    j = j + 1;
+                    if (j == 6) {
+                        j = 0;
+                        var contactPER = '{\\"contact_name\": \\"' + contact_name + '\\", \\"contact_designation\\": \\"' + contact_designation + '\\", \\"contact_mobile\\":\\"' + contact_mobile + '\\", \\"contact_phone1\\": \\"' + contact_phone1 + '\\", \\"contact_phone2\\": \\"' + contact_phone2 + '\\", \\"contact_email\\": \\"' + contact_email + '\\"}';
+                        //alert(contact_email);
+                        //alert(contactPER);
+                        var tagi = 'contactSMA_' + input.id.substring(28).replace('_', ' ').replace('_', ' ').replace('_', ' ');
+                        SaveSettingAjax(tagi, contactPER);
+                    }
+
+                }
+            }
+
+
+            SaveSettingAjax("account_closing_date_month", account_closing_date_month);
+            SaveSettingAjax("account_closing_date_date", account_closing_date_date);
+            SaveSettingAjax("audit_days_before", audit_days_before);
+            SaveSettingAjax("audit_days_after", audit_days_after);
+            SaveSettingAjax("calculation_button", calculation_button);
+
+
+            //end of contact detail
+            SaveSettingAjax("Manual_Activate_1", Manual_Activate_1);
+            SaveSettingAjax("Manual_Activate_2", Manual_Activate_2);
+            SaveSettingAjax("Manual_Activate_3", Manual_Activate_3);
+            SaveSettingAjax("Scan_Security_Level_1", Scan_Security_Level_1);
+            SaveSettingAjax("Scan_Security_Level_2", Scan_Security_Level_2);
+            SaveSettingAjax("Scan_Security_Level_3", Scan_Security_Level_3);
+            SaveSettingAjax("Activation_Time_Stamp", Activation_Time_Stamp);
+            SaveSettingAjax("Missing_Salvage_Value", Missing_Salvage_Value);
+            SaveSettingAjax("Tag_life_Usage", Tag_life_Usage);
+            SaveSettingAjax("Repair_Maintainance_Enable", Repair_Maintainance_EnableVal);
+            SaveSettingAjax("Rescan_Allowed_For_Deprecation", Rescan_Allowed_For_DeprecationVal);
+            SaveSettingAjax("Asset_Limit_Per_Branch", Asset_Limit_Per_BranchVal);
+            SaveSettingAjax("Asset_Limit_Per_Branch_Limit", Asset_Limit_Per_Branch_Limit);
+            SaveSettingAjax("Scan_Reversal_File_Deletion_Days", Scan_Reversal_File_Deletion_Days);
+
+            GetWebSettingsRefresh();
+
+        }
+
+        function SaveSettingAjax(TagName, TagValue) {
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/settingsavesub",
+                dataType: "json",
+                data: JSON.stringify({ TagName: TagName, TagValue: TagValue }),
+                async: false,
+                success: function (data) {
+                    //window.location.reload(true);
+                }
+
+            });
+        }
+
+        function GetWebSettingsRefresh() {
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/GetWebSettingsRefresh",
+                dataType: "json",
+                //data: JSON.stringify({ TagName: TagName, TagValue: TagValue }),
+                async: false,
+                success: function (data) {
+                    window.location.reload(true);
+                }
+
+            });
+
+
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function (e) {
+        $(document).on("change", '#company_logo', function () {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                $('#logos').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+
+            uploadFile();
+            
+        });
+    });
+
+
+    function uploadFile() {
+        /*let formData = new FormData();
+        let fileInput = $('#company_logo')[0].files[0];
+
+        if (!fileInput) {
+            alert("Please select a file first.");
+            return;
+        }
+
+        formData.append('file', fileInput);
+        alert(formData);*/
+
+        let formData = new FormData($('#companyForm')[0]);
+        $.ajax({
+            url: '/Assets/UploadCompanyDetails',  // Server-side endpoint
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                alert(response.message);
+            },
+            error: function () {
+                alert("File upload failed.....");
+            }
+        });
+    }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#btnclose').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        /*$('#btncross').on('click', function () {
+            $('#branchModal').modal('hide');
+        });*/
+        $('#btnAddContactPER').on('click', function () {
+            $('#headerDetail').empty();
+            $('#headerDetail').append('<h5 class="modal-title" id="branchModalLabel">Add Contact:</h5>');
+
+            $('#BodyDetail').empty();
+            $('#BodyDetail').append('<div class="col-md-5">');
+            //$('#BodyDetail').append('<label for="input1" class="form-label">Enter Contact: </label>');
+            $('#BodyDetail').append('<input type="text" id="Contact" style="width: 30ch;" maxlength="30" value="" placeholder="Enter Contact ..."/>');
+            $('#BodyDetail').append('<input type="text" id="prefix" value="contactPER_" hidden/>');
+            $('#BodyDetail').append('<input type="text" id="AddEdit" value="Add" hidden/>');
+            $('#BodyDetail').append('</div>');
+
+            $('#branchModal').modal('show');
+        });
+        $('#btnAddContactSMA').on('click', function () {
+            $('#headerDetail').empty();
+            $('#headerDetail').append('<h5 class="modal-title" id="branchModalLabel">Add Contact:</h5>');
+
+            $('#BodyDetail').empty();
+            $('#BodyDetail').append('<div class="col-md-5">');
+            //$('#BodyDetail').append('<label for="input1" class="form-label">Enter Contact: </label>');
+            $('#BodyDetail').append('<input type="text" id="Contact" style="width: 30ch;" maxlength="30" value="" placeholder="Enter Contact ..."/>');
+            $('#BodyDetail').append('<input type="text" id="prefix" value="contactSMA_" hidden/>');
+            $('#BodyDetail').append('<input type="text" id="AddEdit" value="Add" hidden/>');
+            $('#BodyDetail').append('</div>');
+
+            $('#branchModal').modal('show');
+        });
+        $('#btnSaveAdd').on('click', function () {
+            //alert('i am Add save Button ...');
+
+            var contact = $('#Contact').val();
+            var prefix = $('#prefix').val() + contact;
+            var addedit = $('#AddEdit').val();
+            //alert(prefix);
+            if (addedit == "Add")
+            {
+                var contactPER = '{\\"contact_name\": \\"' + '' + '\\", \\"contact_designation\\": \\"' + '' + '\\", \\"contact_mobile\\":\\"' + '' + '\\", \\"contact_phone1\\": \\"' + '' + '\\", \\"contact_phone2\\": \\"' + '' + '\\", \\"contact_email\\": \\"' + '' + '\\"}';
+                //alert('2');
+                SaveSettingAjax2(prefix, contactPER);
+                //alert('3')
+                GetWebSettingsRefresh2();
+            }
+            
+            
+        });
+
+        
+        /*$('.btnDeleteContactPER').on('click', function (event) {
+            event.preventDefault();
+            var TagName = $(this).data('id');
+
+            var item = { TagName: TagName }
+            swal({
+                title: "Are you sure?",
+                text: "Your will not be able to recover this !",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonClass: "btn-default",
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Delete",
+                closeOnConfirm: false
+            },
+                function () {
+                    $.post("DeleteSettingTag", item, function (data) {
+                        swal({
+                            title: "Deleted!",
+                            text: "Contact has been deleted.",
+                            type: "success",
+                            confirmButtonClass: "btn-success"
+                        },
+                            function () { location.reload(true); });
+                    });
+                });
+            
+        });*/
+
+        $(document).ready(function () {
+            $('.btnDeleteContactPER').on('click', function (event) {
+                event.preventDefault();
+                var TagName = $(this).data('id');
+
+                var item = { TagName: TagName };
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancel",
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post("DeleteSettingTag", item, function (data) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Contact has been deleted.",
+                                icon: "success"
+                            }).then(() => location.reload(true));
+                        });
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('.btnDeleteContactSMA').on('click', function (event) {
+                event.preventDefault();
+                var TagName = $(this).data('id');
+
+                var item = { TagName: TagName };
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancel",
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post("DeleteSettingTag", item, function (data) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Contact has been deleted.",
+                                icon: "success"
+                            }).then(() => location.reload(true));
+                        });
+                    }
+                });
+            });
+        });
+
+        function DeleteSettingAjax(TagName) {
+            alert('1');
+            
+            alert('2');
+            
+        }
+
+        function SaveSettingAjax2(TagName, TagValue) {
+
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/settingsavesub",
+                dataType: "json",
+                data: JSON.stringify({ TagName: TagName, TagValue: TagValue }),
+                async: false,
+                success: function (data) {
+                    //window.location.reload(true);
+                }
+
+            });
+        }
+
+        function GetWebSettingsRefresh2() {
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/GetWebSettingsRefresh",
+                dataType: "json",
+                //data: JSON.stringify({ TagName: TagName, TagValue: TagValue }),
+                async: false,
+                success: function (data) {
+                    window.location.reload(true);
+                }
+
+            });
+
+
+        }
+
+    });
+    
+    
+</script>

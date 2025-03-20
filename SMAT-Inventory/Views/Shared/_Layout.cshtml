@@ -1,0 +1,756 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>@GlobalVariables.GetWebSetting("company_name", "SMA")</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="" name="description" />
+    <meta content="KKB" name="author" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- App favicon -->
+    <!-- <link rel="shortcut icon" href="assets/images/favicon.ico"> -->
+    <!-- DataTables -->
+    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Bootstrap Css -->
+    <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- App Css-->
+    <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+    <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <style>
+        .company-name h2 {
+            border: 1px solid #2a3042;
+            padding: 0.4rem;
+            border-radius: 5px;
+        }
+
+        .alert {
+            margin-top: 1rem;
+        }
+
+        body[data-sidebar=dark] .navbar-brand-box {
+            background: #ffffff00;
+        }
+
+        body[data-sidebar=dark] #sidebar-menu ul li a:hover {
+            color: inherit;
+        }
+
+        .dataTables_scrollBody {
+            min-height: 300px;
+        }
+
+        label, button {
+            font-size: 1.2rem; /* Adjust the size as needed */
+        }
+
+        h6.m-0 {
+            font-size: 1.6rem; /* Adjust as needed */
+        }
+
+        input[readonly] {
+            font-size: 1.2rem; /* Match the size for consistency */
+            color: #000; /* Ensure text is clearly visible */
+        }
+
+        /* Optional: Ensure placeholder text is also larger */
+        input {
+            font-size: 1.5rem; /* Adjust this value as needed */
+        }
+
+        textarea {
+            font-size: 1.5rem; /* Same as the input font size */
+            padding: 10px; /* Add some padding for better readability */
+            border: 1px solid #ccc; /* Define a border */
+            border-radius: 5px; /* Optional: add rounded corners */
+            width: 100%; /* Adjust the width */
+            height: 150px; /* Adjust the height */
+            box-sizing: border-box; /* Ensure padding is included in width/height */
+        }
+
+        /* Increase the size of input fields like textboxes */
+        input[type="text"].form-control {
+            font-size: 1.2rem; /* Adjust text size */
+            padding: 0.5rem 1rem; /* Adjust padding for better spacing */
+            height: auto; /* Ensure input height scales with text size */
+        }
+
+        /* Increase the size of input fields like textboxes */
+        input[type="number"].form-control {
+            font-size: 1.2rem; /* Adjust text size */
+            padding: 0.5rem 1rem; /* Adjust padding for better spacing */
+            height: auto; /* Ensure input height scales with text size */
+        }
+        /* Adjust select dropdowns (without form-control class) */
+        select {
+            font-size: 1.2rem; /* Adjust text size */
+            padding: 0.5rem 1rem; /* Adjust padding for better spacing */
+            height: auto; /* Ensure the select height scales with text size */
+        }
+        /* Increase the size of select elements with the 'form-select' class */
+
+            
+        /* Increase the font size for table headings and data */
+        th, td {
+            font-size: 1.2rem; /* Adjust text size */
+            padding: 0.75rem 1rem; /* Adjust padding for better spacing */
+        }
+
+        /* Optional: Make table headings bold */
+        th {
+            font-weight: bold;
+        }
+
+        /* Optional: Adjust label alignment for larger input/select */
+        label {
+            font-size: 1.2rem;
+        }
+
+        th, td {
+            text-align: left; /* Align text to the left (or use center/right) */
+            border: 1px solid #ddd; /* Add borders between cells */
+        }
+    </style>
+
+   
+    @*@@stack('custom_page_styles')*@
+</head>
+
+<body data-sidebar="dark">
+
+    <!-- <body data-layout="horizontal" data-topbar="dark"> -->
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <header id="page-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <div class="navbar-brand-box">
+                        <a href="dashboard" class="logo logo-dark">
+                            <span class="logo-sm">
+                                @*@if (!empty($company_settings["company_logo"]))*@
+                                    <img src="/assets/images/company/QHdm0QvUZZBiATrDi9sZ.jpg" alt="" height="40">
+                                    
+                                @*@else*@
+                                    
+                                @*@endif*@
+                            </span>
+                            <span class="logo-lg">
+                                @*@if (!empty($company_settings["company_logo"]))*@
+                                <img src="~/@GlobalVariables.GetWebSetting("company_logo","SMATECH")" alt="" height="40">
+
+                                @*@else*@
+
+                                @*@endif*@
+                            </span>
+                        </a>
+
+                        <a href="dashboard" class="logo logo-light">
+                            <span class="logo-sm">
+                                @*@if (!empty($company_settings["company_logo"]))*@
+                                <img src="~/@GlobalVariables.GetWebSetting("company_logo","SMATECH")" alt="" height="40">
+
+                                @*@else*@
+
+                                @*@endif*@
+                            </span>
+                            <span class="logo-lg">
+                                @*@if (!empty($company_settings["company_logo"]))*@
+                                    <img src="~/@GlobalVariables.GetWebSetting("company_logo","SMATECH")" alt="" height="40">
+                                    
+                                @*@else*@
+                                    
+                                @*@endif*@
+                            </span>
+                        </a>
+                    </div>
+
+                    <button type="button" class="btn btn-sm px-3 font-size-16 header-item waves-effect" id="vertical-menu-btn">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+
+                    <div class="app-search company-name d-none d-lg-block">
+                        <h2>@GlobalVariables.GetWebSetting("company_name","SMATECH")</h2>
+                        @GlobalVariables.AppUserId : @GlobalVariables.AppUserName
+                    </div>
+
+                </div>
+
+                <div class="d-flex">
+                    <div class="dropdown d-inline-block d-lg-none ms-2">
+                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="mdi mdi-magnify"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-search-dropdown">
+
+                            <form class="p-3">
+                                <div class="form-group m-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    @if (GlobalVariables.role == "admin")
+                    {
+                        <div class="dropdown d-inline-block">
+                            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i class="bx bx-bell bx-tada"></i>
+                                @*@<span class="badge bg-danger rounded-pill">{{ auth()->user()->unreadNotifications->count() }}</span>*@
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 72px, 0px);" data-popper-placement="bottom-end">
+                                <div class="p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h6 class="m-0" key="t-notifications"> Notifications </h6>
+                                        </div>
+                                        @*
+                                        <div class="col-auto">
+                                            <a href="{{route('notification.list" class="small" key="t-view-all"> View All</a>
+                                        </div>
+                                        *@
+                                    </div>
+                                </div>
+                                <div data-simplebar="init" style="max-height: 230px;">
+                                    <div class="simplebar-wrapper" style="margin: 0px;">
+                                        <div class="simplebar-height-auto-observer-wrapper">
+                                            <div class="simplebar-height-auto-observer"></div>
+                                        </div>
+                                        <div class="simplebar-mask">
+                                            <div class="simplebar-offset" style="right: -20px; bottom: 0px;">
+                                                <div class="simplebar-content-wrapper" style="height: auto; padding-right: 20px; padding-bottom: 0px; overflow: hidden scroll;">
+                                                    <div class="simplebar-content" style="padding: 0px;">
+                                                        @*@@forelse(auth()->user()->unreadNotifications as $notification)
+                                            @php
+                                            $performed_by = App\Models\User::find($notification->data[0]['performed_by']);
+                                            @endphp
+                                                        *@
+                                                        <a href="javascript: void(0);" class="text-reset notification-item" data-id="{{$notification->id}}">
+                                                            <div class="d-flex">
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1" key="t-your-order">{{$notification->data[0]['name']}}</h6>
+                                                                    <div class="font-size-12 text-muted">
+                                                                        <p class="mb-1" key="t-grammer">By {{$performed_by->name}}</p>
+                                                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                        @* @empty
+                                            @endforelse*@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="simplebar-placeholder" style="width: auto; height: 390px;"></div>
+                                    </div>
+                                    <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                                        <div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div>
+                                    </div>
+                                    <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+                                        <div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: block; height: 142px;"></div>
+                                    </div>
+                                </div>
+                                <div class="p-2 border-top d-grid">
+                                    <a class="btn btn-sm btn-link font-size-14 text-center" href="{{route('notification.list">
+                                        <i class="mdi mdi-arrow-right-circle me-1"></i> <span key="t-view-more">View More..</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @*<img class="rounded-circle header-profile-user" src="{{ (!empty(auth()->user()->image) ? asset('/assets/'.auth()->user()->image) : asset('/assets/images/users/avatar-2.jpg')) }}" alt="Header Avatar">
+                <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{auth()->user()->name}}</span>*@
+                            <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <a class="dropdown-item" href="@Url.Action("userprofile", "Assets", new { id = GlobalVariables.AppUserId })">
+                                <i class="bx bx-user font-size-16 align-middle me-1"></i>
+                                <span key="t-profile">Profile</span>
+                            </a>
+                            <a class="dropdown-item" href="@Url.Action("userChangePassword", "Assets")">
+                                <i class="mdi mdi-form-textbox-password font-size-16 align-middle me-1"></i>
+                                <span key="t-profile">Change Password</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="@Url.Action("Login", "Assets")"></i> <span key="t-logout">Logout</span></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+
+        <div id="sidebar-menu">
+            <!-- ========== Left Sidebar Start ========== -->
+            <div class="vertical-menu">
+
+                <div data-simplebar class="h-100">
+
+                    <!--- Sidemenu -->
+                    <div id="sidebar-menu">
+                        <!-- Left Menu Start -->
+                        <ul class="metismenu list-unstyled" id="side-menu">
+                            <li class="menu-title" key="t-menu">Menu</li>
+
+                            <li>
+                                <a href="@Url.Action("Dashboard", "Home")" class="your-css-class">
+                                    <i class="bx bx-home-circle"></i>Dashboard
+                                </a>
+                            </li>
+                            @if (GlobalVariables.role == "admin")
+                            {
+                                @*@hasrole('admin')*@
+                                <li>
+
+                                    <a href="@Url.Action("notification", "Assets")" class="your-css-class">
+                                        <i class="bx bx-bell"></i>Notification
+                                    </a>
+                                    @*<i class="bx bx-bell bx-tada"></i><span class="badge rounded-pill bg-info float-end">{{ auth()->user()->unreadNotifications->count() }}</span>*@
+                                </li>
+                                @*@endhasrole*@
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Zone", "Add") == "Add" || GlobalVariables.GetUserPermissions("Zone", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Zone", "View") == "View" || GlobalVariables.GetUserPermissions("Zone", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Zone</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Zone", "Add") == "Add")
+                                        {
+                                            <li class="your-css-class">
+                                                <a href="@Url.Action("zoneadd", "Assets", new { id = 0 })">Add Zone</a>
+
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Zone", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("zonelist", "Assets")" class="your-css-class">Zone List</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Zone", "Delete") == "Delete")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("zonerestore", "Assets")" class="your-css-class">Restore Zone</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Branch", "Add") == "Add" || GlobalVariables.GetUserPermissions("Branch", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Branch", "View") == "View" || GlobalVariables.GetUserPermissions("Branch", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Branches</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Branch", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("branchadd", "Assets", new { id = 0 })" class="your-css-class">Add Branch</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Branch", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("branchlist", "Assets")" class="your-css-class">Branch List</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Branch", "Delete") == "Delete")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("branchrestore", "Assets")" class="your-css-class">Restore Branch</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Assets", "Add") == "Add" || GlobalVariables.GetUserPermissions("Assets", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Assets", "View") == "View" || GlobalVariables.GetUserPermissions("Assets", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Assets</span>
+                                    </a>
+                                    <ul class="sub-menu" aria-expanded="true">
+
+                                        @if (GlobalVariables.GetUserPermissions("Assets", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetadd", "Assets", new { id = 0 })">Add Assets</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Assets", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetslist", "Assets")">Assets List</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Assets", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetscan", "Assets")">Assets Scan</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Assets", "Delete") == "Delete")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetrollback", "Assets")">Rollback Assets</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Assets", "Delete") == "Delete")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetrestore", "Assets")">Restore Assets</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.role == "admin")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("assetbulkupdate", "Assets")">Bulk Assets Update</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("assetbulkdelete", "Assets")">Bulk Assets Delete</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("assetstransferlist", "Assets")">Asset Transfer</a>
+                                            </li>
+                                            @*<li>
+                            <a href="@Url.Action("AssetExportToCSV", "Assets")">Export Assets</a>
+                        </li>*@
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Users", "Add") == "Add" || GlobalVariables.GetUserPermissions("Users", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Users", "View") == "View" || GlobalVariables.GetUserPermissions("Users", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Users</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Users", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("useradd", "Assets", new { id = 0 })" class="your-css-class">Add User</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Users", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("userlist", "Assets", new { id = 0 })" class="your-css-class">User List</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Group", "Add") == "Add" || GlobalVariables.GetUserPermissions("Group", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Group", "View") == "View" || GlobalVariables.GetUserPermissions("Group", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class='bx bxs-report'></i>
+                                        <span key="t-layouts">Groups</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Group", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("grouplist", "Assets")" class="your-css-class">Group List</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Group", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("groupadd", "Assets", new { id = 0 })" class="your-css-class">Add Group</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Group", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("groupreporting", "Assets")" class="your-css-class">Reporting</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Group", "Delete") == "Delete")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("grouprestore", "Assets")" class="your-css-class">Restore Group</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("ReportScan", "Add") == "Add" || GlobalVariables.GetUserPermissions("ReportScan", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("ReportScan", "View") == "View" || GlobalVariables.GetUserPermissions("ReportScan", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class='bx bxs-report'></i>
+                                        <span key="t-layouts">Reports</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("ReportScan", "View") == "View")
+                                        {
+                                            <li>
+                                                @*@if (auth()->check() && auth()->user()->hasDirectPermission('ReportScan-View'))*@
+                                                <a href="@Url.Action("reportslist", "Assets")" class="your-css-class">Reporting</a>
+                                                @*@endif*@
+                                            </li>
+                                        }
+                                        @if (GlobalVariables.GetUserPermissions("ReportScan", "View") == "View")
+                                        {
+                                            <li>
+                                                @*@if (auth()->check() && auth()->user()->hasDirectPermission('ReportScan-View'))*@
+                                                <a href="@Url.Action("reportscustomlist", "Assets")" class="your-css-class">Custom Viewer</a>
+                                                @*@endif*@
+                                            </li>
+                                        }
+                                        @if (GlobalVariables.GetUserPermissions("ReportScan", "View") == "View")
+                                        {
+                                            <li>
+                                                @*@if (auth()->check() && auth()->user()->hasDirectPermission('ReportScan-View'))*@
+                                                <a href="@Url.Action("reportsscannedlist", "Assets")" class="your-css-class">Scanned Reports</a>
+                                                @*@endif*@
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.GetUserPermissions("Message", "Add") == "Add" || GlobalVariables.GetUserPermissions("Message", "Edit") == "Edit" || GlobalVariables.GetUserPermissions("Message", "View") == "View" || GlobalVariables.GetUserPermissions("Message", "Delete") == "Delete")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Messages</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Message", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("messageadd", "Assets", new { id = 0 })" class="your-css-class">Add Message</a>
+
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Message", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("messagelist", "Assets")" class="your-css-class">Message List</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.role == "admin")
+                            {
+                                <li>
+                                    <a href="@Url.Action("emailupdate", "Assets")" class="your-css-class">
+                                        <i class='bx bxs-envelope'></i>
+                                        <span key="t-layouts">Quick Email Update</span>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.role == "admin")
+                            {
+                                <li>
+                                    <a href="@Url.Action("settings", "Assets")" class="your-css-class">
+                                        <i class='bx bxs-report'></i>
+                                        <span key="t-layouts">Settings</span>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (GlobalVariables.logintype == "stafflogin" && GlobalVariables.role == "admin")
+                            {
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-layouts">Staff Users</span>
+                                    </a>
+
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (GlobalVariables.GetUserPermissions("Users", "Add") == "Add")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("staffuseradd", "Assets", new { id = 0 })" class="your-css-class">Add User</a>
+                                            </li>
+                                        }
+
+                                        @if (GlobalVariables.GetUserPermissions("Users", "View") == "View")
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("staffuserlist", "Assets", new { id = 0 })" class="your-css-class">User List</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                    <!-- Sidebar -->
+                </div>
+            </div>
+            <!-- Left Sidebar End -->
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+                        <!-- start page title -->
+                        @*@yield('content')*@
+                        <!-- end page title -->
+                        <div>
+                            @RenderBody()
+                        </div>
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <!-- <script>document.write(new Date().getFullYear())</script> © . -->
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="text-sm-end d-none d-sm-block">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+            <!-- end main content-->
+
+        </div>
+        
+        <!-- END layout-wrapper -->
+        <!-- JAVASCRIPT -->
+
+        <script src="/assets/libs/jquery/jquery.min.js"></script>
+        <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="/assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="/assets/libs/node-waves/waves.min.js"></script>
+
+        <!-- Required datatable js -->
+        <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <!-- Buttons examples -->
+        <script src="/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <script src="/assets/libs/jszip/jszip.min.js"></script>
+        <script src="/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+        <script src="/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+        <script src="/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+
+        <script src="/assets/libs/select2/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <!-- Sweet Alerts js -->
+        <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+        <!-- Datatable init js -->
+        <!-- <script src="/assets/js/pages/datatables.init.js"></script>     -->
+
+        <script src="//unpkg.com/alpinejs" defer></script>
+
+        <script>
+            $('.select2').select2({
+                placeholder: 'Select an option'
+            });
+        </script>
+
+
+
+        <script src="/assets/js/app.js"></script>
+
+        <script>
+            $(document).on("click", ".notification-item", function (e) {
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '{{ route("notification.read") }}',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    }
+                });
+            });
+
+            if ($(".alert-success").length) {
+                $(".alert-success").fadeTo(6000, 500).slideUp(500, function () {
+                    $(".alert-success").slideUp(500);
+                });
+            }
+        </script>
+
+        @*@stack('custom_page_scripts')*@
+
+
+</body>
+
+</html>

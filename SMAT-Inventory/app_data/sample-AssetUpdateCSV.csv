@@ -1,0 +1,2 @@
+tag_id,asset_id,asset_name,invoice_cost,total_cost,salvage_value,date_of_purchase,vendor_id,vendor,part_warranty,service_warranty,serial_no,generic_name,custom_field,life_in_year,dep_type,last_scan_date,net_value,remaining_years,salvage,last_year_bv,current_dep,total_dep,location,branch_code,AssetOld_id,Tagcount,TagcountRemain
+G2801B602000653EA0FE09F9,FR10001001-3,ASCON AC 4T INNER,124000,127000,12700,3/9/2022 0:00,AB1712,COMPUTER ONE,24 MONTHS,24 MONTHS,,,,17,2,9/16/2024 18:41,15254,16,0,0,0,0,Ground Floor,FR10001,1,2,3

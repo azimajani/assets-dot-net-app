@@ -1,0 +1,245 @@
+﻿@model SMAT_Inventory.Models.ReportDetailViewModel
+@using SMAT_Inventory.Helpers
+@{
+    var companyName = Model.company_name;
+    var date = Model.date;
+    var branches = Model.branches;
+    var currentYear = DateTime.Now.Year;
+    //var matchedAssets = branches.FirstOrDefault()?.Assets?.matched_assets;
+    // Access the first branch's assets
+
+    var matchedAssets = Model.matched_assets; // branches.FirstOrDefault()?.assets?.matched_assets;
+    var unmatchedAssets = Model.unmatched_assets; // branches.FirstOrDefault()?.assets?.unmatched_assets;
+    var otherBranchAssets = Model.otherBranchAssets; // branches.FirstOrDefault()?.assets?.otherBranchAssets;
+
+    // Initialize totals
+    decimal totalBookValue = 0;
+    decimal totalOpeningBookValue = 0;
+    decimal totalCurrentDep = 0;
+    decimal totalCurrentBookValue = 0;
+    decimal totalTotalDep = 0;
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Report</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        p {
+            line-height: 0.7;
+        }
+
+        th, td {
+            font-family: 'arial';
+            font-size: 14px;
+        }
+
+        .alnright {
+            text-align: right;
+        }
+
+        td img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <table class="main-profile" width="100%" cellspacing="0" cellpadding="0" align="right" border="0">
+        <tbody>
+            <tr>
+                <td class="one">@companyName</td>
+                <td class="alnright">Date: @date</td>
+                <td rowspan="5" align="center"><img src="data:image/png;base64,@QRCodeHelper.GenerateQrCode(@Url.Content("~/Reports/" + Model.reporting_no + ".pdf"),2)" alt="QR Code" /></td>
+            </td>
+            </tr>
+            <tr>
+                <td class="one">@branches.name</td>
+                <td class="alnright">Report no:  @branches.FirstOrDefault()?.Assets.ReportingNo</td>
+            </tr>
+            <tr>
+                <td class="one">@branches.address</td>
+                <td class="alnright">Report for year ending June 30, @currentYear</td>
+            </tr>
+            <tr>
+                <td class="one">Phone: @branches.phone1</td>
+                <td class="alnright"></td>
+            </tr>
+            <tr>
+                <td class="one"></td>
+                <td class="alnright"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br><br>
+
+    <table width="100%" border="1">
+        <thead>
+            <tr>
+                <th colspan="9"><b>Matched Records</b></th>
+            </tr>
+            <tr class="alnright">
+                <th>S.No.</th>
+                <th>Asset ID</th>
+                <th>Asset Name</th>
+                <th>Dep./Life</th>
+                <th>Total BV</th>
+                <th>Opening BV</th>
+                <th>Current Dep.</th>
+                <th>Current BV</th>
+                <th>Total Dep.</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (branches != null && matchedAssets != null)
+            {
+                int i = 0;
+                foreach (var assetGroup in matchedAssets)
+                {
+                    var assets = assetGroup;
+                    i = i + 1;
+                    if (assets != null)
+                    {
+                        totalBookValue += assets.total_cost;
+                        //decimal netValue = assets?.net_value ?? 0;
+                        //decimal currentDep = assets?.current_dep ?? 0;
+
+                        totalOpeningBookValue += ((decimal)assets?.net_value + (decimal)assets?.current_dep); // (assets.net_value + assets.current_dep);
+                        totalCurrentDep += (decimal)assets.current_dep;
+                        totalCurrentBookValue += (decimal)assets.net_value;
+                        totalTotalDep += (decimal)assets.total_dep;
+
+                        <tr>
+                            <td>@i</td>
+                            <td>@assets.asset_id</td>
+                            <td>@assets.asset_name</td>
+                            <td>@(assets.dep_type== 1 ? "DD" : assets.dep_type == 2 ? "ST" : assets.dep_type == 3 ? "SYD" : "") - @assets.life_in_year / @assets.remaining_years</td>
+                            <td class="alnright">@assets.total_cost</td>
+                            <td class="alnright">@assets.last_year_bv ? @(assets.net_value + assets.current_dep)</td>
+                            <td class="alnright">@assets.current_dep</td>
+                            <td class="alnright">@assets.net_value</td>
+                            <td class="alnright">@assets.total_dep</td>
+                        </tr>
+                    }
+                }
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>TOTAL</b></td>
+                    <td></td>
+                    <td class="alnright"><b>@totalBookValue.ToString("F2")</b></td>
+                    <td class="alnright"><b>@totalOpeningBookValue.ToString("F2")</b></td>
+                    <td class="alnright"><b>@totalCurrentDep.ToString("F2")</b></td>
+                    <td class="alnright"><b>@totalCurrentBookValue.ToString("F2")</b></td>
+                    <td class="alnright"><b>@totalTotalDep.ToString("F2")</b></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <br>
+
+    @if (unmatchedAssets != null && unmatchedAssets.Count > 0)
+    {
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th colspan="9"><b>Missing Assets</b></th>
+                </tr>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Asset ID</th>
+                    <th>Asset Name</th>
+                    <th>Dep./Life</th>
+                    <th>Total BV</th>
+                    <th>Opening BV</th>
+                    <th>Current Dep.</th>
+                    <th>Current BV</th>
+                    <th>Total Dep.</th>
+                </tr>
+            </thead>
+           @{ int i = 0;
+           }
+            <tbody>
+                @foreach (var assetGroup in unmatchedAssets)
+                {
+                    i= i + 1;
+                    var assets = assetGroup;
+                    if (assets != null)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@assets.asset_id</td>
+                            <td>@assets.asset_name</td>
+                            <td>@(assets.dep_type == 1 ? "DD" : assets.dep_type == 2 ? "ST" : assets.dep_type == 3 ? "SYD" : "") - @(assets.life_in_year / assets.remaining_years)</td>
+                            <td>@assets.total_cost</td>
+                            <td>@assets.last_year_bv ? @(assets.net_value + assets.current_dep)</td>
+                            <td>@assets.current_dep</td>
+                            <td>@assets.net_value</td>
+                            <td>@assets.total_dep</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+
+    <br>
+    
+        @if (otherBranchAssets != null && otherBranchAssets.Count > 0)
+        {
+            <table width="100%">
+                <thead>
+                    <tr>
+                        <th colspan="7"><b>Other Branch Assets</b></th>
+                    </tr>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Asset ID</th>
+                        <th>Asset Name</th>
+                        <th>Dep./Life</th>
+                        <th>Total BV</th>
+                        <th>Current BV</th>
+                        <th>Branch</th>
+                    </tr>
+                </thead>
+                @{ int i = 0;
+                }
+                <tbody>
+                    @foreach (var assetGroup in otherBranchAssets)
+                    {
+                        i = i + 1;
+                        var assets = assetGroup;
+
+                        if (assets != null)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@assets.asset_id</td>
+                                <td>@assets.asset_name</td>
+                                <td>@(assets.dep_type == 1 ? "DD" : assets.dep_type == 2 ? "ST" : assets.dep_type == 3 ? "SYD" : "") - @assets.life_in_year / @assets.remaining_years</td>
+                                <td>@assets.total_cost</td>
+                                <td>@assets.net_value</td>
+                                <td>@assets.branch_id</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    
+</body>
+</html>

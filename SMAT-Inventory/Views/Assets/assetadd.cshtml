@@ -1,0 +1,354 @@
+﻿@model SMAT_Inventory.Models.assetsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Add Asset</h4>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <x-error-messages-section></x-error-messages-section>
+
+                <form name="add-branch-form" action="" method="post" x-data="{dep_type:''}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Select Branch</label>
+                                <select class="form-select select2" name="branch_id" id="branch_id" required>
+                                    <option disabled selected>Select Branch</option>
+                                    @foreach (var branch in Model.branchlist)
+                                    {
+                                        if (branch.id == Model.asset.branch_id)
+                                        {
+                                            <option selected value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Tag ID Here</label>
+                                <input type="text" minlength="24" maxlength="26" class="form-control" id="tag_id" name="tag_id" placeholder="Enter Tag ID Here" required value="@Model.asset.tag_id">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Asset ID Here</label>
+                                <input type="text" class="form-control" id="asset_id" name="asset_id" placeholder="Enter Asset ID Here" required value="@Model.asset.asset_id">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Old Asset ID Here</label>
+                                <input type="text" class="form-control" id="assetOld_id" name="assetOld_id" placeholder="Enter Asset ID Here" required value="@Model.asset.assetOld_id">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Asset Name Here</label>
+                                <input type="text" class="form-control" id="asset_name" name="asset_name" placeholder="Enter Asset Name Here" required value="@Model.asset.asset_name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Invoice Cost Here</label>
+                                <input type="number" min="0" class="form-control" id="invoice_cost" name="invoice_cost" placeholder="Enter Invoice Cost Here" required value="@Model.asset.invoice_cost">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Total Cost Here</label>
+                                <input type="number" min="0" class="form-control" id="total_cost" name="total_cost" placeholder="Enter Total Cost Here" required value="@Model.asset.total_cost">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Date of Purchase Here</label>
+                                <input type="date" class="form-control" id="date_of_purchase" name="date_of_purchase" placeholder="Enter Date of Purchase Here" required value="@Model.asset.date_of_purchase.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Vendor ID</label>
+                                <input type="text" class="form-control" id="vendor_id" name="vendor_id" placeholder="Enter Vendor ID Here" required value="@Model.asset.vendor_id">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Vendor Name Here</label>
+                                <input type="text" class="form-control" id="vendor" name="vendor" placeholder="Enter Vendor Name Here" required value="@Model.asset.vendor">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Part Warranty Here</label>
+                                <input type="text" class="form-control" id="part_warranty" name="part_warranty" placeholder="Enter Part Warranty Here" value="@Model.asset.part_warranty">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Service Warranty Here</label>
+                                <input type="text" class="form-control" id="service_warranty" name="service_warranty" placeholder="Enter Service Warranty Here" value="@Model.asset.service_warranty">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Manufacturer S# Here</label>
+                                <input type="text" class="form-control" id="serial_no" name="serial_no" placeholder="Enter Service Warranty Here" value="@Model.asset.serial_no">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Depreciation Type Here</label>
+                                <select name="dep_type" id="dep_type" class="form-control" x-model="dep_type" required>
+                                    @{
+                                        string sel1 = "", sel2 = "", sel3 = "";
+                                        if (@Model.asset.dep_type == 1) { sel1 = "selected"; }
+                                        if (@Model.asset.dep_type == 2) { sel2 = "selected"; }
+                                        if (@Model.asset.dep_type == 3) { sel3 = "selected"; }
+                                    }
+                                    <option disabled selected>Select Depreciation Type</option>
+                                    <option value="1" @sel1>DOUBLE DEP</option>
+                                    <option value="2" @sel2>STRAIGHT</option>
+                                    <option value="3" @sel3>YEAR COUNT</option>
+                                    <!-- <option value="4">PRODUCTION</option> -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Net Value Here</label>
+                                <input type="number" min="0" class="form-control" id="net_value" name="net_value" placeholder="Enter Net Value Here" required value="@Model.asset.net_value">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Remaining Years Here</label>
+                                <input type="number" min="0" class="form-control" id="remaining_years" name="remaining_years" placeholder="Enter Remaining Years Here" required value="@Model.asset.remaining_years">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Life In Years Here</label>
+                                <input type="number" min="0" class="form-control" id="life_in_year" name="life_in_year" placeholder="Enter Life In Years Here" required value="@Model.asset.life_in_year">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label for="salvage-value" class="form-label">Enter Asset Salvage Value Here</label>
+                                <input type="number" min="0" class="form-control" id="salvage_value" name="salvage_value" placeholder="Enter Asset Salvage Value Here" value="@Model.asset.salvage_value">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label for="Tagcount" class="form-label">Enter Tag Life in count</label>
+                                <input type="number" min="0" class="form-control" id="Tagcount" name="Tagcount" placeholder="Enter Tag Life in count" value="@Model.asset.Tagcount">
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="color:blue">
+                            <div class="mb-2">
+                                <label class="form-label">Tag Balance: @Model.asset.TagcountRemain</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-2">
+                                <label for="zone-input" class="form-label">Enter Asset Location Here</label>
+                                <input type="text" class="form-control" id="location" name="location" placeholder="Enter Asset Location Here" required value="@Model.asset.location">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Generic Asset Name Here</label>
+                                <input type="text" class="form-control" id="generic_name" name="generic_name" placeholder="Enter Generic Asset Name Here" value="@Model.asset.generic_name">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Custom Text Here</label>
+                                <input type="text" class="form-control" id="custom_field" name="custom_field" placeholder="Enter Custom Text Here" value="@Model.asset.custom_field">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        @if (Model.asset.id == 0)
+                        {<button type="button" class="btn btn-primary w-md" id="btnSave">Add Asset</button>}
+                        else
+                        { <button type="button" class="btn btn-primary w-md" id="btnSave">Update Asset</button>}
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+@if (Model.asset.id == 0)
+{     <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
+                <h4 class="mb-sm-0 font-size-18">Add Assets Via CSV</h4>
+            </div>
+            <p>Click on the <a href="@Url.Action("DownloadSampleCsv", new { fileName = "sample-AssetExportToCSV.csv", path = "~/app_data/" })" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
+        </div>
+    </div>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="uploadForm" name="add-asset-csv-form" action="" method="post" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="file" required>
+                        <button class="btn btn-primary" type="submit" id="uploadForm">Upload</button>
+                    </div>
+
+                </form>
+
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+             //alert('0');
+             var branch_id = $('#branch_id').val();
+             var tag_id = $('#tag_id').val();
+             var asset_id = $('#asset_id').val();
+             var assetOld_id = $('#assetOld_id').val();
+             var asset_name = $('#asset_name').val();
+             var invoice_cost = $('#invoice_cost').val();
+             var total_cost = $('#total_cost').val();
+             //alert('1');
+             var date_of_purchase = $('#date_of_purchase').val();
+             var vendor_id = $('#vendor_id').val();
+             var vendor = $('#vendor').val();
+             var part_warranty = $('#part_warranty').val();
+             var service_warranty = $('#service_warranty').val();
+             var serial_no = $('#serial_no').val();
+             var dep_type = $('#dep_type').val();
+             var net_value = $('#net_value').val();
+             //alert('2');
+             var remaining_years = $('#remaining_years').val();
+             var life_in_year = $('#life_in_year').val();
+             var salvage_value = $('#salvage_value').val();
+             var generic_name = $('#generic_name').val();
+             var custom_field = $('#custom_field').val();
+             var Tagcount = $('#Tagcount').val()
+             var id = @Model.asset.id;
+             //alert('3');
+             var Fn = { id: id, branch_id: branch_id, tag_id: tag_id, asset_id: asset_id, assetOld_id: assetOld_id, asset_name: asset_name, invoice_cost: invoice_cost, total_cost: total_cost, date_of_purchase: date_of_purchase, vendor_id: vendor_id, vendor: vendor, part_warranty: part_warranty, service_warranty: service_warranty, serial_no: serial_no, dep_type: dep_type, net_value: net_value, remaining_years: remaining_years, life_in_year: life_in_year, salvage_value: salvage_value, generic_name: generic_name, custom_field: custom_field, Tagcount: Tagcount };
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/assetsave",
+                 dataType: "json",
+                 data: JSON.stringify({ 'item': Fn }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         alert("Asset Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+
+             });
+         });
+     });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(this); // Create FormData object from the form element
+
+            $.ajax({
+                url: '/SMAAPI/UploadAssetData', // URL of the Scan method
+                type: 'POST',
+                data: formData,
+                processData: false,  // Don't process the data
+                contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // To ensure it's recognized as an AJAX request
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        //var fileName = response.data.fileName;
+                        //var downloadUrl = 'Url.Action("DownloadFile", "API")' + '?fileName=' + encodeURIComponent(fileName);
+                        window.location.reload(true);
+
+                        //window.location.href = response.data.url; // Redirect to the report URL
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred: ' + error);
+                    alert('An error occurred while processing your request.' + response.message);
+                }
+            });
+        });
+    });
+</script>

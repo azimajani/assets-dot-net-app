@@ -1,0 +1,268 @@
+﻿@model SMAT_Inventory.Models.assetscanViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Scan Assets</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="uploadForm" name="add-asset-csv-form" class="repeater" action="" method="post" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-9">
+                            <label for="zone-input" class="form-label">Select Branch</label>
+                            <select class="form-select select2 branch-select" name="branch" id="branch" required>
+                                <option disabled selected>Select Branch</option>
+                                @foreach (var branch in Model.branchlist)
+                                {
+                                    <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                }
+                            </select>
+                        </div>
+
+                        @*@if (GlobalVariables.GetWebSetting("calculation_button", "0") == "1")
+                        {*@
+                            <div class="col-md-3">
+                                <div class="form-check form-check-primary mb-3">
+                                    <input class="form-check-input" type="checkbox" id="calcu" name="calcu" checked >
+                                    <label class="form-check-label" for="formCheckcolor1">
+                                        Calculation
+                                    </label>
+                                </div>
+                            </div>
+                        @*}*@
+                    </div>
+
+                    <div data-repeater-list="group-a" class="mb-3">
+                        <div data-repeater-item class="row mb-3">
+                            <div class="col-lg-10 align-self-center">
+                                <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="scannerFile" required>
+                            </div>
+                            <div class="col-lg-2 align-self-center">
+                                <div class="d-grid">
+                                    <input data-repeater-delete type="button" class="btn btn-danger" value="Delete" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <input data-repeater-create type="button" class="btn btn-success mt-3 mt-lg-0 mb-3" value="Add" />
+
+                    <div class="input-group" style="display:grid;">
+                        <button class="btn btn-primary" type="submit" id="uploadForm">Upload Files</button>
+                    </div>
+                </form>
+
+                <div id="branch_assets_count">
+
+                </div>
+
+                <x-error-messages-section></x-error-messages-section>
+
+                @if (Model.count_totalRecords > 0)
+                {
+                    <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        Total Records: Model.count_totalRecords>0
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div> -->
+                }
+
+                @if (Model.count_matchedRecords > 0)
+                {
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        Missing Records: Model.count_matchedRecords
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+@{
+    var calculation = "yes";
+    var dep_type = "";
+}
+@*@if (!empty($matched_assets))*@
+@if (Model.count_matchedRecords > 0)
+{
+    <div id="matched_assets" class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Assets Found</h4>
+                    <table id="matchedAssets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Asset ID</th>
+                                <th>Asset Name</th>
+                                <th>Invoice Cost</th>
+                                <th>Total Cost</th>
+                                @if (calculation == "yes")
+                                {
+                                    <th>Net Value</th>
+                                }
+                                <th>location</th>
+                                <th>Remaining Years</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var matched in Model.matched)
+                            {
+                                <tr>
+                                    <td>*</td>
+                                    <td>@matched.asset_id</td>
+                                    <td>@matched.asset_name</td>
+                                    <td>@matched.invoice_cost</td>
+                                    <td>@matched.total_cost</td>
+                                    @if (calculation == "yes")
+                                    {
+                                        <td>@matched.net_value</td>
+                                    }
+
+                                    <td>@matched.location</td>
+                                    @{
+                                        if (matched.dep_type == 1)
+                                        {
+                                            dep_type = "DD";
+                                        }
+                                        else if (matched.dep_type == 2)
+                                        {
+                                            dep_type = "ST";
+                                        }
+                                        else if (matched.dep_type == 3)
+                                        {
+                                            dep_type = "SYD";
+                                        }
+                                        else
+                                        {
+                                            dep_type = "";
+                                        }
+                                    }
+                                    <td>@dep_type @matched.remaining_years / @matched.life_in_year</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.count_totalRecords - Model.count_matchedRecords > 0)
+{
+    <div id="unmatched_assets" class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Unmatched Asset List</h4>
+                    <table id="unmatchedAssets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Asset ID</th>
+                                <th>Asset Name</th>
+                                <th>Invoice Cost</th>
+                                <th>Total Cost</th>
+                                @if (calculation == "yes")
+                                {
+                                    <th>Net Value</th>
+                                }
+
+                                <th>location</th>
+                                <th>Remaining Years</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var unmached in Model.unmatched)
+                            {
+                                <tr>
+                                    <td>*</td>
+                                    <td>@unmached.asset_id </td>
+                                    <td>@unmached.asset_name</td>
+                                    <td>@unmached.invoice_cost</td>
+                                    <td>@unmached.total_cost</td>
+                                    @if (calculation == "yes")
+                                    {
+                                        <td>@unmached.net_value</td>
+                                    }
+                                    <td>@unmached.location</td>
+                                    <td>@unmached.remaining_years</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(this); // Create FormData object from the form element
+            
+            // Append additional parameters
+            var branch_id = $('#branch').val(); // Assuming you have an input or variable with the branch_id value
+            var calcu = $('#calcu').is(':checked') ? 1 : 0;// Assuming you have an input or variable with the calcu value
+    
+
+            formData.append('branch_id', branch_id); // Add branch_id to the formData
+            formData.append('calculation', calcu); // Add calcu to the formData
+
+
+            $.ajax({
+                url: '/SMAAPI/Scan', // URL of the Scan method
+                type: 'POST',
+                data: formData,
+                processData: false,  // Don't process the data
+                contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // To ensure it's recognized as an AJAX request
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('File uploaded successfully. Report URL: ' + response.data.url);
+                        var fileName = response.data.fileName;
+                        var downloadUrl = '@Url.Action("DownloadFile", "SMAAPI")' + '?fileName=' + encodeURIComponent(fileName);
+                        window.location.href = downloadUrl;
+
+                        //window.location.href = response.data.url; // Redirect to the report URL
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred: ' + error);
+                    alert('An error occurred while processing your request.' + response.message);
+                }
+            });
+        });
+    });
+</script>

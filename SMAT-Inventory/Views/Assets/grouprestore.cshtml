@@ -1,0 +1,181 @@
+﻿@model SMAT_Inventory.Models.groupViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Zones</p>
+                        <h4 class="mb-0">@Model.zonecount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                            <span class="avatar-title">
+                                <i class="bx bx-copy-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Branches</p>
+                        <h4 class="mb-0">@Model.branchcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Groups</p>
+                        <h4 class="mb-0">@Model.groupcount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center ">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-archive-in font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Branch List</h4>
+                <table id="groups-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <div class="row">
+                        <div class="card mini-stats-wid">
+                            <div class="d-flex">
+                                <div class="flex-grow-1">
+                                    <div class="pagination">
+                                        @{
+                                            var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                                        }
+
+                                        @for (var i = 1; i <= pageCount; i++)
+                                        {
+                                            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/grouplist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "id", sortOrder = Model.SortColumn == "id" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    ID @(Model.SortColumn == "id" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "name", sortOrder = Model.SortColumn == "name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Group Name @(Model.SortColumn == "name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "person_name", sortOrder = Model.SortColumn == "person_name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Person Name @(Model.SortColumn == "person_name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "person_Designation", sortOrder = Model.SortColumn == "person_Designation" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Person Designation @(Model.SortColumn == "person_Designation" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("/grouplist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "BranchesinGroup", sortOrder = Model.SortColumn == "BranchesinGroup" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                                    Branches @(Model.SortColumn == "BranchesinGroup" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                                </a>
+                            </th>
+
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var group in Model.grouplist)
+                        {
+                            <tr>
+                                <td>@group.id</td>
+                                <td>@group.name</td>
+                                <td>@group.person_name</td>
+                                <td>@group.person_designation</td>
+                                <td><a href="#" class="btn btn-warning view-branches" data-id="@group.id">@group.BranchesinGroup</a></td>
+                                <td>
+                                    <a href="javascript::void()" class="btn btn-success restore-group" data-id="@group.id"><i class="bx bx-archive-out"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    @{
+                        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                    }
+
+                    @for (var i = 1; i <= pageCountd; i++)
+                    {
+                        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/grouplist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".restore-group", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do want to Restore Group?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("grouprestorenow", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
