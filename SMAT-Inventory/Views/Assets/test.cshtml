@@ -1,0 +1,82 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="branchForm">
+    <input type="text" name="name" value="KARACHI 1" />
+    <input type="text" name="zone_id" value="0" />
+    <input type="text" name="code" value="F09987" />
+    <input type="text" name="phone2" value="332" />
+
+    <button type="submit">Submit</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#branchForm').on('submit', function (event) {
+            event.preventDefault();
+            sendEmail();
+            /*
+            var formData = {
+                name: $('input[name="name"]').val(),
+                zone_id: $('input[name="zone_id"]').val(),
+                code: $('input[name="code"]').val(),
+                phone2: $('input[name="phone2"]').val(),
+            };
+
+            $.ajax({
+                url: "/api/branch",
+                type: "POST",
+                data: JSON.stringify(formData),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    alert("Data submitted successfully!");
+                },
+                error: function (error) {
+                    alert("Error submitting data.");
+                }
+            });*/
+        });
+    });
+</script>
+
+<script>
+    function sendEmail() {
+        //alert(GlobalVariables.GetWebSetting("User_Email_Subject", ""));
+        var emailData = {
+            toEmail: 'zeeshan.cna@gmail.com',
+            subject: 'hello... this is test subject',
+            message: 'Hello this is test email message',
+            //fromEmail: 'zeeshanali@sma-techno.net',
+            //fromEmailPassword: 'Create@321',
+            //smtpServer: 'mail.sma-techno.net',
+            //smtpPort: '25',
+            //EnableSsl:'false'
+            //attachmentPath: $('#attachmentPath').val() // Optional attachment path
+        };
+        alert(emailData);
+        $.ajax({
+            url: '/SMAAPI/SendEmail', // The controller and action method
+            type: 'POST',
+            data: JSON.stringify(emailData),
+            contentType: 'application/json',
+            success: function (response) {
+                alert(response); // This will show success or error message
+            },
+            error: function (error) {
+                alert("Error sending email: " + error.responseText);
+            }
+        });
+    }
+</script>
+
+
+
+
+
+
+
+

@@ -31,7 +31,7 @@
                         <div class="col-md-6">
                             <label for="zone-input" class="form-label">Select Group</label>
                             <select class="form-select select2" id="group" name="group" required>
-                                <option disabled selected value="0">Select Group</option>
+                                <option selected value="0">Select ALL</option>
                                 @foreach (var group in Model.grouplist)
                                 {
                                     <option value="@group.id">@group.name</option>
@@ -49,14 +49,14 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="dateFrom" class="form-label">Date From</label>
-                                <input type="date" class="form-control" id="dateFrom" name="dateFrom">
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom"  value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="dateTo" class="form-label">Date To</label>
-                                <input type="date" class="form-control" id="dateTo" name="dateTo">
+                                <input type="date" class="form-control" id="dateTo" name="dateTo"  value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
@@ -144,11 +144,12 @@
                 var Groupbranches = filteredGroups[0].branches;
                 //alert(Groupbranches);  // Now you have access to the branches for this group
             } else {
-                //alert('No group found with the selected GroupID.');
+                $('#branch').empty().append('<option selected value="0">Select ALL</option>');
+                return;
             }
 
             // Clear existing options
-            $('#branch').empty().append('<option disabled selected value="0">Select Branch</option>');
+            $('#branch').empty().append('<option selected value="0">Select ALL</option>');
 
             // Filter branches based on selected zone
             var filteredBranches = branches.filter(function (branch) {
@@ -157,7 +158,8 @@
 
             // Populate branch select with filtered branches
             $.each(filteredBranches, function (index, branch) {
-                $('#branch').append($('<option></option>').val(branch.id).text(branch.name));
+                cn = '(' + branch.code + ') - ' + branch.name;
+                $('#branch').append($('<option></option>').val(branch.id).text(cn));
             });
         });
     });
@@ -199,8 +201,8 @@
 
 
     $('#report_type').val(getUrlParameter('report_type')).change();
-    $('#dateFrom').val(getUrlParameter('fromdate')).change();
-    $('#dateTo').val(getUrlParameter('todate')).change();
+    //$('#dateFrom').val(getUrlParameter('fromdate')).change();
+    //$('#dateTo').val(getUrlParameter('todate')).change();
 
 
 

@@ -1,0 +1,3 @@
+zone,branch_code,branch_name,phone_no1,phone_no2,phone_no3,email,address,city,postalcode,googleMapId,branchemail,chkSum
+SINDH 3.4,ABC 001,ABC Road Branch 3,,,,branch@company.com,"Plot # 2C, ABC Road",Karachi,76600,"4,444,666",branch@company.com,1
+SINDH 3.4,ABC 001,ABC Road Branch 4,,,,branch@company.com,"Plot # 2C, ABC Road",Karachi,76600,,branch@company.com,0

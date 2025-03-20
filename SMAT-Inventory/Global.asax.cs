@@ -13,6 +13,7 @@ namespace SMAT_Inventory
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            System.Web.Http.GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

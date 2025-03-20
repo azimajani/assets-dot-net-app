@@ -3,8 +3,14 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
+<style>
+    .modal-body {
+        max-height: 400px; /* Set a maximum height for the modal body */
+        overflow-y: auto; /* Allows scrolling if the content exceeds max height */
+        word-wrap: break-word; /* Wrap text within the modal body */
+        word-break: break-all; /* Ensure long emails break correctly */
+    }
+</style>
 <div class="row">
     <div class="col-md-4">
         <div class="card mini-stats-wid">
@@ -28,28 +34,121 @@
     </div>
 </div>
 
-
-
-<table class="table table-bordered dt-responsive nowrap w-100">
-    <div class="row">
-        <div class="card mini-stats-wid">
-            <div class="d-flex">
-                <div class="flex-grow-1">
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="col-md-5">
                     <div class="pagination">
                         @{
                             var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                            var currentPage = Model.CurrentPage;
+                            var startPage = Math.Max(1, currentPage - 5);
+                            var endPage = Math.Min(pageCount, currentPage + 5);
+                            var skip = 11; // Number of pages to skip
                         }
 
-                        @for (var i = 1; i <= pageCount; i++)
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
                         {
-                            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/branchlist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                            <a class="btn btn-secondary" href="@Url.Action("branchlist", new { page = Math.Max(1, currentPage - skip), pageSize = Model.PageSize, searchTerm=ViewBag.searchTerm, zone= ViewBag.zone, group= ViewBag.group, city= ViewBag.city })"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("branchlist", new { page = currentPage - 1, pageSize = Model.PageSize, searchTerm=ViewBag.searchTerm, zone= ViewBag.zone, group= ViewBag.group, city= ViewBag.city })"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("branchlist", new { page = i, pageSize = Model.PageSize, searchTerm=ViewBag.searchTerm, zone= ViewBag.zone, group= ViewBag.group, city= ViewBag.city })">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("branchlist", new { page = currentPage + 1, pageSize = Model.PageSize, searchTerm=ViewBag.searchTerm, zone= ViewBag.zone, group= ViewBag.group, city= ViewBag.city })">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("branchlist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize, searchTerm=ViewBag.searchTerm, zone= ViewBag.zone, group= ViewBag.group, city= ViewBag.city })">>></a>
                         }
                     </div>
+
                 </div>
+
+                <form method="get" action="@Url.Action("branchlist", new { page = Math.Min(pageCount, currentPage), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = Request.QueryString["zone"], group = Request.QueryString["group"], city = Request.QueryString["city"] })">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select class="form-select select2" name="zone" id="zone" required>
+                                <option selected value="0">ALL Zone</option>
+                                @foreach (var zone in Model.zonelist)
+                                {
+
+                                    if (zone.id == ViewBag.zone)
+                                    {
+                                        <option selected value="@zone.id">@zone.name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@zone.id">@zone.name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select select2" name="group" id="group" required>
+                                <option selected value="0">ALL Group</option>
+                                @foreach (var group in Model.grouplist)
+                                {
+
+                                    if (group.id == ViewBag.group)
+                                    {
+                                        <option selected value="@group.id">@group.name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@group.id">@group.name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select select2" name="city" id="city" required>
+                                <option selected value="0">ALL City</option>
+                                @foreach (var city in Model.citylist)
+                                {
+
+                                    if (city.id == ViewBag.city)
+                                    {
+                                        <option selected value="@city.id">@city.name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@city.id">@city.name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="searchTerm" class="form-control" id="searchbox" placeholder="Search by Branch Code / Name" value="@Request.QueryString["searchTerm"]" />
+                        </div>
+                        <div class="col-md-1  mt-2">
+                            <button type="submit" class="btn btn-primary" style="margin-top: -5px; margin-left: 2px;">Search</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
+
     </div>
 
+</div>
+
+<table class="table table-bordered dt-responsive nowrap w-100">
     <thead>
         <tr>
             <th>
@@ -89,7 +188,10 @@
                 <td>@branch.code</td>
                 <td>@branch.name</td>
                 <td>@branch.phone1</td>
-                <td>@branch.email</td>
+                <td onclick="ShowAllEmail('@branch.branchemail', '@branch.email')">
+                    <span class="email-display">@branch.branchemail</span>
+                    <span class="extra-emails" style="display:none;">, @branch.email</span>
+                </td>
                 <td>
 
                     <div class="dropdown">
@@ -103,7 +205,7 @@
                         </ul>
                     </div>
                     @*@<button class="btn btn-sm btn-danger disable-zone" data-id="@zone.id">Disable</button>
-            <button class="btn btn-sm btn-info zone-branches" data-zone="@zone.id">View Branches</button>
+                        <button class="btn btn-sm btn-info zone-branches" data-zone="@zone.id">View Branches</button>
                     *@
                 </td>
             </tr>
@@ -112,15 +214,42 @@
 </table>
 
 
-<div class="pagination">
-    @{
-        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-    }
+@*
+    <div class="pagination">
+        @{
+            var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+        }
 
-    @for (var i = 1; i <= pageCountd; i++)
-    {
-        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/branchlist", new { page = i, pageSize = Model.PageSize })">@i</a>
-    }
+        @for (var i = 1; i <= pageCountd; i++)
+        {
+            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/branchlist", new { page = i, pageSize = Model.PageSize })">@i</a>
+        }
+    </div>
+*@
+
+
+<div class="modal fade" id="branchModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Email Detail</h5>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+
+                    </thead>
+                    <tbody id="branchList">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -165,3 +294,36 @@
     });
 </script>
 
+
+
+<script>
+    function ShowAllEmail(branchemail, allemail) {
+
+        $('#branchList').empty();
+
+        $('#branchModal').modal('show');
+        $('#branchList').append('<tr><td>' + branchemail + '</td></tr>');
+        $('#branchList').append('<tr><td>' + allemail + '</td></tr>');
+
+
+
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#btnclose').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        $('#btncross').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+
+        $('#btnclosem').on('click', function () {
+            $('#ManagerModal').modal('hide');
+        });
+        $('#btncrossm').on('click', function () {
+            $('#ManagerModal').modal('hide');
+        });
+    });
+</script>

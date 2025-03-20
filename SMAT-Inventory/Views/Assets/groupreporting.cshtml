@@ -24,9 +24,7 @@
             <div class="card-body">
                 <x-error-messages-section></x-error-messages-section>
 
-                <form name="add-branch-form" action="{{ route('group.reporting') }}" method="post">
-
-
+                <form id="fetch-reports" name="fetch-reports" method="post">
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label for="zone-input" class="form-label">Select Group</label>
@@ -44,14 +42,14 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dateFrom" class="form-label">Date From</label>
-                                <input type="date" class="form-control" id="dateFrom" name="dateFrom">
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dateTo" class="form-label">Date To</label>
-                                <input type="date" class="form-control" id="dateTo" name="dateTo">
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
                         <br>
@@ -97,148 +95,24 @@
     <!-- end col -->
 </div>
 
-<!-- <div class="row">
-<div class="col-sm-12 message"></div>
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Asset List</h4>
-                <table id="assets-datatable" class="table table-bordered dt-responsive nowrap w-100">
-                    <thead>
-                   @* @if(auth()->check() && auth()->user()->hasRole("admin"))
-                        <tr>
-                            <th>ID</th>
-                            <th>Tag ID</th>
-                            <th>Asset ID</th>
-                            <th>Asset Name</th>
-                            <th>Invoice Cost</th>
-                            <th>Total Cost</th>
-                            <th>location</th>
-                            <th>Remaining Years</th>
-                            <th>Action</th>
-                        </tr>
-                    @else
-                        <tr>
-                            <th>ID</th>
-                            <th>Asset ID</th>
-                            <th>Asset Name</th>
-                            <th>Invoice Cost</th>
-                            <th>Total Cost</th>
-                            <th>location</th>
-                            <th>Remaining Years</th>
-                            <th>Action</th>
-                        </tr>
-                    @endif
-                   *@
-                    </thead>
-
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-            var assetsDatatable = $('#assets-datatable').DataTable({
-                scrollX: true,
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('/asset/list') }}",
-                columns: [
-                    @*@if(auth()->check() && auth()->user()->hasRole("admin"))
-                        {data: 'id', name: 'id'},
-                        {data: 'tag_id', name: 'tag_id'},
-                        {data: 'asset_id', name: 'asset_id'},
-                        {data: 'asset_name', name: 'asset_name'},
-                        {data: 'invoice_cost', name: 'invoice_cost'},
-                        {data: 'total_cost', name: 'total_cost'},
-                        {data: 'location', name: 'location'},
-                        {data: 'remaining_years', name: 'remaining_years'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    @else
-                        {data: 'id', name: 'id'},
-                        {data: 'asset_id', name: 'asset_id'},
-                        {data: 'asset_name', name: 'asset_name'},
-                        {data: 'invoice_cost', name: 'invoice_cost'},
-                        {data: 'total_cost', name: 'total_cost'},
-                        {data: 'location', name: 'location'},
-                        {data: 'remaining_years', name: 'remaining_years'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    @endif
-                        *@
-                ]
-            });
+    $(document).on("submit", "#fetch-reports", function (e) {
+        e.preventDefault();
+        event.preventDefault(); // Prevent default form submission
+        var group = $('#group').val();
+        //var outas = $(this).value; // Get the zone id from the label
+        //alert(outas);
 
 
-            $(document).on("change", ".disable-asset", function(event) {
-                var flag = confirm('Do want to Remove Asset?');
-                if (flag) {
-                    var id = $(this).data('id');
+        //var vlink = "/Assets/groupreportsummary?group_id=1";
+        var vlink = "/Assets/groupreportdetail?group_id=" + group;
+        window.location.href = vlink;
 
-                    $.ajax({
-                        url: '{{ route("/asset/delete-asset") }}',
-                        type: 'POST',
-                        data: {
-                            id: id
-                        },
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(data) {
 
-                            console.log(data);
-                            let result = JSON.parse(data);
-                            $('.message').html('<div class="alert alert-' + result.type +
-                                ' alert-dismissible fade show" role="alert"><i class="mdi ' + result.icon +
-                                ' me-2"></i>' + result.message +
-                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>'
-                            );
+        //var vlink = "/Assets/reportslist?zone_id=" + zone_id + "&branch_id=" + branch_id
+        //vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
 
-                            assetsDatatable.ajax.reload( null, false );
-                        },
-                        error: function(data) {
-                            console.log(data);
-                        }
-                    });
-                } else {
-                    event.preventDefault();
-                }
-            });
-
-            //Fetch Zone wise Branches
-            $(document).on("change", "#zone", function(e) {
-                let zone = $(this).val();
-
-                $.ajax({
-                    url: '{{ route("/branch/zone_wise_branches") }}',
-                    type: 'POST',
-                    data: {
-                        zone_id: zone
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.success) {
-                            console.log(data.branches.length);
-                            const branches = [];
-                            for(let i = 0; i<data.branches.length; i++) {
-                                branches[i] = '<option value="'+data.branches[i].id+'">'+data.branches[i].name+' ('+data.branches[i].code+')<option>';
-                            }
-
-                            $("#branch").html(branches.join(""));
-                            console.log(branches.toString());
-                        }
-
-                    },
-                    error: function(data) {
-                        console.log(data);
-                    }
-                });
-            });
+    });
 </script>

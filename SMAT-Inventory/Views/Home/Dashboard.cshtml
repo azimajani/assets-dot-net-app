@@ -7,24 +7,26 @@
     <div class="col-12">
         <div class="row">
             <div class="col-md-2">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <div class="page-title-box d-sm-flex align-items-cjustify-content-between">
                     <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
                 </div>
             </div>
-            <div class="col-md-10">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="max-height: 200px; overflow-y: auto;">
-                    <!-- Loop through Module.messages to display each message in a new row -->
-                    <h4> Message(s)--></h4>
-                    @foreach (var message in Model.message)
-                    {
-                        <h4 class="mb-sm-0 font-size-18"> 
-                            <a href="@Url.Action("messageView", "Assets", new { id = message.id })" target="_blank" style="color: red; text-decoration: underline;">
-                                 @message.subject
-                            </a>
-                        </h4>
-                    }
-                </div>
+            @*
+        <div class="col-md-10">
+            <div class="page-title-box d-sm-flex align-items-cjustify-content-between" style="max-height: 200px; overflow-y: auto;">
+                <!-- Loop through Module.messages to display each message in a new row -->
+                <h4> Message(s)--></h4>
+                @foreach (var message in Model.message)
+                {
+                    <h4 class="mb-sm-0 font-size-18">
+                        <a href="@Url.Action("messageView", "Assets", new { id = message.id })" target="_blank" style="color: red; text-decoration: underline;">
+                             @message.subject
+                        </a>
+                    </h4>
+                }
             </div>
+        </div>
+            *@
         </div>
         <div class="row">
                 <div class="col-md-4">
@@ -56,7 +58,7 @@
                                     <h4 class="mb-0">@Model.branchcount</h4>
                                 </div>
 
-                                <div class="flex-shrink-0 align-self-center ">
+                                <div class="flex-shrink-0 align-self-c">
                                     <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
                                         <span class="avatar-title rounded-circle bg-primary">
                                             <i class="bx bx-archive-in font-size-24"></i>
@@ -102,459 +104,216 @@
             }
 
          <div class="tab-pane" id="heads" role="tabpanel">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="card mini-stats-wid">
-                            <div class="card-body">
-                                <label for="formrow-firstname-input" class="form-label" style="color:orangered">Company</label>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="formrow-firstname-input" class="form-label">Name</label>
-                                        <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="company_name" value="@GlobalVariables.GetWebSetting("company_name","<Company Name>")" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="formrow-firstname-input" class="form-label">Address</label>
-                                        <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="company_address" value="@GlobalVariables.GetWebSetting("company_address","<Company Address>")" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="formrow-firstname-input" class="form-label">eMail</label>
-                                        <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="company_eMail" value="@GlobalVariables.GetWebSetting("company_eMail","<Company eMail>")" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="formrow-firstname-input" class="form-label">Phone1</label>
-                                        <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="company_phone1" value="@GlobalVariables.GetWebSetting("company_phone1","<Company Phone1>")" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="formrow-firstname-input" class="form-label">Phone2</label>
-                                        <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="company_phone2" value="@GlobalVariables.GetWebSetting("company_phone2","<Company Phone2>")" required>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card mini-stats-wid">
-                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                <label style="color:orangered">CUSTOMERS</label>
-                                <a class="nav-link mb-2 active" id="v-pills-person1-tab" data-bs-toggle="pill" href="#v-pills-person1" role="tab" aria-controls="v-pills-person1" aria-selected="true">Contact Person</a>
-                                <a class="nav-link mb-2" id="v-pills-person2-tab" data-bs-toggle="pill" href="#v-pills-person2" role="tab" aria-controls="v-pills-person2" aria-selected="false">Contact Person 2</a>
-                                <a class="nav-link mb-2" id="v-pills-personadmin-tab" data-bs-toggle="pill" href="#v-pills-personadmin" role="tab" aria-controls="v-pills-personadmin" aria-selected="false">Contact Person Admin</a>
-                                <a class="nav-link mb-2" id="v-pills-personfinance-tab" data-bs-toggle="pill" href="#v-pills-personfinance" role="tab" aria-controls="v-pills-personfinance" aria-selected="false">Contact Person Finance</a>
-                                <label style="color:orangered">SMA TECHNOLOGY</label>
-                                <a class="nav-link mb-2" id="v-pills-CustomerRelationOfficer1-tab" data-bs-toggle="pill" href="#v-pills-CustomerRelationOfficer1" role="tab" aria-controls="v-pills-CustomerRelationOfficer1" aria-selected="false">Customer Relation Officer 1</a>
-                                <a class="nav-link mb-2" id="v-pills-CustomerRelationOfficer2-tab" data-bs-toggle="pill" href="#v-pills-CustomerRelationOfficer2" role="tab" aria-controls="v-pills-CustomerRelationOfficer2" aria-selected="false">Customer Relation Officer 2</a>
-                                <a class="nav-link mb-2" id="v-pills-ManagerQualityControl-tab" data-bs-toggle="pill" href="#v-pills-ManagerQualityControl" role="tab" aria-controls="v-pills-ManagerQualityControl" aria-selected="false">Manager Quality Control</a>
-                                <a class="nav-link mb-2" id="v-pills-ManagerOperations-tab" data-bs-toggle="pill" href="#v-pills-ManagerOperations" role="tab" aria-controls="v-pills-ManagerOperations" aria-selected="false">Manager Operations</a>
-                                <a class="nav-link mb-2" id="v-pills-ManagerFinance-tab" data-bs-toggle="pill" href="#v-pills-ManagerFinance" role="tab" aria-controls="v-pills-ManagerFinance" aria-selected="false">Manager Finance</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-6">
-                        <div class="card mini-stats-wid">
-                            <div class="d-flex">
-                                <div class="tab-content text-muted mt-4 mt-md-0" id="v-pills-tabContent">
-                                    <div class="tab-pane fade active show" id="v-pills-person1" role="tabpanel" aria-labelledby="v-pills-person1-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(person1, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-person2" role="tabpanel" aria-labelledby="v-pills-person2-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(person2, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-personadmin" role="tabpanel" aria-labelledby="v-pills-personadmin-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(personadmin, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-personfinance" role="tabpanel" aria-labelledby="v-pills-personfinance-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(personfinance, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-CustomerRelationOfficer1" role="tabpanel" aria-labelledby="v-pills-CustomerRelationOfficer1-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer1, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-CustomerRelationOfficer2" role="tabpanel" aria-labelledby="v-pills-CustomerRelationOfficer2-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_phone1")">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone1-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_phone1")">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(CustomerRelationOfficer2, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-ManagerQualityControl" role="tabpanel" aria-labelledby="v-pills-ManagerQualityControl-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(ManagerQualityControl, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-ManagerOperations" role="tabpanel" aria-labelledby="v-pills-ManagerOperations-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(ManagerOperations, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-ManagerFinance" role="tabpanel" aria-labelledby="v-pills-ManagerFinance-tab">
-                                        <form action="{{ route('company.update.contact.person') }}" method="post">
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Name</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_name")" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-firstname-input" class="form-label">Designation</label>
-                                                <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_designation")" required>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-mobile-input" class="form-label">Mobile #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-mobile-input" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_mobile")" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone-input" class="form-label">Phone #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone-input" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_phone1")">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
-                                                        <input readonly type="text" class="form-control" id="formrow-phone2-input" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_phone2")">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="formrow-email-input" class="form-label">Email</label>
-                                                <input readonly type="email" class="form-control" id="formrow-email-input" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(ManagerFinance, "contact_email")" required>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+             <div class="row">
+                 <div class="col-md-3">
+                     <div class="card mini-stats-wid">
+                         <div class="card-body">
+                             <label for="formrow-firstname-input" class="form-label" style="color:orangered">Company</label>
+                             <div class="row">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Name</label>
+                                     <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Name" name="company_name" value="@GlobalVariables.GetWebSetting("company_name","<Company Name>")" required>
+                                 </div>
+                             </div>
+
+                             <div class="row">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Address</label>
+                                     <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Name" name="company_address" value="@GlobalVariables.GetWebSetting("company_address","<Company Address>")" required>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">eMail</label>
+                                     <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Name" name="company_eMail" value="@GlobalVariables.GetWebSetting("company_eMail","<Company eMail>")" required>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Phone1</label>
+                                     <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Name" name="company_phone1" value="@GlobalVariables.GetWebSetting("company_phone1","<Company Phone1>")" required>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Phone2</label>
+                                     <input readonly type="text" class="form-control" id="formrow-firstname-input" placeholder="Name" name="company_phone2" value="@GlobalVariables.GetWebSetting("company_phone2","<Company Phone2>")" required>
+                                 </div>
+                             </div>
+
+                         </div>
+                     </div>
+                 </div>
+
+
+                 <div class="col-md-3">
+                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                         <div class="col-md-3 d-flex align-items-center">
+                             <label style="color:orangered">CUSTOMERS</label>
+                         </div>
+                         @{ var tfvalue = "0";}
+                         @foreach (var set in Model.contactPERlist)
+                         {
+                             string settag = @set.tag.Substring(11);
+                             string settagtab = @set.tag.Replace(' ', '_');
+                             bool tf = false;
+                             string active = "";
+
+
+                             if (tfvalue == "0") tf = true;
+                             if (tfvalue == "0") active = "active";
+                             if (tfvalue == "0") tfvalue = "1";
+
+
+
+                             <a class="nav-link mb-2 @active id="v-pills-@setagtab-tab" data-bs-toggle="pill" href="#v-pills-@settagtab" role="tab" aria-controls="v-pills-@settagtab" aria-selected="@(tf.ToString().ToLower())">@settag</a>
+                         }
+
+
+                     
+                         <div class="col-md-3 d-flex align-items-center">
+                             <label style="color:orangered">SMA_TECHNOLOGY</label>
+                         </div>
+                         @{ var fvalue = "0";}
+                         @foreach (var set in Model.contactSMAlist)
+                         {
+                             string settag = @set.tag.Substring(11);
+                             string settagtab = @set.tag.Replace(' ', '_');
+                             bool tf = false;
+                             string active = "";
+
+
+                             if (tfvalue == "0") tf = true;
+                             if (tfvalue == "0") active = "active";
+                             if (tfvalue == "0") tfvalue = "1";
+
+
+
+                             <a class="nav-link mb-2 @active id="v-pills-@setagtab-tab" data-bs-toggle="pill" href="#v-pills-@settagtab" role="tab" aria-controls="v-pills-@settagtab" aria-selected="@(tf.ToString().ToLower())">@settag</a>
+                         }
+
+
+                     </div>
+                 </div>
+
+                 <div class="col-md-6">
+                     <div class="tab-content text-muted mt-4 mt-md-0" id="v-pills-tabContent">
+                         @{ tfvalue = "0";}
+                         @foreach (var set in Model.contactPERlist)
+                         {
+                             string settag = @set.tag.Substring(11);
+                             string settagtab = @set.tag.Replace(' ', '_');
+                             string active = "";
+
+                             if (tfvalue == "0") active = "active show";
+                             if (tfvalue == "0") tfvalue = "1";
+
+
+                             <div class="tab-pane fade @active" id="v-pills-@settagtab" role="tabpanel" aria-labelledby="v-pills-@settagtab-tab">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Name</label>
+                                     <input type="text" disabled class="form-control" id="contactPER_name_@settagtab" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_name")" required>
+                                 </div>
+
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Designation</label>
+                                     <input type="text" disabled class="form-control" id="contactPER_designation_@settagtab" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_designation")" required>
+                                 </div>
+
+                                 <div class="row">
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-mobile-input" class="form-label">Mobile #</label>
+                                             <input type="text" disabled class="form-control" id="contactPER_mobile_@settagtab" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_mobile")" required>
+                                         </div>
+                                     </div>
+
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-phone-input" class="form-label">Phone #</label>
+                                             <input type="text" disabled class="form-control" id="contactPER_phone1_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone1")">
+                                         </div>
+                                     </div>
+
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
+                                             <input type="text" disabled class="form-control" id="contactPER_phone2_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone2")">
+                                         </div>
+                                     </div>
+                                 </div>
+
+                                 <div class="mb-3">
+                                     <label for="formrow-email-input" class="form-label">Email</label>
+                                     <input type="email" disabled class="form-control" id="contactPER_email_@settagtab" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_email")" required>
+                                 </div>
+
+                                 <div>
+                                     <input type="hidden" name="contact_person" value="contact_@settagtab">
+                                     @*<button type="button" class="btn btn-primary w-md" id="btnSave1">Save</button>*@
+                                 </div>
+                             </div>
+                         }
+
+                         @{ tfvalue = "0";}
+                         @foreach (var set in Model.contactSMAlist)
+                         {
+                             string settag = @set.tag.Substring(11);
+                             string settagtab = @set.tag.Replace(' ', '_');
+                             string active = "";
+
+                             if (tfvalue == "0") active = "";
+                             if (tfvalue == "0") tfvalue = "1";
+
+
+                             <div class="tab-pane fade @active" id="v-pills-@settagtab" role="tabpanel" aria-labelledby="v-pills-@settagtab-tab">
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Name</label>
+                                     <input type="text" disabled class="form-control" id="contactSMA_name_@settagtab" placeholder="Enter Name Here" name="contact_name" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_name")" required>
+                                 </div>
+
+                                 <div class="mb-3">
+                                     <label for="formrow-firstname-input" class="form-label">Designation</label>
+                                     <input type="text" disabled class="form-control" id="contactSMA_designation_@settagtab" placeholder="Enter Designation Here" name="contact_designation" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_designation")" required>
+                                 </div>
+
+                                 <div class="row">
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-mobile-input" class="form-label">Mobile #</label>
+                                             <input type="text" disabled class="form-control" id="contactSMA_mobile_@settagtab" placeholder="Enter Mobile Number Here" name="contact_mobile" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_mobile")" required>
+                                         </div>
+                                     </div>
+
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-phone-input" class="form-label">Phone #</label>
+                                             <input type="text" disabled class="form-control" id="contactSMA_phone1_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone1" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone1")">
+                                         </div>
+                                     </div>
+
+                                     <div class="col-md-4">
+                                         <div class="mb-3">
+                                             <label for="formrow-phone2-input" class="form-label">Phone 2 #</label>
+                                             <input type="text" disabled class="form-control" id="contactSMA_phone2_@settagtab" placeholder="Enter Phone Number Here" name="contact_phone2" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_phone2")">
+                                         </div>
+                                     </div>
+                                 </div>
+
+                                 <div class="mb-3">
+                                     <label for="formrow-email-input" class="form-label">Email</label>
+                                     <input type="email" disabled class="form-control" id="contactSMA_email_@settagtab" placeholder="Enter Email Here" name="contact_email" value="@GlobalVariables.GetPersonColumnValue(set.Value, "contact_email")" required>
+                                 </div>
+
+                                 <div>
+                                     <input type="hidden" name="contact_person" value="contact_@settagtab">
+                                     @*<button type="button" class="btn btn-primary w-md" id="btnSave1">Save</button>*@
+                                 </div>
+                             </div>
+                         }
+                     </div>
+                 </div>
+             </div>
             </div>
     </div>
 </div>

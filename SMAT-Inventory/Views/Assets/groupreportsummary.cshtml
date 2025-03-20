@@ -1,0 +1,116 @@
+﻿@model SMAT_Inventory.Models.groupreportsummaryViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Report</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        p {line-height: 0.7;
+
+        }
+
+        th, td {
+            font-family: 'arial';
+            font-size: 14px;
+        }
+    </style>
+    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.min.css') }}"> -->
+</head>
+<body>
+    <h2 style="display: block; margin-left: auto; margin-right: auto; text-align: center;">FIXED ASSETS DEPRECIATION REPORT</h2>
+    <h1 style="display: block; margin-left: auto; margin-right: auto; text-align: center;">@Model.group.name</h1>
+    <h2 style="display: block; margin-left: auto; margin-right: auto; text-align: center;">From @Model.datefrom to @Model.dateto</h2>
+
+    <p style="line-height: 1.2">We have scanned and verified a total of {{ $total["assets"] }} assets for the value of {{ $currency }} {{ $total["amount"] }}, The depreciation charged for the year {{ $currency }} {{ $total["dep_amount"] }} and the new current book value is {{ $currency }} {{ $total["bv_amount"] }}, during this exercise {{ $total["missingTotal"] }} assets were not verified or found for the value of {{ $currency.' '.number_format($total["missingValue"], 2) }} and depreciation was charged on these assets.</p>
+
+
+    <table style="width: 100%;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Branch Code</th>
+                <th>Scan Date</th>
+                <th>Total Assets</th>
+                <th>Total BV</th>
+                <th>Current BV</th>
+                @if (Model.calculation == 0)
+                {
+                    <th>Dep. For the Year</th>
+                    <th>New BV</th>
+                }
+                <th>Missing Assets</th>
+                <th>Value Missing Assets</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ 
+                float total_assets = 0;
+                float last_bv = 0;
+                int current_bv = 0;
+                //int last_bv = 0;
+                int current_dep = 0;
+                int unmatched_count = 0;
+                int total_cost = 0;
+                float totalBookValue = 0;
+                int i = 0;
+            }
+
+            @foreach (var gsl in Model.groupreportsummarylist)
+            {
+
+                int assetsBookValue = gsl.total_assets; //$branch["assets"]['matched_assets']->sum('total_cost');
+                totalBookValue = totalBookValue + assetsBookValue;
+
+                total_assets = total_assets + gsl.total_assets;
+                last_bv = last_bv+gsl.last_bv;
+                current_bv = current_bv + gsl.current_bv;
+                current_dep = current_dep + gsl.current_dep;
+                unmatched_count = unmatched_count + gsl.unmatched_count;
+                total_cost = total_cost + gsl.total_cost;
+
+                i = i + 1;
+            <tr>
+                <td>@i</td>
+                <td>@gsl.branchcode</td>
+                <td>@gsl.scan_date</td>
+                <td>@gsl.total_assets</td>
+                <td>@gsl.last_bv</td>
+                <td>@gsl.current_bv</td>
+                @if (Model.calculation == 0)
+                {
+                <td>@gsl.last_bv</td>
+                <td>@gsl.current_dep</td>
+                }
+                <td>@gsl.unmatched_count</td>
+                <td>@gsl.total_cost</td>
+             </tr>
+
+            }
+
+            <tr>
+                <td colspan="3"><b>Total</b></td>
+                <td><b>@total_assets</b></td>
+                <td><b>@last_bv</b></td>
+                <td><b>@current_bv</b></td>
+                @if (Model.calculation == 0)
+                {
+                    <td><b>@last_bv</b></td>
+                    <td><b>@current_dep</b></td>
+                }
+                <td><b>@unmatched_count</b></td>
+                <td><b>@total_cost</b></td>
+            </tr>
+            
+        </tbody>
+    </table>
+</body>
+</html>

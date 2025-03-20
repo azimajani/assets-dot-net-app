@@ -79,7 +79,6 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Tag ID</th>
                             <th>Tag Count</th>
                             <th>Tag Balance</th>
                             <th>Asset ID</th>
@@ -106,7 +105,6 @@
                     {
                         <tr>
                             <td>@rl.id</td>
-                            <td>@rl.tag_id</td>
                             <td>@rl.Tagcount</td>
                             <td>@rl.TagcountRemain</td>
                             <td>@rl.asset_id</td>
@@ -114,13 +112,60 @@
                             <td>@rl.net_value</td>
                             <td>@rl.total_cost</td>
                             <td>
-                                <a href="#" class="btn btn-success restore-asset" data-id="@rl.id"><i class="bx bx-archive-out"></i></a>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="">
+                                        <li>
+                                            <a class="dropdown-item btn btn-danger restore-asset" data-id="@rl.id"><i class="mdi mdi-plus font-size-16 text-danger me-1"></i> Add Year</a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("assetadd", "Assets",new { id = rl.id})" class="dropdown-item"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit Asset</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item btn btn-danger disable-asset" data-id="@rl.id"><i class="mdi mdi-trash-can-outline font-size-16 text-danger me-1"></i> Delete Asset</a>
+                                        </li>
+                                        <li><a class="dropdown-item permanent-delete-asset" data-id="@rl.id"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Permanently Delete</a></li>
+                                    </ul>
+                                </div>
+                                @*<a href="#" class="btn btn-success restore-asset" data-id="@rl.id"><i class="bx bx-archive-out"></i></a>*@
                             </td>
                         </tr>
                     }
                     <tbody>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manager Modal -->
+<div class="modal fade" id="AddYearsModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Add Years</h5>
+                <button type="button" class="close" data-dismiss="modal" id="btncross" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ManagerDetail">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                        </tr>
+                    </thead>
+                    <tbody id="AddYearDetail">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary w-md" id="btnSave" >Save</button>
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -140,13 +185,116 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
+
+        $('#btnclose').on('click', function () {
+            $('#AddYearsModal').modal('hide');
+        });
+        $('#btncross').on('click', function () {
+            $('#AddYearsModal').modal('hide');
+        });
+
         $(document).on("click", ".restore-asset", function(event) {
             event.preventDefault(); // Prevent default action
-            if (confirm('Do want to Restore Asset?')) {
+            var id = $(this).data('id');
+
+            $('#AddYearDetail').empty();
+
+            // AJAX request to fetch branches for the selected zone
+            $.ajax({
+                url: '/Assets/GetAssetDetail', // Replace with your server-side URL
+                type: 'GET',
+                data: { Id: id },
+                success: function (assets) {
+                    // branches should be an array of branch objects { branchId, branchName }
+                    $('#AddYearDetail').append('<tr><td><input type="text" id="assetid" hidden name="assetid"  value="' + id + '"></td></tr>');
+
+                    $('#AddYearDetail').append('<tr><td> Name: </td><td>' + assets.asset_name + '</td></tr>');
+                    $('#AddYearDetail').append('<tr><td> Life in Year(s): </td><td>' + assets.life_in_year + '</td></tr>');
+                    $('#AddYearDetail').append('<tr><td> Remaing Life in Year(s): </td><td>' + assets.remaining_years + '</td></tr>');
+                    $('#AddYearDetail').append('<tr><td> select Year(s) to add: </td><td>' +
+                        '<select class="form-select select2" name="addyear" id="addyear" required> ' +
+                        '<option selected value = "1" >1</option>' +
+                        '<option value = "2" >2</option>' +
+                        '<option value = "3" >3</option>' +
+                        '<option value = "4" >4</option>' +
+                        '<option value = "5" >5</option>' +
+                        + '</td></tr>');
+
+                    // Show the modal
+                    $('#AddYearsModal').modal('show');
+                },
+                error: function () {
+                    alert('Error fetching Manager data');
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+     $(document).ready(function () {
+
+         $('#btnSave').on('click', function () {
+             var assetid = $('#assetid').val();
+             var addyear = $('#addyear').val();
+             
+             //alert(assetid);
+             //alert(addyear);
+             
+             //var Fn = { assetid: assetid, addyear: addyear};
+
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/AddYear",
+                 dataType: "json",
+                 data: JSON.stringify({ assetid: assetid, addyear: addyear }),
+                 async: false,
+                 success: function (response) {
+                     if (response.status) {
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + response.message)
+                     }
+                 }
+
+             });
+             
+
+         });
+     });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".disable-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Asset?')) {
                 var id = $(this).data('id');
                 $.ajax({
-                    url: '@Url.Action("assetrestorenow", "Assets")',
+                    url: '@Url.Action("assetdelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+        $(document).on("click", ".permanent-delete-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Asset permanently?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetpermanentlydelete", "Assets")',
                     type: 'POST',
                     data: { id: id },
                     success: function(response) {

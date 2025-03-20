@@ -20,14 +20,14 @@
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label for="deleteType" class="form-label">Delete Type</label>
-                            <select class="form-select select2" id="deleteType" name="deleteType" required>
-                                <option value="0" selected>Temporary Delete</option>
-                                <option value="1">Permanent Delete</option>
+                            <select class="form-select" id="deleteType" name="deleteType" required>
+                                <option value="Temp" selected>Temporary Delete</option>
+                                <option value="Perm">Permanent Delete</option>
                             </select>
                         </div>
                         <div class="col-md-12">
                             <label for="update-by" class="form-label">Update By</label>
-                            <select class="form-select select2" id="update-by" name="updateBy" required>
+                            <select class="form-select" id="deleteAS" name="deleteAS" required>
                                 <option disabled selected>Select Attribute</option>
                                 <option value="tag_id">Tag ID</option>
                                 <option value="asset_id">Asset ID</option>
@@ -64,7 +64,14 @@
     </div>
     <!-- end col -->
 </div>
-
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
+            <h4 class="mb-sm-0 font-size-18">Delete Assets Via CSV</h4>
+        </div>
+        <p>Click on the <a href="@Url.Action("DownloadSampleCsv", new { fileName = "sample-AssetDeleteCSV.csv", path = "~/app_data/" })" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -73,6 +80,11 @@
             event.preventDefault(); // Prevent the default form submission
             var formData = new FormData(this); // Create FormData object from the form element
 
+            var deleteType = $('#deleteType').val(); 
+            var deleteAS = $('#deleteAS').val(); 
+
+            formData.append('deleteType', deleteType); // Add branch_id to the formData
+            formData.append('deleteAS', deleteAS); // Add calcu to the formData
             $.ajax({
                 url: '/Assets/DeleteAssetsFromExcel', // URL of the Scan method
                 type: 'POST',

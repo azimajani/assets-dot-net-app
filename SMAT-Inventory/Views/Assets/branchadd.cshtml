@@ -3,6 +3,25 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+
+    .scrolling-text {
+        white-space: nowrap;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .scrolling-text a {
+        display: inline-block;
+        padding-left: 100%; /* Start from outside the container */
+        animation: scrollText 10s linear infinite;
+    }
+
+    keyframes scrollText {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+</style>
 
 <div class="row">
     <div class="col-md-4">
@@ -33,11 +52,35 @@
 
 <div class="row">
     <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-cjustify-content-between" style="max-height: 200px; overflow-y: auto;">
+            <!-- Loop through Module.messages to display each message in a new row -->
+            <h6>Message(s):</h6>
+            <h4 class="mb-sm-0 font-size-18">
+                <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+                    @foreach (var message in Model.messageslist)
+                    {
+                        <a href="@Url.Action("messageView", "Assets", new { id = message.id })" target="_blank" style="color:@message.displaycolor; text-decoration: underline;">
+                            &lt;@message.subject &gt;
+                        </a>
+                        if (message != Model.messageslist.Last())
+                        {
+                            @: |  <!-- Separator (you can change it to a comma or space) -->
+                        }
+                    }
+                </marquee>
+            </h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
             @if (Model.branch.id != 0)
-            {<h4 class="mb-sm-0 font-size-18">Update Zone</h4> }
+            {<h4 class="mb-sm-0 font-size-18">Update Branch</h4> }
             else
-            {<h4 class="mb-sm-0 font-size-18">Add Zone</h4>}
+            {<h4 class="mb-sm-0 font-size-18">Add Branch</h4>}
         </div>
     </div>
 </div>
@@ -52,7 +95,7 @@
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <label for="zone-input" class="form-label">Select Zone</label>
-                                <select class="form-select" name="zone" id="zone" required>
+                                <select class="form-select select2" name="zone" id="zone" required>
                                     <option disabled selected>Select Zone</option>
                                     @foreach (var zone in Model.zonelist)
                                     {
@@ -68,11 +111,11 @@
                                 </select>
                             </div>
                         </div>
-                        @{ 
-                            var chkSUMchecked = "";
-                            if (Model.branch.chkSUM == 1)
+                        @{
+                            var chkSUMchecked = "checked";
+                            if (Model.branch.chkSUM != 1)
                             {
-                                chkSUMchecked = "checked";
+                                chkSUMchecked = "";
                             }
                         }
                         <div class="col-md-1">
@@ -117,19 +160,19 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="zone-input" class="form-label">Enter Email Here</label>
-                                <input type="text" class="form-control" id="email" name="branchemail" required value="@Model.branch.email">
+                                <input type="text" class="form-control" id="email" name="email" required value="@Model.branch.email">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="zone-input" class="form-label">Enter Branch Email Here</label>
-                                <input type="text" class="form-control" id="email" name="branchemail" required value="@Model.branch.branchemail">
+                                <input type="text" class="form-control" id="branchemail" name="branchemail" required value="@Model.branch.branchemail">
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="zone-input" class="form-label">Enter Address Here</label>
-                        <textarea class="form-control" name="branchaddress" id="address">@Model.branch.address</textarea>
+                        <textarea class="form-control" style="font-size:1.2rem" name="branchaddress" id="address">@Model.branch.address</textarea>
                         <!-- <input type="text" class="form-control" id="zone-input" name="branchaddress"> -->
                     </div>
 
@@ -161,9 +204,19 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="zone-input" class="form-label">Enter Google Map ID Here</label>
-                        <input type="text" class="form-control" id="googleMapId" name="googleMapId" value="@Model.branch.googleMapId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Enter Google Map ID Here</label>
+                                <input type="text" class="form-control" id="googleMapId" name="googleMapId" value="@Model.branch.googleMapId">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="zone-input" class="form-label">Click to regenerate coordinates</label>
+                                <button type="button" action="GetGoogleCordinates" class="btn btn-primary w-md" id="GetGoogleCordinates">Regenerate</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -175,6 +228,7 @@
                         @*<button type="submit" class="btn btn-primary w-md">Add Branch</button>*@
                     </div>
                 </form>
+
 
 
             </div>
@@ -190,7 +244,7 @@
         <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
             <h4 class="mb-sm-0 font-size-18">Add Branches Via CSV</h4>
         </div>
-        <p>Click on the <a href="{{ route('sample-branch-file') }}" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
+        <p>Click on the <a href="@Url.Action("DownloadSampleCsv", new { fileName = "sample-branch-file.csv", path = "~/app_data/" })" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
     </div>
 </div>
 
@@ -199,10 +253,10 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <form name="add-branch-csv-form" action="{{ route('branch/insert-via-csv') }}" method="post" enctype="multipart/form-data">
+                <form id="uploadForm" name="add-branch-csv-form" action="" method="post" enctype="multipart/form-data">
                     <div class="input-group">
                         <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="file" required>
-                        <button class="btn btn-primary" type="submit" id="inputGroupFileAddon04">Upload</button>
+                        <button class="btn btn-primary" type="submit" id="uploadForm">Upload</button>
                     </div>
                 </form>
 
@@ -216,6 +270,8 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <script>
      $(document).ready(function () {
 
@@ -237,8 +293,8 @@
              var chkSUMVal = 0;
              if (chkSUM.checked) {
                  chkSUMVal = 1;
-             } 
-             
+             }
+
              var FId = @Model.branch.id;
 
              var Fn = { id: FId, zone_id: zone_id, code: code, name: name, phone1: phone1, phone2: phone2, phone3: phone3, email: email, branchemail: branchemail, address: address, city_id: city_id, postalcode: postalcode, googleMapId: googleMapId, chkSUM: chkSUMVal  };
@@ -251,7 +307,77 @@
                  data: JSON.stringify({ 'item': Fn }),
                  async: false,
                  success: function (data) {
-                     window.location.reload(true);
+                     if (data.success) {
+                         alert("Branch Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
+                 }
+             });
+         });
+     });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(this); // Create FormData object from the form element
+
+            $.ajax({
+                url: '/SMAAPI/UploadBranchData', // URL of the Scan method
+                type: 'POST',
+                data: formData,
+                processData: false,  // Don't process the data
+                contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // To ensure it's recognized as an AJAX request
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        //var fileName = response.data.fileName;
+                        //var downloadUrl = 'Url.Action("DownloadFile", "API")' + '?fileName=' + encodeURIComponent(fileName);
+                        window.location.reload(true);
+
+                        //window.location.href = response.data.url; // Redirect to the report URL
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred: ' + error);
+                    alert('An error occurred while processing your request.' + response.message);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+     $(document).ready(function () {
+
+         $('#GetGoogleCordinates').on('click', function () {
+             var citySelect = document.getElementById('city_id'); // Get the select element
+             var cityText = citySelect.options[citySelect.selectedIndex].text;
+             var address = $('#address').val() + ' ' + cityText;
+             
+             $.ajax({
+                 contentType: 'application/json',
+                 type: "POST",
+                 url: "/Assets/GetBranchCoordinates",
+                 dataType: "json",
+                 data: JSON.stringify({ branchAddress: address }),
+                 async: false,
+                 success: function (data) {
+                     if (data.success) {
+                         $('#googleMapId').val(data.message);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
                  }
              });
          });

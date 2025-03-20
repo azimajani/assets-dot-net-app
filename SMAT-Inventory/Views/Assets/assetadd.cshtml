@@ -22,17 +22,17 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="zone-input" class="form-label">Select Branch</label>
-                                <select class="form-select select2" name="branch" id="branch_id" required>
+                                <select class="form-select select2" name="branch_id" id="branch_id" required>
                                     <option disabled selected>Select Branch</option>
                                     @foreach (var branch in Model.branchlist)
                                     {
                                         if (branch.id == Model.asset.branch_id)
                                         {
-                                            <option selected value="@branch.id">@branch.name</option>
+                                            <option selected value="@branch.id">(@branch.code) - @branch.name</option>
                                         }
                                         else
                                         {
-                                            <option value="@branch.id">@branch.name</option>
+                                            <option value="@branch.id">(@branch.code) - @branch.name</option>
                                         }
                                     }
                                 </select>
@@ -215,8 +215,10 @@
                         </div>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary w-md" id="
-                                ">Add Asset</button>
+                        @if (Model.asset.id == 0)
+                        {<button type="button" class="btn btn-primary w-md" id="btnSave">Add Asset</button>}
+                        else
+                        { <button type="button" class="btn btn-primary w-md" id="btnSave">Update Asset</button>}
                     </div>
                 </form>
             </div>
@@ -226,26 +228,25 @@
     </div>
     <!-- end col -->
 </div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
-            <h4 class="mb-sm-0 font-size-18">Add Assets Via CSV</h4>
+@if (Model.asset.id == 0)
+{     <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between" style="padding-bottom: 0.3rem;">
+                <h4 class="mb-sm-0 font-size-18">Add Assets Via CSV</h4>
+            </div>
+            <p>Click on the <a href="@Url.Action("DownloadSampleCsv", new { fileName = "sample-AssetExportToCSV.csv", path = "~/app_data/" })" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
         </div>
-        <p>Click on the <a href="{{ route('sample-asset-file') }}" class="btn btn-dark waves-effect waves-light w-sm p-0" download> <i class="mdi mdi-download font-size-16"></i>Download</a> to get <b>Sample CSV</b> file for Scanning purpose.</p>
     </div>
-</div>
 
 
 <div class="row">
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <form name="add-asset-csv-form" action="{{ route('asset/insert-via-csv') }}" method="post" enctype="multipart/form-data">
-
+                <form id="uploadForm" name="add-asset-csv-form" action="" method="post" enctype="multipart/form-data">
                     <div class="input-group">
                         <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" name="file" required>
-                        <button class="btn btn-primary" type="submit" id="inputGroupFileAddon04">Upload</button>
+                        <button class="btn btn-primary" type="submit" id="uploadForm">Upload</button>
                     </div>
 
                 </form>
@@ -258,21 +259,22 @@
     </div>
     <!-- end col -->
 </div>
-
+}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
      $(document).ready(function () {
 
          $('#btnSave').on('click', function () {
-
-             var branch_id = $('#branch').val();
+             //alert('0');
+             var branch_id = $('#branch_id').val();
              var tag_id = $('#tag_id').val();
              var asset_id = $('#asset_id').val();
              var assetOld_id = $('#assetOld_id').val();
              var asset_name = $('#asset_name').val();
              var invoice_cost = $('#invoice_cost').val();
              var total_cost = $('#total_cost').val();
+             //alert('1');
              var date_of_purchase = $('#date_of_purchase').val();
              var vendor_id = $('#vendor_id').val();
              var vendor = $('#vendor').val();
@@ -281,6 +283,7 @@
              var serial_no = $('#serial_no').val();
              var dep_type = $('#dep_type').val();
              var net_value = $('#net_value').val();
+             //alert('2');
              var remaining_years = $('#remaining_years').val();
              var life_in_year = $('#life_in_year').val();
              var salvage_value = $('#salvage_value').val();
@@ -288,7 +291,7 @@
              var custom_field = $('#custom_field').val();
              var Tagcount = $('#Tagcount').val()
              var id = @Model.asset.id;
-             
+             //alert('3');
              var Fn = { id: id, branch_id: branch_id, tag_id: tag_id, asset_id: asset_id, assetOld_id: assetOld_id, asset_name: asset_name, invoice_cost: invoice_cost, total_cost: total_cost, date_of_purchase: date_of_purchase, vendor_id: vendor_id, vendor: vendor, part_warranty: part_warranty, service_warranty: service_warranty, serial_no: serial_no, dep_type: dep_type, net_value: net_value, remaining_years: remaining_years, life_in_year: life_in_year, salvage_value: salvage_value, generic_name: generic_name, custom_field: custom_field, Tagcount: Tagcount };
 
              $.ajax({
@@ -299,12 +302,53 @@
                  data: JSON.stringify({ 'item': Fn }),
                  async: false,
                  success: function (data) {
-                     window.location.reload(true);
+                     if (data.success) {
+                         alert("Asset Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
                  }
 
              });
-
-
          });
      });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(this); // Create FormData object from the form element
+
+            $.ajax({
+                url: '/SMAAPI/UploadAssetData', // URL of the Scan method
+                type: 'POST',
+                data: formData,
+                processData: false,  // Don't process the data
+                contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // To ensure it's recognized as an AJAX request
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        //var fileName = response.data.fileName;
+                        //var downloadUrl = 'Url.Action("DownloadFile", "API")' + '?fileName=' + encodeURIComponent(fileName);
+                        window.location.reload(true);
+
+                        //window.location.href = response.data.url; // Redirect to the report URL
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred: ' + error);
+                    alert('An error occurred while processing your request.' + response.message);
+                }
+            });
+        });
+    });
 </script>

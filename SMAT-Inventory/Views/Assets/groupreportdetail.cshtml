@@ -1,0 +1,176 @@
+﻿@model SMAT_Inventory.Models.groupreportdetailViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Report</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        p {line-height: 0.7;
+
+        }
+
+        th, td {
+            font-family: 'arial';
+            font-size: 14px;
+        }
+    </style>
+</head>
+@{ string cdate = DateTime.Now.ToString("yyyy-MM-dd");}
+<body>
+    <table width="50%">
+        <tbody>
+            <tr>
+                <td><b>Date</b></td>
+                <td>@cdate</td>
+            </tr>
+            <tr>
+                <td><b>User</b></td>
+                <td>@GlobalVariables.AppUserName  (@GlobalVariables.AppUserEmail)</td>
+            </tr>
+        </tbody>
+    </table>
+    @{ 
+        string branchcode = "";
+        
+        int i = 1;
+    }
+    @foreach (var gd in Model.groupreportdetaillist)
+    {
+        if (branchcode != @gd.branchcode)
+        {
+        <br>
+        <hr>
+        <p>Branch Code: @gd.branchcode </p>
+        <p>Branch Name:  @gd.branchname</p>
+        <p>Branch Phone: @gd.phone</p>
+        <p>Branch Email: @gd.email</p>
+        <p>Branch Address: @gd.address</p>
+            
+
+        <h4>@gd.branchname Assets</h4>
+        }
+        <table width="100%">
+            <thead>
+                @if (branchcode!= gd.branchcode)
+                {
+                    <tr>
+                        <th colspan="8"><b>Matched Records</b></th>
+                    </tr>
+                    <tr>
+                        <th style="width: 5%;">ID</th>
+                        <th style="width: 10%;">Asset ID</th>
+                        <th style="width: 20%;">Asset Name</th>
+                        <th style="width: 10%;">Invoice Cost</th>
+                        <th style="width: 10%;">Date of Purchase</th>
+                        <th style="width: 10%;">Total Cost</th>
+                        <th style="width: 15%;">location</th>
+                        <th style="width: 10%;">Remaining Years</th>
+                    </tr>
+                    branchcode = gd.branchcode;
+                }
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td style="width: 5%;">@i</td>
+                    <td style="width: 10%;">@gd.asset_id</td>
+                    <td style="width: 20%;">@gd.asset_name</td>
+                    <td style="width: 10%;">@gd.invoice_cost</td>
+                    <td style="width: 10%;">@gd.purchase_date.ToString("yyyy-MM-dd")</td>
+                    <td style="width: 10%;">@gd.total_cost</td>
+                    <td style="width: 15%;">@gd.location</td>
+                    @{
+                        string dep_type = "";
+                        if (gd.dep_type == 1)
+                        {
+                            dep_type = "DD";
+                        }
+                        else if (gd.dep_type == 2)
+                        {
+                            dep_type = "ST";
+                        }
+                        else
+                        {
+                            dep_type = "";
+                        }
+                        i = i + 1;
+                    }
+                    <td style="width: 10%;">@dep_type @gd.remaining_years</td>
+                </tr>
+
+            </tbody>
+        </table>
+    }
+    @{ i = 0;}
+    @foreach (var gdu in Model.groupreportdetaiunllist)
+    {
+        <br>
+        <hr>
+        <p>Branch Code: @gdu.branchcode </p>
+        <p>Branch Name:  @gdu.branchname</p>
+        <p>Branch Phone: @gdu.phone</p>
+        <p>Branch Email: @gdu.email</p>
+        <p>Branch Address: @gdu.address</p>
+
+        <h4>@gdu.branchname Assets</h4>
+        <br>
+
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th colspan="8"><b>Missing Records</b></th>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Asset ID</th>
+                    <th>Asset Name</th>
+                    <th>Invoice Cost</th>
+                    <th>Date of Purchase</th>
+                    <th>Total Cost</th>
+                    <th>location</th>
+                    <th>Remaining Years</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                
+                <tr>
+                    <td>@i</td>
+                    <td>@gdu.asset_id</td>
+                    <td>@gdu.asset_name</td>
+                    <td>@gdu.invoice_cost.ToString()</td>
+                    <td>@gdu.purchase_date.ToString("yyyy-MM-dd")</td>
+                    <td>@gdu.total_cost</td>
+                    <td>@gdu.location</td>
+                    @{
+                        string dep_type = "";
+                        if (gdu.dep_type == 1)
+                        {
+                            dep_type = "DD";
+                        }
+                        else if (gdu.dep_type == 2)
+                        {
+                            dep_type = "ST";
+                        }
+                        else
+                        {
+                            dep_type = "";
+                        }
+                        i = i + 1;
+                    }
+                    <td>@dep_type @gdu.remaining_years</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</body>
+</html>

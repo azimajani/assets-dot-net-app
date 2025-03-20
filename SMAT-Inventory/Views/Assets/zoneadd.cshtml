@@ -60,16 +60,16 @@
                                 <label for="zone-input" class="form-label">Manager</label>
                                 @*<input type="text" name="manager" class="form-control" id="manager" value="@Model.zone.manager" required>*@
                                 <select class="form-select select2" name="managerid" id="managerid" required>
-                                    <option disabled selected>Select Branch</option>
+                                    <option disabled selected>Select Manager</option>
                                     @foreach (var user in Model.userlist)
                                     {
                                         if (user.id == Model.zone.managerid)
                                         {
-                                            <option selected value="@user.id">@user.name</option>
+                                            <option selected value="@user.id"  data-email="@user.email" data-id="@user.id" data-mobile="@user.phone">@user.name</option>
                                         }
                                         else
                                         {
-                                            <option value="@user.id">@user.name</option>
+                                            <option value="@user.id" data-email="@user.email" data-id="@user.id" data-mobile="@user.phone">@user.name</option>
                                         }
                                     }
                                 </select>
@@ -122,6 +122,23 @@
 <script>
      $(document).ready(function () {
 
+         $('#managerid').on('change', function () {
+             // Get the selected option
+             var selectedOption = $(this).find('option:selected');
+             
+
+             // Get the data attributes for email and mobile
+             var email = selectedOption.data('email');
+             var mobile = selectedOption.data('mobile');
+             var id = selectedOption.data('id');
+
+             // Update the email and mobile fields
+             $('#email').val(email);
+             $('#mobile').val(mobile);
+             $('#staffid').val(id);
+             
+         });
+
          $('#btnSave').on('click', function () {
              
 
@@ -145,9 +162,14 @@
                  data: JSON.stringify({ 'item': Fn }),
                  async: false,
                  success: function (data) {
-                     window.location.reload(true);
+                     if (data.success) {
+                         alert("Zone Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
                  }
-
              });
 
 

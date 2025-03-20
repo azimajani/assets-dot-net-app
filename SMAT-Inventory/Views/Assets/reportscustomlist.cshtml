@@ -31,14 +31,14 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="dateFrom" class="form-label">Date From</label>
-                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" required>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" required  value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="dateTo" class="form-label">Date To</label>
-                                <input type="date" class="form-control" id="dateTo" name="dateTo" required>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" required value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
@@ -46,7 +46,7 @@
                             <div class="mb-3">
                                 <label for="report_type" class="form-label">Report Type</label>
                                 <select name="report_type" class="form-control" id="report_type" required>
-                                    <option disabaled selected>Select</option>
+                                    <option selected value="-1">Select ALL</option>
                                     <option value="1">Calculated</option>
                                     <option value="0">Reviewed</option>
                                 </select>
@@ -142,8 +142,8 @@
 
 
     $('#report_type').val(getUrlParameter('report_type')).change();
-    $('#dateFrom').val(getUrlParameter('fromdate')).change();
-    $('#dateTo').val(getUrlParameter('todate')).change();
+    //$('#dateFrom').val(getUrlParameter('fromdate')).change();
+    //$('#dateTo').val(getUrlParameter('todate')).change();
 
 
 

@@ -53,20 +53,133 @@
 <div class="row">
     <div class="card mini-stats-wid">
         <div class="d-flex">
-            <div class="flex-grow-1">
-                <div class="pagination">
-                    @{
-                        var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-                    }
+            @{
+                var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                var currentPage = Model.CurrentPage;
+                var startPage = Math.Max(1, currentPage - 5);
+                var endPage = Math.Min(pageCount, currentPage + 5);
+                var skip = 11; // Number of pages to skip
 
-                    @for (var i = 1; i <= pageCount; i++)
-                    {
-                        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetslist", new { page = i, pageSize = Model.PageSize })">@i</a>
-                    }
+                var sel10 = "";
+                var sel25 = "";
+                var sel50 = "";
+                var sel100 = "";
+                if (Model.PageSize == 10) { sel10 = "selected"; }
+                if (Model.PageSize == 25) { sel25 = "selected"; }
+                if (Model.PageSize == 50) { sel50 = "selected"; }
+                if (Model.PageSize == 100) { sel100 = "selected"; }
+            }
+            <div>
+                <select id="pagesize">
+                    <option @sel10 value="10">10</option>
+                    <option @sel25 value="25">25</option>
+                    <option @sel50 value="50">50</option>
+                    <option @sel100 value="100">100</option>
+                </select>
+            </div>
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
+
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Max(1, currentPage - skip), pageSize =Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage - 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("assetslist", new { page = i, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage + 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">>></a>
+                        }
+                    </div>
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="form-select select2" name="zone" id="zone" required>
+                            <option selected value="0">ALL Zone</option>
+                            @foreach (var zone in Model.zonelist)
+                            {
+
+                                if (zone.id == ViewBag.zone)
+                                {
+                                    <option selected value="@zone.id">@zone.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@zone.id">@zone.name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select select2" name="group" id="group" required>
+                            <option selected value="0">ALL Group</option>
+                            @foreach (var group in Model.grouplist)
+                            {
+
+                                if (group.id == ViewBag.group)
+                                {
+                                    <option selected value="@group.id">@group.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@group.id">@group.name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select select2" name="branch" id="branch" required>
+                            <option selected value="0">ALL Branch</option>
+                            @foreach (var branch in Model.branchlist)
+                            {
+                                if (branch.id == ViewBag.branch)
+                                {
+                                    <option selected value="@branch.id">(@branch.code) - @branch.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="searchTerm" class="form-control" id="searchTerm" placeholder="Search by Asset ID / Name" value="@Request.QueryString["searchTerm"]" />
+                    </div>
+                    <div class="col-md-1  mt-2">
+                        <button type="button" class="btn btn-primary" id="searchbut" style="margin-top: -5px; margin-left: 2px;">Search</button>
+                    </div>
                 </div>
             </div>
         </div>
+            
     </div>
+
+    
 </div>
 
 <div class="row">
@@ -80,7 +193,6 @@
                         @*@if (auth()->check() && auth()->user()->hasRole("admin"))*@
                         <tr>
                             <th>ID</th>
-                            <th>Tag ID</th>
                             <th>Tag Count</th>
                             <th>Tag Balance</th>
                             <th>Asset ID</th>
@@ -107,7 +219,6 @@
                     {
                         <tr>
                             <td>@rl.id</td>
-                            <td>@rl.tag_id</td>
                             <td>@rl.Tagcount</td>
                             <td>@rl.TagcountRemain</td>
                             <td>@rl.asset_id</td>
@@ -141,15 +252,52 @@
 </div>
 
 
-<div class="pagination">
-    @{
-        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-    }
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
 
-    @for (var i = 1; i <= pageCountd; i++)
-    {
-        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/assetslist", new { page = i, pageSize = Model.PageSize })">@i</a>
-    }
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Max(1, currentPage - skip), pageSize =Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage - 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("assetslist", new { page = i, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage + 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">>></a>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
 </div>
 
 
@@ -192,5 +340,28 @@
                 });
             }
         });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#searchbut').click(function () {
+            //alert(1);
+            var searchTerm = $('#searchTerm').val();
+            var currentPage = '@currentPage'; // Current page variable
+            var pageSize = $('#pagesize').val();
+            var zone = $('#zone').val();
+            var branch = $('#branch').val();
+            var group = $('#group').val();
+
+            window.location.href = '@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;', '') + '&searchTerm=' + searchTerm + '&zone=' + zone + '&branch=' + branch + '&group=' + group;
+        });
+         $('#pagesize').change(function() {
+            var searchTerm = $('#searchTerm').val();
+            var currentPage = '@currentPage'; // Current page variable
+             var pageSize = $('#pagesize').val();
+
+             window.location.href = '@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;', '') + '&searchTerm=' + searchTerm + '&zone=' + zone + '&branch=' + branch + '&group=' + group;
+       });
     });
 </script>

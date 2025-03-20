@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Web.Mvc;
+using System.Data;
 
 namespace SMAT_Inventory.Models
 {
@@ -22,6 +24,7 @@ namespace SMAT_Inventory.Models
         public string alternate_no { get; set; }
         public string email { get; set; }
         public int managerid { get; set; }
+        public string staffcount { get; set; }
 
         public zoneModel()
         {
@@ -29,9 +32,10 @@ namespace SMAT_Inventory.Models
             this.name = string.Empty;
             this.created_by = 0;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
             this.Branches = 0;
             this.managerid = 0;
+            this.staffcount = string.Empty;
 
         }
     }
@@ -67,6 +71,7 @@ namespace SMAT_Inventory.Models
 
     public class WebSetting
     {
+        public int id {get; set;}
         public string tag { get; set; }
         public string Value { get; set; }
         public string Created_by { get; set; }
@@ -74,6 +79,7 @@ namespace SMAT_Inventory.Models
 
         public WebSetting()
         {
+            this.id = 0;
             this.tag = string.Empty;
             this.Value = string.Empty;
             this.Created_by = string.Empty;
@@ -121,6 +127,8 @@ namespace SMAT_Inventory.Models
         public List<DMBranchModel> DMBranch { get; set; }
         public List<DMAssetModel> DMAsset { get; set; }
         public List<messagesModel> message { get; set; }
+        public List<WebSetting> contactPERlist { get; set; }
+        public List<WebSetting> contactSMAlist { get; set; }
         public DashBoardViewModel()
         {
             this.zonecount = 0;
@@ -148,7 +156,7 @@ namespace SMAT_Inventory.Models
             this.lat = 0;
             this.lng = 0;
             this.status = string.Empty;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
         }
     }
     public class branchModel
@@ -194,14 +202,14 @@ namespace SMAT_Inventory.Models
             this.updated_by = 0;
             this.postalcode = string.Empty;
             this.googleMapId = string.Empty;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
             this.city = string.Empty;
             this.zone = string.Empty;
             this.branchemail = string.Empty;
-            this.chkSUM = 0;
+            this.chkSUM = 1;
         }
     }
 
@@ -211,6 +219,9 @@ namespace SMAT_Inventory.Models
         public branchModel branch { get; set; }
         public List<zoneModel> zonelist { get; set; }
         public List<cityModel> citylist { get; set; }
+        public List<groupModel> grouplist { get; set; }
+        public List<branchModelforgoogle> branchModelforgoogle { get; set; }
+        public List<messagesModel> messageslist { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
@@ -222,6 +233,9 @@ namespace SMAT_Inventory.Models
             this.branch = new branchModel();
             this.zonelist = new List<zoneModel>();
             this.citylist = new List<cityModel>();
+            this.grouplist = new List<groupModel>();
+            this.branchModelforgoogle = new List<branchModelforgoogle>();
+            this.messageslist = new List<messagesModel>();
         }
 
         public void SetModel()
@@ -253,25 +267,34 @@ namespace SMAT_Inventory.Models
         public string CNIC { get; set; }
         public string address { get; set; }
         public int Active { get; set; }
-
+        public DateTime DOB { get; set; }
+        public string zones { get; set; }
+        public int AssetTransfer_AddReviewer { get; set; }
+        public int AssetTransfer_Approver { get; set; }
+        public int AssetTransfer_Receiver { get; set; }
         public userModel()
         {
             this.id = 0;
             this.name = string.Empty;
             this.phone = string.Empty;
             this.email = string.Empty;
-            this.email_verified_at = DateTime.MinValue;
+            this.email_verified_at = DateTime.Now;
             this.password = string.Empty;
             this.image = string.Empty;
             this.remember_token = string.Empty;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
-            this.deleted_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
+            this.deleted_at = DateTime.Now;
             this.role_id = 0;
             this.role_name = string.Empty;
             this.CNIC = string.Empty;
             this.address = string.Empty;
             this.Active = 0;
+            this.DOB = DateTime.Now;
+            this.zones = string.Empty;
+            this.AssetTransfer_AddReviewer = 0;
+            this.AssetTransfer_Approver = 0;
+            this.AssetTransfer_Receiver = 0;
         }
     }
 
@@ -292,6 +315,7 @@ namespace SMAT_Inventory.Models
         public userModel user { get; set; }
         public List<roleModel> rolelist { get; set; }
         public List<userpermissions> userpermissions { get; set; }
+        public List<zoneModel> zones { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
@@ -303,6 +327,7 @@ namespace SMAT_Inventory.Models
             this.user = new userModel();
             this.rolelist = new List<roleModel>();
             this.userpermissions = new List<userpermissions>();
+            this.zones = new List<zoneModel>();
         }
 
         public void SetModel()
@@ -347,10 +372,10 @@ namespace SMAT_Inventory.Models
             this.city_id = 0;
             this.created_by = 0;
             this.updated_by = 0;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
             this.BranchesinGroup = 0;
             this.BranchesAll = string.Empty;
         }
@@ -421,23 +446,26 @@ namespace SMAT_Inventory.Models
             this.currency_code = string.Empty;
             this.currency_symbol = string.Empty;
             this.currency_column = string.Empty;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.created_by = 0;
             this.updated_by = 0;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
         }
     }
     public class settingsViewModel
     {
         public List<cityModel> city { get; set; }
         public List<country_currencies> country_Currencies { get; set; }
-
+        public List<WebSetting> contactPERlist { get; set; }
+        public List<WebSetting> contactSMAlist { get; set; }
         public settingsViewModel()
         {
             this.city = new List<cityModel>();
             this.country_Currencies = new List<country_currencies>();
+            this.contactPERlist = new List<WebSetting>();
+            this.contactSMAlist = new List<WebSetting>();
         }
     }
 
@@ -465,10 +493,10 @@ namespace SMAT_Inventory.Models
             report = string.Empty;
             calculation = 0;
             scanned_times = 0;
-            created_at = DateTime.MinValue;
+            created_at = DateTime.Now;
             created_by = 0;
             status = 0;
-            deleted_at = DateTime.MinValue;
+            deleted_at = DateTime.Now;
             branchname = string.Empty;
             zoneid = 0;
             zonename = string.Empty;
@@ -490,25 +518,30 @@ namespace SMAT_Inventory.Models
 
     public class notificationModel
     {
-        public string id { get; set; }
+        public Guid id { get; set; }
         public string type { get; set; }
         public string notifiable_type { get; set; }
         public int notifiable_id { get; set; }
+        public int performed_by { get; set; }
+        public string name { get; set; }
+        public string url { get; set; }
+        public string data_value { get; set; }
         public string data { get; set; }
         public DateTime read_at { get; set; }
         public DateTime created_at { get; set; }
         public DateTime updated_at { get; set; }
+        public string username { get; set; }
 
         public notificationModel()
         {
-            this.id = string.Empty;
+            this.id = Guid.NewGuid();
             this.type = string.Empty;
             this.notifiable_type = string.Empty;
             this.notifiable_id = 0;
             this.data = string.Empty;
-            this.read_at = DateTime.MinValue;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            //this.read_at = null;
+            //this.created_at = DateTime.Now;
+            //this.updated_at = DateTime.Now;
         }
     }
 
@@ -516,13 +549,23 @@ namespace SMAT_Inventory.Models
     {
         public List<notificationModel> notificationlist { get; set; }
         public notificationModel notification { get; set; }
+        public List<notificationTypeModel> notificationTypelist { get; set; }
         public List<userModel> user { get; set; }
-
+        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public string SortColumn { get; set; }
+        public string SortOrder { get; set; }
+        public string datefrom { get; set; }
+        public string dateto { get; set; }
+        public int performedBy { get; set; }
+        public string notification_type { get; set; }
         public notificationViewModel()
         {
             this.notificationlist = new List<notificationModel>();
             this.notification = new notificationModel();
             this.user = new List<userModel>();
+            this.notificationTypelist = new List<notificationTypeModel>();
+
         }
     }
 
@@ -580,12 +623,12 @@ namespace SMAT_Inventory.Models
             this.branch_id = 0;
             this.file_name = string.Empty;
             this.calculation = 0;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.created_by = 0;
             this.updated_by = 0;
             this.status = 0;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
         }
     }
 
@@ -632,6 +675,9 @@ namespace SMAT_Inventory.Models
         public double total_dep { get; set; }
         public string location { get; set; }
         public string branch_code { get; set; }
+        public string AssetOld_id { get; set; }
+        public int Tagcount { get; set; }
+        public int TagcountRemain { get; set; }
 
         public assetsModelExport()
         {
@@ -641,7 +687,7 @@ namespace SMAT_Inventory.Models
             this.invoice_cost = 0;
             this.total_cost = 0;
             this.salvage_value = 0;
-            this.date_of_purchase = DateTime.MinValue;
+            this.date_of_purchase = DateTime.Now;
             this.vendor_id = string.Empty;
             this.vendor = string.Empty;
             this.part_warranty = string.Empty;
@@ -651,7 +697,7 @@ namespace SMAT_Inventory.Models
             this.custom_field = string.Empty;
             this.life_in_year = 0;
             this.dep_type = 0;
-            this.last_scan_date = DateTime.MinValue;
+            this.last_scan_date = DateTime.Now;
             this.net_value = 0;
             this.remaining_years = 0;
             this.salvage = 0;
@@ -661,6 +707,43 @@ namespace SMAT_Inventory.Models
             this.location = string.Empty;
             this.branch_code = string.Empty;
         }
+    }
+
+
+
+    public class BranchModelExport
+    {
+        public string zone { get; set; }
+        public string branch_code { get; set; }
+        public string branch_name { get; set; }
+        public string phone_no1 { get; set; }
+        public string phone_no2 { get; set; }
+        public string phone_no3 { get; set; }
+        public string email { get; set; }
+        public string address { get; set; }
+        public string city { get; set; }
+        public string postalcode { get; set; }
+        public string googleMapId { get; set; }
+        public string branchemail { get; set; }
+        public int chkSUM { get; set; }
+
+        public BranchModelExport()
+        {
+            this.zone = string.Empty;
+            this.branch_code = string.Empty;
+            this.branch_name = string.Empty;
+            this.phone_no1 = string.Empty;
+            this.phone_no2 = string.Empty;
+            this.phone_no3 = string.Empty;
+            this.email = string.Empty;
+            this.address = string.Empty;
+            this.city = string.Empty;
+            this.postalcode = string.Empty;
+            this.googleMapId = string.Empty;
+            this.branchemail = string.Empty;
+            this.chkSUM = 0;
+        }
+
     }
     public class assetsModel
     {
@@ -685,8 +768,8 @@ namespace SMAT_Inventory.Models
         public int dep_type { get; set; }
         public DateTime last_scan_date { get; set; }
         public int net_value { get; set; }
-        public double remaining_years { get; set; }
-        public double salvage { get; set; }
+        public int remaining_years { get; set; }
+        public int salvage { get; set; }
         public int last_year_bv { get; set; }
         public double current_dep { get; set; }
         public double total_dep { get; set; }
@@ -711,7 +794,7 @@ namespace SMAT_Inventory.Models
             this.invoice_cost = 0;
             this.total_cost = 0;
             this.salvage_value = 0;
-            this.date_of_purchase = DateTime.MinValue;
+            this.date_of_purchase = DateTime.Now;
             this.vendor_id = string.Empty;
             this.vendor = string.Empty;
             this.part_warranty = string.Empty;
@@ -721,7 +804,7 @@ namespace SMAT_Inventory.Models
             this.custom_field = string.Empty;
             this.life_in_year = 0;
             this.dep_type = 0;
-            this.last_scan_date = DateTime.MinValue;
+            this.last_scan_date = DateTime.Now;
             this.net_value = 0;
             this.remaining_years = 0;
             this.salvage = 0;
@@ -729,12 +812,12 @@ namespace SMAT_Inventory.Models
             this.current_dep = 0;
             this.total_dep = 0;
             this.location = string.Empty;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.created_by = 0;
             this.updated_by = 0;
             this.status = 0;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
             this.Tagcount = 0;
             this.TagcountRemain = 0;
         }
@@ -745,6 +828,8 @@ namespace SMAT_Inventory.Models
         public List<assetsModel> assetlist { get; set; }
         public assetsModel asset { get; set; }
         public List<branchModel> branchlist { get; set; }
+        public List<zoneModel> zonelist { get; set; }
+        public List<groupModel> grouplist { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
@@ -752,12 +837,15 @@ namespace SMAT_Inventory.Models
         public string SortOrder { get; set; }
         public int assetcount { get; set; }
         public double currentbookvalue { get; set; }
+        
 
         public assetsViewModel()
         {
             this.assetlist = new List<assetsModel>();
             this.asset = new assetsModel();
             this.branchlist = new List<branchModel>();
+            this.zonelist = new List<zoneModel>();
+            this.grouplist = new List<groupModel>();
             this.assetcount = 0;
             this.currentbookvalue = 0;
         }
@@ -773,7 +861,117 @@ namespace SMAT_Inventory.Models
         }
     }
 
+    public class assetstransferModel
+    {
 
+        public int id { get; set; }
+        public int AssetId { get; set; }
+        public int frombranchcode { get; set; }
+        public string fromlocation { get; set; }
+        public int tobranchcode { get; set; }
+        public string tolocation { get; set; }
+        public DateTime created_at { get; set; }
+        public int created_by { get; set; }
+        public string Description { get; set; }
+        public DateTime reviewed_at { get; set; }
+        public DateTime approver_at { get; set; }
+        public DateTime recceived_at { get; set; }
+        public int reviewed_by { get; set; }
+        public int approved_by { get; set; }
+        public int received_by { get; set; }
+        public string transferdetail { get; set; }
+        public DateTime receiptprint_at { get; set; }
+        public int receiptprint_by { get; set; }
+        public int transstatus { get; set; }
+        public string frombranchname { get; set; }
+        public string tobranchname { get; set; }
+        public string created_user { get; set; }
+        public string reviewed_user { get; set; }
+        public string approved_user { get; set; }
+        public string received_user { get; set; }
+        public string receiptprint_user { get; set; }
+        public int deleted_by { get; set; }
+        public DateTime deleted_at { get; set; }
+        public string asset_id { get; set; }
+        public string asset_name { get; set; }
+        public string Status { get; set; }
+        public string ReviewRemarks { get; set; }
+        public string ApproveRemarks { get; set; }
+        public assetstransferModel()
+        {
+            this.id = 0;
+            this.AssetId = 0;
+            this.frombranchcode = 0;
+            this.fromlocation = string.Empty;
+            this.tobranchcode = 0;
+            this.tolocation = string.Empty;
+            this.created_at = DateTime.Now;
+	        this.created_by =0;
+	        this.Description = string.Empty;
+            this.reviewed_at = DateTime.Now;
+            this.approver_at = DateTime.Now;
+            this.recceived_at = DateTime.Now;
+	        this.reviewed_by =0;
+	        this.approved_by =0;
+	        this.received_by =0;
+	        this.transferdetail  = string.Empty;
+	        this.receiptprint_at = DateTime.Now;
+	        this.receiptprint_by =0;
+	        this.transstatus =0;
+            this.frombranchname = string.Empty;
+            this.tobranchname = string.Empty;
+            this.created_user = string.Empty;
+            this.received_user = string.Empty;
+            this.approved_user = string.Empty;
+            this.received_user = string.Empty ;
+            this.receiptprint_user = string.Empty ;
+            this.deleted_by = 0;
+            this.deleted_at = DateTime.Now;
+            this.asset_id = string.Empty;
+            this.asset_name = string.Empty;
+            this.Status = string.Empty;
+            this.ReviewRemarks = string.Empty;
+            this.ApproveRemarks = string.Empty;
+        }
+    }
+
+    public class assetstransferViewModel
+    {
+        public List<assetstransferModel> assettransferlist { get; set; }
+        public assetstransferModel assettransfer { get; set; }
+        public List<branchModel> branchlist { get; set; }
+        public List<zoneModel> zonelist { get; set; }
+        public List<groupModel> grouplist { get; set; }
+        public int TotalCount { get; set; }
+        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public string SortColumn { get; set; }
+        public string SortOrder { get; set; }
+        public int assetcount { get; set; }
+        public double currentbookvalue { get; set; }
+
+
+        public assetstransferViewModel()
+        {
+            this.assettransferlist = new List<assetstransferModel>();
+            this.assettransfer = new assetstransferModel();
+            this.branchlist = new List<branchModel>();
+            this.zonelist = new List<zoneModel>();
+            this.grouplist = new List<groupModel>();
+            this.assetcount = 0;
+            this.currentbookvalue = 0;
+        }
+
+        public void SetModel()
+        {
+            this.SetCount();
+        }
+
+        private void SetCount()
+        {
+            this.TotalCount = this.assettransferlist.Count;
+        }
+    }
     public class AssetScannerFileModel
     {
         public int id { get; set; }
@@ -793,12 +991,12 @@ namespace SMAT_Inventory.Models
             this.branch_id = 0;
             this.file_name = string.Empty;
             this.calculation = false;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.created_by = 0;
             this.updated_by = 0;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
         }
 
 
@@ -833,12 +1031,12 @@ namespace SMAT_Inventory.Models
             this.rssi = 0;
             this.riss = 0;
             this.chk_sum_2 = string.Empty;
-            this.created_at = DateTime.MinValue;
-            this.updated_at = DateTime.MinValue;
+            this.created_at = DateTime.Now;
+            this.updated_at = DateTime.Now;
             this.created_by = 0;
             this.updated_by = 0;
             this.status = false;
-            this.deleted_at = DateTime.MinValue;
+            this.deleted_at = DateTime.Now;
 
 
         }
@@ -910,17 +1108,35 @@ namespace SMAT_Inventory.Models
         public int Created_by { get; set; }
         public DateTime Created_at { get; set; }
         public int active { get; set; }
+        public int branch_id { get; set; }
+        public int group_id { get; set; }
+        public int zone_id { get; set; }
+        public int city_id { get; set; }
+        public string branchname { get; set; }
+        public string groupname { get; set; }
+        public string zonename { get; set; }
+        public string cityname { get; set; }
+        public string displaycolor { get; set; }
 
         public messagesModel()
         {
             this.id = 0;
             this.subject = string.Empty;
             this.message = string.Empty;
-            this.startdate= DateTime.MinValue;
-            this.enddate= DateTime.MinValue;
+            this.startdate= DateTime.Now;
+            this.enddate= DateTime.Now;
             this.Created_by = 0;
-            this.Created_at = DateTime.MinValue;
+            this.Created_at = DateTime.Now;
             this.active = 0;
+            this.branch_id = 0;
+            this.zone_id = 0;
+            this.group_id = 0;
+            this.city_id = 0;
+            this.branchname = string.Empty;
+            this.zonename = string.Empty;
+            this.groupname = string.Empty;
+            this.cityname = string.Empty;
+            this.displaycolor = string.Empty;
         }
         
     }
@@ -928,12 +1144,17 @@ namespace SMAT_Inventory.Models
     public class messagesViewModel
     {
         public List<messagesModel> messagelist { get; set; }
+        public List<branchModel> branchlist { get; set; }
+        public List<zoneModel> zonelist { get; set; }
+        public List<groupModel> grouplist { get; set; }
+        public List<cityModel> citylist { get; set; }
         public messagesModel message { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
         public string SortColumn { get; set; }
         public string SortOrder { get; set; }
+        
         public messagesViewModel()
         {
             this.messagelist = new List<messagesModel>();
@@ -948,6 +1169,146 @@ namespace SMAT_Inventory.Models
         private void SetCount()
         {
             this.TotalCount = this.messagelist.Count;
+        }
+    }
+
+    public class branchModelforgoogle
+    {
+        public int BranchId { get; set; }
+        public string BranchName { get; set; }
+        public string Latitude { get; set; } // Ensure you have Latitude as a string or decimal
+        public string Longitude { get; set; } // Ensure you have Longitude as a string or decimal
+    }
+
+
+    public class ReportingRequest
+    {
+        public int GroupId { get; set; }            // ID of the group (zone or branch)
+        public string Group { get; set; }           // Name or identifier for the group
+        public string View { get; set; }            // Action type, like "view_report"
+        public string Download { get; set; }        // Action type, like "download_report"
+        public DateTime? DateFrom { get; set; }     // Start date for the report period
+        public DateTime? DateTo { get; set; }       // End date for the report period
+        public string Calculation { get; set; }     // Whether calculations are needed ("yes" or "no")
+        public string ReportType { get; set; }      // Type of report (optional, depending on the logic)
+
+        // Add additional fields if necessary, depending on the form data structure
+    }
+
+    public class groupreportsummaryModel
+    {
+        public int branch_id { get; set; }
+        public string branchcode { get; set; }
+        public string branchname { get; set; }
+        public DateTime scan_date { get; set; }
+        public int matched_count { get; set; }
+        public int unmatched_count { get; set; }
+        public int total_assets { get; set; }
+        public int last_bv { get; set; }
+        public int current_bv { get; set; }
+        public int current_dep { get; set; }
+        public int total_cost { get; set; }
+
+    }
+
+    public class groupreportsummaryViewModel
+    {
+        public List<groupreportsummaryModel> groupreportsummarylist { get; set; }
+        public groupreportsummaryModel groupreportsummary { get; set; }
+        public groupModel group {  get; set; }
+        public int TotalCount { get; set; }
+        public string datefrom { get; set; }
+        public string dateto { get; set; }
+        public int calculation { get; set; }
+        public groupreportsummaryViewModel()
+        {
+            this.groupreportsummarylist = new List<groupreportsummaryModel>();
+            this.groupreportsummary = new groupreportsummaryModel();
+            this.group = new groupModel();
+        }
+
+        public void SetModel()
+        {
+            this.SetCount();
+        }
+
+        private void SetCount()
+        {
+            this.TotalCount = this.groupreportsummarylist.Count;
+        }
+    }
+
+    public class groupreportdetailModel
+    {
+        public int branch_id { get; set; }
+        public string branchcode { get; set; }
+        public string branchname { get; set; }
+        public string asset_id { get; set; }
+        public string asset_name { get; set; }
+        public string invoice_cost { get; set; }
+        public DateTime purchase_date { get; set; }
+        public int total_cost { get; set; }
+        public string location { get; set; }
+        public string remaining_years { get; set; }
+        public string phone { get; set; }
+        public string email { get; set; }
+        public string address { get; set; }
+        public int dep_type { get; set; }
+
+    }
+
+    public class groupreportdetailViewModel
+    {
+        public List<groupreportdetailModel> groupreportdetaillist { get; set; }
+        public List<groupreportdetailModel> groupreportdetaiunllist { get; set; }
+        public groupreportdetailModel groupreportdetail { get; set; }
+        public groupModel group { get; set; }
+        public int TotalCount { get; set; }
+        public string datefrom { get; set; }
+        public string dateto { get; set; }
+        public int calculation { get; set; }
+        public groupreportdetailViewModel()
+        {
+            this.groupreportdetaillist = new List<groupreportdetailModel>();
+            this.groupreportdetaiunllist = new List<groupreportdetailModel>();
+            this.groupreportdetail = new groupreportdetailModel();
+            this.group = new groupModel();
+        }
+
+        public void SetModel()
+        {
+            this.SetCount();
+        }
+
+        private void SetCount()
+        {
+            this.TotalCount = this.groupreportdetaillist.Count;
+        }
+    }
+
+    public class notificationTypeModel
+    {
+        public int id { get; set; }
+        public string  name { get; set; }
+        public DateTime deleted_at { get; set; }
+
+        public notificationTypeModel()
+        {
+            this.id= 0;
+            this.name = string.Empty;
+            this.deleted_at = DateTime.Now;
+        }
+    }
+
+    public class notificationTypeViewModel
+    {
+        public List<notificationTypeModel> notificationTypelist { get; set; }
+        public notificationTypeModel notificationType { get; set; }
+
+        public notificationTypeViewModel()
+        {
+            this.notificationTypelist = new List<notificationTypeModel>();
+            this.notificationType = new notificationTypeModel();
         }
     }
 }

@@ -88,7 +88,7 @@
             <div class="card-body">
                 <x-error-messages-section></x-error-messages-section>
 
-                <form name="add-branch-form" action="{{ route('group.create') }}" method="post">
+                <form name="add-branch-form" action="" method="post">
 
                     <div class="row mb-3">
                         <div class="col-md-12">
@@ -102,8 +102,8 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="person_name" class="form-label">Contact Person Name</label>
-                                <input type="text" class="form-control" id="person_name" name="person_name" placeholder="Enter Contact Person Name here" required value="@Model.group.person_name">
+                                <label for="person_name" class="form-label">Group Head</label>
+                                <input type="text" class="form-control" id="person_name" name="person_name" placeholder="Enter Group Head here" required value="@Model.group.person_name">
                             </div>
 
                         </div>
@@ -169,11 +169,11 @@
                                         if (idArray.Contains(branch.id.ToString()))
                                         {
 
-                                            <option selected value="@branch.id">@branch.name</option>
+                                            <option selected value="@branch.id">(@branch.code) - @branch.name</option>
                                         }
                                         else
                                         {
-                                            <option value="@branch.id">@branch.name</option>
+                                            <option value="@branch.id">(@branch.code) - @branch.name</option>
                                         }
                                     }
                                 </select>
@@ -181,10 +181,13 @@
                             </div>
                         </div>
                     </div>
-
+                    @{ 
+                        var btnSavelbl = "Create Group";
+                        if (Model.group.id !=0) { btnSavelbl = "Update Group"; }
+                    }
                     <div class="row">
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light" id="btnSave">Create Group</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" id="btnSave">@btnSavelbl</button>
                         </div>
                     </div>
                 </form>
@@ -203,22 +206,19 @@
 
          $('#btnSave').on('click', function () {
              var name = $('#name').val();
-             var phone1 = $('#person_name').val();
-             var phone2 = $('#person_designation').val();
-             var phone3 = $('#person_email').val();
-             var email = $('#person_number').val();
+             var person_name = $('#person_name').val();
+             var person_designation = $('#person_designation').val();
+             var person_email = $('#person_email').val();
+             var person_number = $('#person_number').val();
              var city_id = $('#city_id').val();
-             var postalcode = $('#postalcode').val();
-             var googleMapId = $('#googleMapId').val();
              var selectedBranches = $('#branch').val();
-
-
+             
              var vali = JSON.stringify(selectedBranches);
              vali = vali.replace(/"/g, '\\"');
-             alert(vali);
-             //var FId = Model.branch.id;
 
-             var Fn = { id: FId, zone_id: zone_id, code: code, name: name, phone1: phone1, phone2: phone2, phone3: phone3, email: email, address: address, city_id: city_id, postalcode: postalcode, googleMapId: googleMapId  };
+             var FId = @Model.group.id;
+
+             var Fn = { id: FId, name: name, person_name: person_name, person_designation: person_designation, person_email: person_email, person_number: person_number, city_id: city_id, branches: vali};
 
              $.ajax({
                  contentType: 'application/json',
@@ -228,7 +228,13 @@
                  data: JSON.stringify({ 'item': Fn }),
                  async: false,
                  success: function (data) {
-                     window.location.reload(true);
+                     if (data.success) {
+                         alert("Group Add/Updated Successfully");
+                         window.location.reload(true);
+                     }
+                     else {
+                         alert("Error: " + data.message)
+                     }
                  }
 
              });
@@ -239,35 +245,7 @@
 </script>
 
 <script>
-            var assetsDatatable = $('#assets-datatable').DataTable({
-                "scrollX": true,
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('/asset/list') }}",
-                columns: [
-                    @*@if(auth()->check() && auth()->user()->hasRole("admin"))
-                        {data: 'id', name: 'id'},
-                        {data: 'tag_id', name: 'tag_id'},
-                        {data: 'asset_id', name: 'asset_id'},
-                        {data: 'asset_name', name: 'asset_name'},
-                        {data: 'invoice_cost', name: 'invoice_cost'},
-                        {data: 'total_cost', name: 'total_cost'},
-                        {data: 'location', name: 'location'},
-                        {data: 'remaining_years', name: 'remaining_years'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    @else
-                        {data: 'id', name: 'id'},
-                        {data: 'asset_id', name: 'asset_id'},
-                        {data: 'asset_name', name: 'asset_name'},
-                        {data: 'invoice_cost', name: 'invoice_cost'},
-                        {data: 'total_cost', name: 'total_cost'},
-                        {data: 'location', name: 'location'},
-                        {data: 'remaining_years', name: 'remaining_years'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    @endif*@
 
-                ]
-            });
 
             //Unselecting group
             $("#branch").on("select2:unselecting", function(e) {

@@ -51,7 +51,6 @@ namespace SMAT_Inventory.Models
         [Required] 
         public int id{get;set;}
 
-
         [Required]
         [Display(Name = "Name")]
         public string Name { get; set; }
@@ -73,6 +72,11 @@ namespace SMAT_Inventory.Models
         public int roleid { get; set; }
         [Required]
         public string role { get; set; }
+        public string logintype { get; set; }
+        public string remember_token { get; set; }
+        public int AssetTransfer_AddReviewer { get; set; }
+        public int AssetTransfer_Approver { get; set; }
+        public int AssetTransfer_Receiver { get; set; }
 
     }
 

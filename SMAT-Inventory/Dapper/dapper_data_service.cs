@@ -24,6 +24,7 @@ namespace SMAT_Inventory.Dapper
         private bool IsDisposed = false;
         public DynamicParameters dp;
         protected bool _run_in_text_mode = false;
+        private SqlTransaction _transaction;
 
         public DAPPER_DATA_SERVICE()
         {
@@ -1401,6 +1402,49 @@ namespace SMAT_Inventory.Dapper
             }
         }
 
+
+        // Transaction handling methods
+        public SqlTransaction BeginTransaction()
+        {
+            if (sql_connection == null || sql_connection.State != ConnectionState.Open)
+            {
+                open_connection();
+            }
+
+            _transaction = sql_connection.BeginTransaction();
+            return _transaction;
+        }
+
+        public void CommitTransaction()
+        {
+            if (_transaction != null)
+            {
+                _transaction.Commit();
+                _transaction.Dispose();
+                _transaction = null;
+            }
+        }
+
+        public void RollbackTransaction()
+        {
+            if (_transaction != null)
+            {
+                _transaction.Rollback();
+                _transaction.Dispose();
+                _transaction = null;
+            }
+        }
+
+        // Example query execution with transaction
+        public int Execute(string query)
+        {
+            return sql_connection.Execute(query, dp, transaction: _transaction);
+        }
+
+        public IEnumerable<T> Query<T>(string query)
+        {
+            return sql_connection.Query<T>(query, dp, transaction: _transaction);
+        }
     }
 
     public class DAPPER_DATA_SERVICESMA : IDisposable

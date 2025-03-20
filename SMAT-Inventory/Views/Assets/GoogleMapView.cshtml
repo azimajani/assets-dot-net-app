@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Branch Locations</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCY2zdxcW1OrcOLRfxzej9Q9j6pepQG-6M"></script>
+    <script>
+        function initMap() {
+            var mapOptions = {
+                zoom: 8,
+                center: { lat: 24.8607, lng: 67.0011 } // Default center location
+            };
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            // Array of branch locations (Replace with dynamic data from your controller)
+            var branches = @Html.Raw(Json.Encode(ViewBag.Branches));
+
+            branches.forEach(function (branch) {
+                if (branches.length > 0) {
+                    var mapOptions = {
+                        zoom: 8, // Default zoom level
+                        center: { lat: branches[0].Latitude, lng: branches[0].Longitude },
+                        styles: [
+                            {
+                                featureType: "transit", // Disable bus stops and public transit
+                                elementType: "labels",
+                                stylers: [{ visibility: "off" }]
+                            },
+                            {
+                                featureType: "poi", // Disable points of interest (e.g., tourist spots)
+                                elementType: "labels",
+                                stylers: [{ visibility: "off" }]
+                            },
+                        ]// Default center on the first branch
+                    };
+
+                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                    var bounds = new google.maps.LatLngBounds(); // Create a bounds object to fit all markers
+
+                    // Add markers to the map for each branch
+                    branches.forEach(function (branch) {
+                        var position = { lat: parseFloat(branch.Latitude), lng: parseFloat(branch.Longitude) };
+                        var title = branch.BranchName;
+                        var marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            title: title
+                        });
+
+                        bounds.extend(position); // Extend bounds to include each marker's position
+                    });
+
+                    map.fitBounds(bounds); // Adjust the map to show all markers within the bounds
+                } else {
+                    alert('No branches found for this zone.');
+                }
+            });
+
+          
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <div id="map" style="height: 800px; width: 100%;"></div>
+</body>
+</html>

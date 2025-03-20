@@ -12,9 +12,18 @@ namespace SMAT_Inventory
     {
 
         public static List<WebSetting> GetWebSettingValue = new List<WebSetting>();
-        public static int AppUserId=20;
-        public static string AppUserName="Zeesshan";
-        public static string AppUserEmail = "zeeshan.cna@gmail.com";
+        public static List<userpermissions> GetUserPermissionsValue = new List<userpermissions>();
+        public static int AppUserId;
+        public static string AppUserName;
+        public static string AppUserEmail;
+        public static string remember_token;
+        public static string role;
+        public static string AppUserPassword;
+        public static string logintype;
+        public static int AssetTransfer_AddReviewer;
+        public static int AssetTransfer_Approver;
+        public static int AssetTransfer_Receiver;
+
         public static string GetWebSetting(string tag, string DefaultValue = "")
         {
 
@@ -44,6 +53,29 @@ namespace SMAT_Inventory
             return "";
         }
 
+        public static string GetUserPermissions(string Module, string Permission)
+        {
+            string Value = null;
+
+            if (Permission == "Add")
+            {
+                Value = GlobalVariables.GetUserPermissionsValue.Where(item => item.Module == Module).Select(item => item.AddPermission).FirstOrDefault();
+            }
+            if (Permission == "Edit")
+            {
+                Value = GlobalVariables.GetUserPermissionsValue.Where(item => item.Module == Module).Select(item => item.EditPermission).FirstOrDefault();
+            }
+            if (Permission == "View")
+            {
+                Value = GlobalVariables.GetUserPermissionsValue.Where(item => item.Module == Module).Select(item => item.ViewPermission).FirstOrDefault();
+            }
+            if (Permission == "Delete")
+            {
+                Value = GlobalVariables.GetUserPermissionsValue.Where(item => item.Module == Module).Select(item => item.DeletePermission).FirstOrDefault();
+            }
+            if (Value == null) { Value = null; }
+            return Value;
+        }
         /*public static Boolean GetWebConfigBoolean(string Name, Boolean DefaultValue = false)
         {
 

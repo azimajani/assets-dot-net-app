@@ -9,86 +9,103 @@
         <div class="card">
             <div class="card-body">
                 @*@if (Session::get('type') == 'success')
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="mdi mdi-check-all me-2"></i>
-                        {{ Session::has('message') ? Session::get('message') : "" }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-check-all me-2"></i>
+                            {{ Session::has('message') ? Session::get('message') : "" }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-                @if (Session::get('type') == 'error')
+                    @if (Session::get('type') == 'error')
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-block-helper me-2"></i>
+                            {{ Session::has('message') ? Session::get('message') : "" }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors)
+                    @foreach ($errors->all() as $message)
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="mdi mdi-block-helper me-2"></i>
-                        {{ Session::has('message') ? Session::get('message') : "" }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                     </div>
-                @endif
-
-                @if ($errors)
-                @foreach ($errors->all() as $message)
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="mdi mdi-block-helper me-2"></i>
-                    {{ $message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                </div>
-                @endforeach
-                @endif
+                    @endforeach
+                    @endif
                 *@
-    <form id="fetch-notifications" name="fetch-notifications" method="post">
-        <div class="row mb-3">
-            <div class="mb-4">
-                <label>Notification Range</label>
+                <form id="fetch-notifications" name="fetch-notifications" method="post">
+                    <div class="row mb-3">
+                        <div class="mb-4">
+                            <label>Notification Range</label>
 
-                <div class="input-daterange input-group" id="datepicker6" data-date-format="dd-M-yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container="#datepicker6">
-                    <input type="text" class="form-control" name="start" placeholder="Start Date">
-                    <input type="text" class="form-control" name="end" placeholder="End Date">
-                </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="dateFrom" class="form-label">Date From</label>
+                                        <input type="date" class="form-control" id="dateFrom" name="dateFrom" required value="@Model.datefrom">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="dateTo" class="form-label">Date To</label>
+                                        <input type="date" class="form-control" id="dateTo" name="dateTo" required value="@Model.dateto">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-3">
+                            <label for="performedBy-input" class="form-label">Performed By</label>
+                            <select class="form-select select2" id="performedBy" name="performedBy" required>
+                                <option selected value="0">All</option>
+                                @foreach (var user in Model.user)
+                                {
+                                    if (user.id == Model.performedBy){
+                                        <option selected value="@user.id">@user.name</option>
+                                        }
+                                    else{
+                                        <option value="@user.id">@user.name</option>
+                                        }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="branch-input" class="form-label">Select Type</label>
+                            <select class="form-select select2" id="notification_type" name="notification_type">
+                                <option value="All" selected>All</option>
+                                @foreach (var notificationtype in Model.notificationTypelist)
+                                {
+                                    if (notificationtype.name == Model.notification_type)
+                                    {
+                                        <option selected value="@notificationtype.name">@notificationtype.name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@notificationtype.name">@notificationtype.name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="view" class="btn btn-primary waves-effect waves-light">Search</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+            <!-- end card body -->
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="performedBy-input" class="form-label">Performed By</label>
-                <select class="form-select select2" id="performedBy" name="performedBy" required>
-                    <option selected value="All">All</option>
-                    @foreach (var user in Model.user)
-                    {
-                        <option value="@user.id">@user.name</option>
-                    }
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label for="branch-input" class="form-label">Select Type</label>
-                <select class="form-select select2" id="notification_type" name="notification_type">
-                    <option value="All" selected>All</option>
-                    <option value="Zone Edited">Zone Edited</option>
-                    <option value="Zone Deleted">Zone Deleted</option>
-                    <option value="Zone Restored">Zone Restored</option>
-                    <option value="Branch Edited">Branch Edited</option>
-                    <option value="Branch Deleted">Branch Deleted</option>
-                    <option value="Branch Restored">Branch Restored</option>
-                    <option value="Asset Edited">Asset Edited</option>
-                    <option value="Asset Deleted">Asset Deleted</option>
-                    <option value="Asset Restored">Asset Restored</option>
-                    <option value="Setting Updated">Setting Updated</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="d-flex flex-wrap gap-2">
-                <button type="submit" name="view" class="btn btn-primary waves-effect waves-light">Search</button>
-            </div>
-        </div>
-    </form>
-</div>
-<!-- end card body -->
-</div>
-<!-- end card -->
-</div>
-<!-- end col -->
+        <!-- end card -->
+    </div>
+    <!-- end col -->
 </div>
 
 <div class="row">
@@ -108,7 +125,22 @@
                             <th>Performed At</th>
                         </tr>
                     </thead>
-
+                    @{ int i = 1;
+                      }
+                    @foreach (var noti in Model.notificationlist)
+                    {
+                        string isView = "Not Read";
+                        if (noti.read_at != DateTime.MinValue) { isView = noti.read_at.ToString("yyyy-MM-dd hh:mm:ss"); }
+                        <tr>
+                            <td>@i</td>
+                            <td>@noti.name</td>
+                            <td>@noti.username</td>
+                            <td><button type="button" data-id="@noti.id" class="btn btn-success notification_view" id="btnView"><i class="mdi mdi-eye"></i>View</button></td>
+                            <td>@isView</td>
+                            <td>@noti.created_at.ToString("yyyy-MM-dd hh:mm:ss")</td>
+                        </tr>
+                        i = i + 1;
+                    }
                     <tbody>
                     </tbody>
                 </table>
@@ -148,132 +180,51 @@
     </div><!-- /.modal-dialog -->
 </div>
 
-<script src="{{ asset('assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-        var usersDatatable = $('#notification-datatable').DataTable({
-            scrollX: true,
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('notification.list') }}",
-            columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'id',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'title',
-                    name: 'title'
-                },
-                {
-                    data: 'performed_by',
-                    name: 'performed_by'
-                },
-                {
-                    data: 'view_notification',
-                    name: 'view_notification'
-                },
-                {
-                    data: 'read_at',
-                    name: 'read_at'
-                },
-                {
-                    data: 'performed_at',
-                    name: 'performed_at'
-                },
-            ],
-        });
+    $(document).on("submit", "#fetch-notifications", function (e) {
+        e.preventDefault();
+        //var formData = $(this).serializeArray();
+        var datefrom = $('#dateFrom').val();
+        var dateto = $('#dateTo').val();
+        var performedBy = $('#performedBy').val();
+        var notification_type = $('#notification_type').val();
 
-        $(document).on("submit", "#fetch-notifications", function(e) {
-                e.preventDefault();
+        var vlink = "/Assets/notification?datefrom=" + datefrom + "&dateto=" + dateto + "&performedBy=" + performedBy + "&notification_type=" + notification_type
+        //vlink = vlink + "&fromdate=" + fromdate + "&todate=" + todate
+        //vlink = vlink + "&FilterDateTF=" + FilterDateTF
 
-                var formData = $(this).serializeArray();
+        window.location.href = vlink;
+    });
+</script>
 
-                if($.fn.dataTable.isDataTable("#notification-datatable")) {
-                    usersDatatable.destroy();
-                }
+<script>
+    $(document).ready(function () {
 
-                usersDatatable = $(document).find('#notification-datatable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        "url": "{{ route('notification.search') }}",
-                        "type": "POST",
-                        "data": function(d) {
-                            d.form = formData,
-                            d._token = $('meta[name="csrf-token"]').attr('content')
-                        }
-                    },
-                    columns: [
-                        {
-                            data: 'DT_RowIndex',
-                            name: 'id',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'title',
-                            name: 'title'
-                        },
-                        {
-                            data: 'performed_by',
-                            name: 'performed_by'
-                        },
-                        {
-                            data: 'view_notification',
-                            name: 'view_notification'
-                        },
-                        {
-                            data: 'read_at',
-                            name: 'read_at'
-                        },
-                        {
-                            data: 'performed_at',
-                            name: 'performed_at'
-                        },
-                    ],
-                });
+        $(document).on('click', '.notification_view', function () {
+            //var zone_id = $('#zone').val();
+            //alert('ddd');
+            var Notificationid = $(this).data('id'); //this.getAttribute("data-id");
+            //alert(Notificationid);
 
-            });
-
-        $(document).on("click", '.notification_view', function(e) {
-            e.preventDefault();
-
-            var id = $(this).data('id');
-            console.log(id);
             $.ajax({
-                url: '{{ route("notification.get") }}',
-                type: 'POST',
-                data: {
-                    id: id
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    if(data.success) {
-                        const notify_data = data.data;
-                        $("#title").html(notify_data.data[0].name);
-                        console.log(notify_data.data[0].name);
+                contentType: 'application/json',
+                type: "POST",
+                url: "/Assets/notificationViewed",
+                dataType: "json",
+                data: JSON.stringify({ Notificationid: Notificationid}),
+                async: false,
+                success: function (data) {
+                    if (data.success) {
+                        //alert("Branch Add/Updated Successfully");
+                        window.location.reload(true);
+                    }
+                    else {
+                        alert("Error: " + data.message);
                     }
                 }
             });
-
-            $.ajax({
-                url: '{{ route("notification.read") }}',
-                type: 'POST',
-                data: {
-                    id: id
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    usersDatatable.ajax.reload( null, false );
-                    console.log(data);
-                }
-            });
-
-            $('.bs-example-modal-center').modal('show');
         });
+    });
 </script>

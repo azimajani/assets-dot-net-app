@@ -1,0 +1,138 @@
+﻿@model SMAT_Inventory.Models.UserViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mini-stats-wid">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <p class="text-muted fw-medium">Staff User List</p>
+                        <h4 class="mb-0" id="Branhes_count">@Model.TotalCount</h4>
+                    </div>
+
+                    <div class="flex-shrink-0 align-self-center">
+                        <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                            <span class="avatar-title rounded-circle bg-primary">
+                                <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<table class="table table-bordered dt-responsive nowrap w-100">
+    <div class="row">
+        <div class="card mini-stats-wid">
+            <div class="d-flex">
+                <div class="flex-grow-1">
+                    <div class="pagination">
+                        @{
+                            var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                        }
+
+                        @for (var i = 1; i <= pageCount; i++)
+                        {
+                            <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/staffuserlist", new { page = i, pageSize = Model.PageSize })">@i</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <thead>
+        <tr>
+            <th>
+                <a href="@Url.Action("/staffuserlist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Id", sortOrder = Model.SortColumn == "Id" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    ID @(Model.SortColumn == "Id" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/staffuserlist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Image", sortOrder = Model.SortColumn == "Image" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Image @(Model.SortColumn == "Image" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/staffuserlist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "Name", sortOrder = Model.SortColumn == "Name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Name @(Model.SortColumn == "Name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/staffuserlist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "email", sortOrder = Model.SortColumn == "email" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Email @(Model.SortColumn == "email" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>
+                <a href="@Url.Action("/staffuserlist", new { page = Model.CurrentPage, pageSize = Model.PageSize, sortColumn = "role_name", sortOrder = Model.SortColumn == "role_name" && Model.SortOrder == "asc" ? "desc" : "asc" })">
+                    Role @(Model.SortColumn == "role_name" ? (Model.SortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.userlist)
+        {
+            <tr>
+                <td>@user.id</td>
+                @if (user.image != "")
+                    {<td><img src="~/assets/@user.image" alt="" height="40"></td>}
+                else
+                    {<td><img src="~/assets/images/users/avatar-2.jpg" alt="" height="40"></td>}
+                <td>@user.name</td>
+                <td>@user.email</td>
+                <td>@user.role_name</td>
+
+                <td>
+                    <a href="@Url.Action("staffuseradd", "Assets", new { id = user.id })" class="btn btn-success"><i class="mdi mdi-pencil"></i></a>
+                    <a href="@Url.Action("staffuserpermission", "Assets", new { id = user.id })" class="btn btn-success user-edisst" data-id="@user.id"><i class="bx bx-archive-out"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="pagination">
+    @{
+        var pageCountd = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    }
+
+    @for (var i = 1; i <= pageCountd; i++)
+    {
+        <a class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("/staffuserlist", new { page = i, pageSize = Model.PageSize })">@i</a>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".user-edit", function(event) {
+            event.preventDefault(); // Prevent default action
+            var id = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("branchrestorenow", "Assets")',
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    window.location.reload();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+

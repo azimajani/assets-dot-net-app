@@ -1,0 +1,622 @@
+﻿@model SMAT_Inventory.Models.assetstransferViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card mini-stats-wid">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <p class="text-muted fw-medium">Assets</p>
+                            <h4 class="mb-0" id="assets_count">@Model.assetcount</h4>
+                        </div>
+
+                        <div class="flex-shrink-0 align-self-center">
+                            <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                                <span class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mini-stats-wid">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <p class="text-muted fw-medium">Current Book Value</p>
+                            <h4 class="mb-0" id="assets_bookValue">Rs.@Model.currentbookvalue.ToString("N2")/=</h4>
+                        </div>
+
+                        <div class="flex-shrink-0 align-self-center">
+                            <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
+                                <span class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+*@
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            @{
+                var pageCount = Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                var currentPage = Model.CurrentPage;
+                var startPage = Math.Max(1, currentPage - 5);
+                var endPage = Math.Min(pageCount, currentPage + 5);
+                var skip = 11; // Number of pages to skip
+
+                var sel10 = "";
+                var sel25 = "";
+                var sel50 = "";
+                var sel100 = "";
+                if (Model.PageSize == 10) { sel10 = "selected"; }
+                if (Model.PageSize == 25) { sel25 = "selected"; }
+                if (Model.PageSize == 50) { sel50 = "selected"; }
+                if (Model.PageSize == 100) { sel100 = "selected"; }
+            }
+            <div>
+                <select id="pagesize">
+                    <option @sel10 value="10">10</option>
+                    <option @sel25 value="25">25</option>
+                    <option @sel50 value="50">50</option>
+                    <option @sel100 value="100">100</option>
+                </select>
+            </div>
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
+
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Max(1, currentPage - skip), pageSize =Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage - 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("assetslist", new { page = i, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage + 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">>></a>
+                        }
+                    </div>
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="form-select select2" name="branch" id="branch" required>
+                            <option selected value="0">ALL Branch</option>
+                            @foreach (var branch in Model.branchlist)
+                            {
+                                if (branch.id == ViewBag.branch)
+                                {
+                                    <option selected value="@branch.id">(@branch.code) - @branch.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@branch.id">(@branch.code) - @branch.name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="row">
+
+                    @{
+                        string AssetTransfer_AddReviewer = "";
+                        if (ViewBag.AssetTransfer_AddReviewer == 1) { AssetTransfer_AddReviewer = "checked"; }
+                        string AssetTransfer_Approver = "";
+                        if (ViewBag.AssetTransfer_Approver == 1) { AssetTransfer_Approver = "checked"; }
+                        string AssetTransfer_Receiver = "";
+                        if (ViewBag.AssetTransfer_Receiver == 1) { AssetTransfer_Receiver = "checked"; }
+                        string AssetTransfer_Completed = "";
+                        if (ViewBag.AssetTransfer_Completed == 1) { AssetTransfer_Completed = "checked"; }
+                        string AssetTransfer_Deleted = "";
+                        if (ViewBag.AssetTransfer_Deleted == 1) { AssetTransfer_Deleted = "checked"; }
+                    }
+                    <div class="col-md-2">
+                        <label for="Active" class="form-label">For Review</label>
+                        <input class="form-check-input" type="checkbox" id="chkReview" name="chkReview" @AssetTransfer_AddReviewer>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="Active" class="form-label">For Approval</label>
+                        <input class="form-check-input" type="checkbox" id="chkApprove" name="chkApprove" @AssetTransfer_Approver>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="Active" class="form-label">For Receive</label>
+                        <input class="form-check-input" type="checkbox" id="chkReceiver" name="chkReceiver" @AssetTransfer_Receiver>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="Active" class="form-label">Received</label>
+                        <input class="form-check-input" type="checkbox" id="chkCompleted" name="chkCompleted" @AssetTransfer_Completed>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="Active" class="form-label">Deleted</label>
+                        <input class="form-check-input" type="checkbox" id="chkDeleted" name="chkDeleted" @AssetTransfer_Deleted>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary" id="searchbut">Filter</button>
+                        @if (GlobalVariables.AssetTransfer_AddReviewer == 1)
+                        {
+                            <button type="button" class="btn btn-primary" id="Addbut">Add</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-sm-12 message"></div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Asset List</h4>
+                <table id="assets-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <thead>
+                        @*@if (auth()->check() && auth()->user()->hasRole("admin"))*@
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>Asset Name</th>
+                            <th>From branch</th>
+                            <th>To Branch</th>
+                            <th>Created by</th>
+                            <th>Status</th>
+                        </tr>
+                        @*@else
+                            <tr>
+                                <th>ID</th>
+                                <th>Asset ID</th>
+                                <th>Asset Name</th>
+                                <th>Current BV</th>
+                                <th>Total Cost</th>
+                                @if (!(auth()->user()->cannot(["Assets-Edit", "Assets-Delete"])))
+                                <th>Action</th>
+                                endif
+                            </tr>
+                            @endif*@
+
+                    </thead>
+                    @foreach (var rtl in Model.assettransferlist)
+                    {
+                        <tr>
+                            <td>@rtl.id</td>
+                            <td>@rtl.asset_id</td>
+                            <td>@rtl.asset_name</td>
+                            <td>@rtl.frombranchname</td>
+                            <td>@rtl.tobranchname</td>
+                            <td>@rtl.created_user</td>
+                            <td>@rtl.Status</td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="">
+                                        @if (rtl.created_by == GlobalVariables.AppUserId && rtl.transstatus == 0 && GlobalVariables.AssetTransfer_AddReviewer == 1)
+                                        {
+                                            @*<li>
+                                                <a class="dropdown-item" onclick="handleClick('Edit', @rtl.id)"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a>
+                                            </li>*@
+                                            <li>
+                                                <a class="dropdown-item permanent-delete-asset" onclick="handleClick('Delete', @rtl.id)" data-id="@rtl.id"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i>Delete</a>
+                                            </li>
+                                        }
+                                        @if (rtl.created_by != GlobalVariables.AppUserId && rtl.transstatus == 0 && GlobalVariables.AssetTransfer_AddReviewer == 1)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" onclick="handleClick('Review', @rtl.id)"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Review</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item  permanent-delete-asset" onclick="handleClick('Delete', @rtl.id)"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i>Delete</a>
+                                            </li>
+                                        }
+                                        @if (rtl.transstatus == 1 && GlobalVariables.AssetTransfer_Approver == 1)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" onclick="handleClick('Approve', @rtl.id)"><i class="mdi mdi-check font-size-16 text-success me-1"></i> Approve</a>
+                                            </li>
+                                        }
+                                        @if (rtl.transstatus == 2 && (GlobalVariables.AssetTransfer_Approver == 1 || GlobalVariables.AssetTransfer_AddReviewer == 1))
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" onclick="handleClick('Print', @rtl.id)"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Print Receipt</a>
+                                            </li>
+                                        }
+                                        @if (rtl.transstatus == 2 && GlobalVariables.AssetTransfer_Receiver == 1)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" onclick="handleClick('Receive', @rtl.id)"><i class="mdi mdi-check-circle font-size-16 text-success me-1"></i> Receive</a>
+                                            </li>
+                                        }
+                                        @if (rtl.transstatus == 4 && GlobalVariables.AssetTransfer_Approver == 1)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" onclick="handleClick('Print', @rtl.id)"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Print Receipt</a>
+                                            </li>
+                                        }
+                                        <li>
+                                            <a class="dropdown-item" onclick="handleClick('View', @rtl.id)"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> View Detail</a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="card mini-stats-wid">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="col-md-5">
+                    <div class="pagination">
+
+
+                        <!-- Skip Backward by 5 Pages Button -->
+                        @if (currentPage - skip > 0)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Max(1, currentPage - skip), pageSize =Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><<</a>
+                        }
+
+                        <!-- Previous Button -->
+                        @if (currentPage > 1)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage - 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})"><</a>
+                        }
+                        <!-- Page Numbers -->
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <a class="btn @(i == currentPage ? "btn-primary" : "btn-secondary")" href="@Url.Action("assetslist", new { page = i, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">@i</a>
+                        }
+
+                        <!-- Next Button -->
+                        @if (currentPage < pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = currentPage + 1, pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">></a>
+                        }
+
+                        <!-- Skip Forward by 5 Pages Button -->
+                        @if (currentPage + skip <= pageCount)
+                        {
+                            <a class="btn btn-secondary" href="@Url.Action("assetslist", new { page = Math.Min(pageCount, currentPage + skip), pageSize = Model.PageSize, searchTerm = Request.QueryString["searchTerm"], zone = ViewBag.zone, branch=ViewBag.branch, group=ViewBag.group})">>></a>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- Manager Modal -->
+<div class="modal fade" id="TransferModal" tabindex="-1" role="dialog" aria-labelledby="branchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="branchModalLabel">Transfer Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" id="btncross" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table to display branch list -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                        </tr>
+                    </thead>
+                    <tbody id="TransferDetail">
+                        <!-- Dynamic content will go here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="TransferFooter" class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on("click", ".disable-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove this Asset?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetdelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+        $(document).on("click", ".permanent-delete-asset", function(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm('Do you want to remove?')) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("assetpermanentlydelete", "Assets")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        $('.message').html('<div class="alert alert-' + response.type + ' alert-dismissible fade show" role="alert"><i class="mdi ' + response.icon + ' me-2"></i>' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#searchbut').click(function () {
+            //alert(1);
+            const checkbox = document.getElementById('chkReview');
+                if (checkbox.checked) { chkReview = 1; } else { chkReview = 0; }
+            const checkbox2 = document.getElementById('chkApprove');
+                if (checkbox2.checked) { chkApprove = 1; } else { chkApprove = 0; }
+            const checkbox3 = document.getElementById('chkReceiver');
+                if (checkbox3.checked) { chkReceiver = 1; } else { chkReceiver = 0; }
+            const checkbox4 = document.getElementById('chkCompleted');
+                if (checkbox4.checked) { chkCompleted = 1; } else { chkCompleted = 0; }
+            const checkbox5 = document.getElementById('chkDeleted');
+                if (checkbox5.checked) { chkDeleted = 1; } else { chkDeleted = 0; }
+
+            var currentPage = '@currentPage'; // Current page variable
+            var pageSize = $('#pagesize').val();
+            var branch = $('#branch').val();
+
+
+            window.location.href = '@Url.Action("assetstransferlist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;', '') + '&branch=' + branch + '&AssetTransfer_AddReviewer=' + chkReview + '&AssetTransfer_Approver=' + chkApprove + '&AssetTransfer_Receiver=' + chkReceiver + '&AssetTransfer_Completed=' + chkCompleted + '&AssetTransfer_Deleted=' + chkDeleted;
+        });
+         $('#pagesize').change(function() {
+            var searchTerm = $('#searchTerm').val();
+            var currentPage = '@currentPage'; // Current page variable
+             var pageSize = $('#pagesize').val();
+
+             window.location.href = '@Url.Action("assetstransferlist", new { page = Math.Min(pageCount, currentPage),pageSize = "--pageSize--" })'.replace('--pageSize--', pageSize).replace('amp;', '') + '&branch=' + branch + '&AssetTransfer_AddReviewer=' + chkReview + '&AssetTransfer_Approver=' + chkApprove + '&AssetTransfer_Receiver=' + chkReceiver + '&AssetTransfer_Completed=' + chkCompleted + '&AssetTransfer_Deleted=' + chkDeleted;
+       });
+    });
+</script>
+
+<script>
+    function handleClick(status, Id) {
+        //alert(status);
+        $('#TransferDetail').empty();
+        $('#TransferFooter').empty();
+        // AJAX request to fetch branches for the selected zone
+        $.ajax({
+            url: '/Assets/AssetTransferGet', // Replace with your server-side URL
+            type: 'GET',
+            data: { Id: Id },
+            success: function (ati) {
+                // branches should be an array of branch objects { branchId, branchName }
+
+                $('#TransferDetail').append('<input type="text" class="form-control" id="Id" name="Id" hidden value="' + Id + '">');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Transfer ID: ' + ati.id + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Asset ID: ' + ati.asset_id + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Created At: ' + ati.created_at+ '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Asset: ' + ati.asset_name + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">From: ' + ati.frombranchname + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">To: ' + ati.tobranchname + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Created By: ' + ati.created_user + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Reviewed By: ' + ati.reviewed_user + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Approved By: ' + ati.approved_user + '</label>');
+                $('#TransferDetail').append('<br><label for="zone-input" class="form-label">Last Receipt Printed By: ' + ati.receiptprint_user + '</label>');
+
+                if (status == 'Review') {
+                    $('#TransferDetail').append('<div class="mb-3"> ' +
+                        '<label for="zone-input" class="form-label">Review Remarks</label> ' +
+                        '<textarea class="form-control" style="font-size:1.2rem" name="ReviewRemarks" id="ReviewRemarks"></textarea> ' +
+                        '</div>');
+                    $('#TransferFooter').append('<button type="button" action="add" class="btn btn-primary w-md" id="btnReviewSave">Save Review</button>');
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                else if (status == 'Approve') {
+                    $('#TransferDetail').append('<div class="mb-3"> ' +
+                        '<label for="zone-input" class="form-label">Approve Remarks</label> ' +
+                        '<textarea class="form-control" style="font-size:1.2rem" name="ApproveRemarks" id="ApproveRemarks">Transport type:  Vechicel No:<b> Driver Name: Mobile:</textarea> ' +
+                        '</div>');
+                    $('#TransferFooter').append('<button type="button" action="add" class="btn btn-primary w-md" id="btnApproveSave">Save Approve</button>');
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                else if (status == 'Receive') {
+                    $('#TransferDetail').append('<div class="mb-3"> ' +
+                        '<label for="zone-input" class="form-label">Enter Address Here</label> ' +
+                        '<textarea class="form-control" style="font-size:1.2rem" name="ReceiveRemarks" id="ReceiveRemarks"></textarea> ' +
+                        '</div>');
+                    $('#TransferFooter').append('<button type="button" action="add" class="btn btn-primary w-md" id="btnReceiveSave">Save Receive</button>');
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                else if (status == 'Print') {
+                    $('#TransferFooter').append('<button type="button" action="add" class="btn btn-primary w-md" id="btnPrintSave">Print Receipt</button>');
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                else if (status == 'Delete') {
+                    $('#TransferFooter').append('<button type="button" action="add" class="btn btn-primary w-md" id="btnDeleteSave">Delete</button>');
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                else if (status == 'View') {
+                    $('#TransferFooter').append('<button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>');
+                }
+                // Show the modal
+                $('#TransferModal').modal('show');
+            },
+            error: function () {
+                alert('Error fetching branch data');
+            }
+        });
+
+
+
+        // Show the modal
+
+    }
+</script>
+
+<script>
+    $(document).on('click', '#btnclose', function () {
+        $('#TransferModal').modal('hide');
+    });
+    $('#btncross').on('click', function () {
+        $('#TransferModal').modal('hide');
+    });
+    //-----------------------------------------------------
+    $(document).on('click', '#btnReviewSave', function () {
+        RASave('RS');
+    });
+    $(document).on('click', '#btnApproveSave', function () {
+        ASSave('AS');
+    });
+    $(document).on('click', '#btnReceiveSave', function () {
+        RSSave('RS');
+    });
+    $(document).on('click', '#btnPrintSave', function () {
+        RARSave('Printing ....');
+    });
+    $(document).on('click', '#btnDeleteSave', function () {
+        RARSave('Printing ....');
+    });
+
+</script>
+
+<script>
+
+    function RASave(type) { 
+        var Id = $('#Id').val();
+        var ReviewRemarks = $('#ReviewRemarks').val();
+        //alert(ReviewRemarks);
+
+        $.ajax({
+            contentType: 'application/json',
+            type: "POST",
+            url: "/Assets/AssetTransferSaveReview",
+            dataType: "json",
+            data: JSON.stringify({ Id: Id, ReviewRemarks: ReviewRemarks}),
+            async: false,
+            success: function (data) {
+                if (data.success) {
+                    alert("Updated Successfully");
+                    window.location.reload(true);
+                }
+                else {
+                    alert("Error: " + data.message)
+                }
+            }
+        });
+    };
+    function ASSave(type) {
+        var Id = $('#Id').val();
+        var ApproveRemarks = $('#ApproveRemarks').val();
+        //alert(ApproveRemarks);
+
+        $.ajax({
+            contentType: 'application/json',
+            type: "POST",
+            url: "/Assets/AssetTransferSaveApprove",
+            dataType: "json",
+            data: JSON.stringify({ Id: Id, ApproveRemarks: ApproveRemarks }),
+            async: false,
+            success: function (data) {
+                if (data.success) {
+                    alert("Updated Successfully");
+                    window.location.reload(true);
+                }
+                else {
+                    alert("Error: " + data.message)
+                }
+            }
+        });
+    };
+
+    function RSSave(type) {
+        var Id = $('#Id').val();
+        var ReceiveRemarks = $('#ReceiveRemarks').val();
+        //alert(ApproveRemarks);
+
+        $.ajax({
+            contentType: 'application/json',
+            type: "POST",
+            url: "/Assets/AssetTransferSaveReceive",
+            dataType: "json",
+            data: JSON.stringify({ Id: Id, ReceiveRemarks: ReceiveRemarks }),
+            async: false,
+            success: function (data) {
+                if (data.success) {
+                    alert("Updated Successfully");
+                    window.location.reload(true);
+                }
+                else {
+                    alert("Error: " + data.message)
+                }
+            }
+        });
+    };
+</script>

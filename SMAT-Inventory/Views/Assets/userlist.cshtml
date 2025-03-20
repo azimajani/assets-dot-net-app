@@ -85,10 +85,11 @@
         {
             <tr>
                 <td>@user.id</td>
-                @if (user.image != "")
-                    {<td><img src="~/assets/@user.image" alt="" height="40"></td>}
-                else
-                    {<td><img src="~/assets/images/users/avatar-2.jpg" alt="" height="40"></td>}
+                @{
+                    var userimagefile = "";
+                    if (user.image == "") { userimagefile = "assets/images/users/avatar-2.jpg"; } else { userimagefile = user.image; }
+                }
+                <td><img id="profile_picture" src="@Url.Content("~/"+userimagefile)"  height="40"></td>
                 <td>@user.name</td>
                 <td>@user.email</td>
                 <td>@user.role_name</td>

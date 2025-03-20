@@ -49,14 +49,14 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dateFrom" class="form-label">Date From</label>
-                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" required>
+                                <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dateTo" class="form-label">Date To</label>
-                                <input type="date" class="form-control" id="dateTo" name="dateTo" required>
+                                <input type="date" class="form-control" id="dateTo" name="dateTo" value="@DateTime.Today.ToString("yyyy-MM-dd")">
                             </div>
                         </div>
                     </div>
@@ -97,8 +97,9 @@
                                 <td>@rl.report_no</td>
                                 <td>
                                 <td>
-                                    <a href="@Url.Content("../app_data/reports/")@rl.report" class="btn btn-success"><i class="mdi mdi-eye"></i> View</a>
-                                    <a href="https://sma-techno.com/fresh1/storage/app/public/reports/FR10003-1200-29052024-R.pdf" download="" class="btn btn-primary download-report" data-id="198"><i class="mdi mdi-file-download"></i> Download</a>
+                                    @*<a href="@Url.Content("../app_data/reports/")@rl.report" class="btn btn-success"><i class="mdi mdi-eye"></i> View</a>*@
+                                    <a href="javascript:void(0);" onclick="viewFile('@rl.report','download');" class="btn btn-success"><i class="mdi mdi-eye"></i> View</a>
+                                    <a href="javascript:void(0);" onclick="viewFile('@rl.report','open');" download="" class="btn btn-primary download-report" data-id="198"><i class="mdi mdi-file-download"></i> Download</a>
                                     <a class="btn btn-primary email-report" data-id="198"><i class="mdi mdi-mail"></i> Email</a>
                                 </td>
                                 </td>
@@ -143,7 +144,8 @@
 
             // Populate branch select with filtered branches
             $.each(filteredBranches, function (index, branch) {
-                $('#branch').append($('<option></option>').val(branch.id).text(branch.name));
+                var cn = '(' + branch.code+') - ' + branch.name;
+                $('#branch').append($('<option></option>').val(branch.id).text(cn));
             });
         });
     });
@@ -208,9 +210,52 @@
 
     $('#zone').val(zone_id).change();
     $('#branch').val(getUrlParameter('branch_id')).change();
-    $('#dateFrom').val(getUrlParameter('fromdate')).change();
-    $('#dateTo').val(getUrlParameter('todate')).change();
+    //$('#dateFrom').val(getUrlParameter('fromdate')).change();
+    //$('#dateTo').val(getUrlParameter('todate')).change();
 
 
-    
+
+</script>
+
+
+<script type="text/javascript">
+    function viewFile(filename, action) {
+        // Here you can perform any action, such as opening a new window or modal
+
+        //alert(action);
+        var fileName = filename; // response.data.fileName
+        var checkUrl = '@Url.Action("CheckFileExists", "SMAAPI")' + '?fileName=' + fileName;
+
+        $.ajax({
+            url: checkUrl,
+            method: 'GET',
+            success: function(response) {
+                if (response.exists) {
+                    var downloadUrl = '@Url.Action("DownloadFile", "SMAAPI")' + '?fileName=' + fileName;
+                    if (action == "download") {
+                        //alert('download');
+                        window.location.href = downloadUrl;
+                    }
+                    else {
+                        //alert('open');
+                        window.open(downloadUrl, '_blank');
+                    }
+                } else {
+                    alert("File not found");
+                }
+            },
+            error: function() {
+                alert("An error occurred while checking the file.");
+            }
+        });
+
+        /*alert(filename);
+
+        var fileName = filename; // response.data.fileName;
+        var downloadUrl = 'Url.Action("DownloadFile", "SMAAPI")' + '?fileName=' + fileName;
+        window.location.href = downloadUrl;
+        */
+        // To open the file directly, you can do the following:
+        //window.open(filePath, '_blank');
+    }
 </script>

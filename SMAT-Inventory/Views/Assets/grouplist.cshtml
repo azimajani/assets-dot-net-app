@@ -163,7 +163,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="branchModalLabel">Branch List</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <input type="text" id="groupid" hidden />
+                <button type="button" class="close" data-dismiss="modal" id="btncross" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -172,8 +173,9 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Branch code</th>
-                            <th scope="col">Branch Name</th>
+                            <th> <a href="javascript:void(0);" onclick="sortTable('code')">Branch Code</a></th>
+                            <th> <a href="javascript:void(0);" onclick="sortTable('name')">Branch Name</a></th>
+                            
                         </tr>
                     </thead>
                     <tbody id="branchList">
@@ -182,7 +184,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnclose" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -192,7 +194,14 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
+        $('#btnclose').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+        $('#btncross').on('click', function () {
+            $('#branchModal').modal('hide');
+        });
+
         $(document).on("click", ".disable-group", function(event) {
             event.preventDefault(); // Prevent default action
             if (confirm('Do you want to remove this Group?')) {
@@ -262,20 +271,7 @@
         });
 
 
-        var branchDatatable = $('#groups-datatable').DataTable({
-            scrollX: true,
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('group.list') }}",
-            columns: [
-                {data: 'id', name: 'id'},
-                {data: 'name', name: 'name'},
-                {data: 'person_name', name: 'person_name'},
-                {data: 'person_designation', name: 'person_designation'},
-                {data: 'branches', name: 'branches'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
-        });
+       
 
 
         $(document).on("click", ".disable-group", function(event) {
@@ -321,7 +317,9 @@
 
         $(document).on("click", ".view-branches", function(event) {
             let group_id = $(this).attr("data-id");
-            alert(group_id);
+
+            document.getElementById('groupid').value = group_id;
+            //alert(group_id);
             $.ajax({
                 url: '{{ route("group.wise.branches") }}',
                 type: 'GET',
@@ -355,4 +353,46 @@
             });
 
         });
+</script>
+<script>
+    let currentSortColumn = 'code';
+    let currentSortOrder = 'asc'; // Default sort order
+
+    function sortTable(column) {
+        if (currentSortColumn === column) {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortColumn = column;
+            currentSortOrder = 'asc'; // Default to ascending when changing columns
+        }
+        filterBranches();
+    }
+
+     function filterBranches() {
+         var GroupId = $('#groupid').val();
+         
+     //const searchTerm = $("#searchTerm").val();
+     // Clear previous data in the modal
+     $('#branchList').empty();
+     //document.getElementById('zoneid').value = zoneId;
+         //alert(currentSortColumn);
+     $.ajax({
+         url: '/Assets/GetBranchbyGroup',
+         data: {
+             GroupId: GroupId,
+             currentSortColumn: currentSortColumn,
+             currentSortOrder: currentSortOrder
+         },
+         success: function (branches) {
+             // branches should be an array of branch objects { branchId, branchName }
+             branches.forEach(function (branch) {
+                 $('#branchList').append('<tr><td>' + branch.code + '</td><td>' + branch.name + '</td></tr>');
+             });
+         },
+         error: function () {
+             alert('Error fetching branch data');
+         }
+     });
+ }
+
 </script>

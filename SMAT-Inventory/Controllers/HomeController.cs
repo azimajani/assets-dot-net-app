@@ -46,6 +46,8 @@ namespace SMAT_Inventory.Controllers
                     Model.DMBranch = result.Read<DMBranchModel>().ToList();
                     Model.DMAsset = result.Read<DMAssetModel>().ToList();
                     Model.message = result.Read<messagesModel>().ToList();
+                    Model.contactPERlist = result.Read<WebSetting>().ToList();
+                    Model.contactSMAlist = result.Read<WebSetting>().ToList();
                 }
             }
                 return View(Model);

@@ -24,7 +24,7 @@
                                 <option disabled selected>Select Branch</option>
                                 @foreach (var branch in Model.branchlist)
                                 {
-                                    <option value="@branch.id">@branch.name</option>
+                                    <option value="@branch.id">(@branch.code) - @branch.name</option>
                                 }
                             </select>
                         </div>
@@ -238,16 +238,19 @@
 
 
             $.ajax({
-                url: '/API/Scan', // URL of the Scan method
+                url: '/SMAAPI/Scan', // URL of the Scan method
                 type: 'POST',
                 data: formData,
                 processData: false,  // Don't process the data
                 contentType: false,  // Set content type to false as jQuery will tell the server its a query string request
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // To ensure it's recognized as an AJAX request
+                },
                 success: function (response) {
                     if (response.success) {
                         alert('File uploaded successfully. Report URL: ' + response.data.url);
                         var fileName = response.data.fileName;
-                        var downloadUrl = '@Url.Action("DownloadFile", "API")' + '?fileName=' + encodeURIComponent(fileName);
+                        var downloadUrl = '@Url.Action("DownloadFile", "SMAAPI")' + '?fileName=' + encodeURIComponent(fileName);
                         window.location.href = downloadUrl;
 
                         //window.location.href = response.data.url; // Redirect to the report URL
@@ -257,7 +260,7 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('Error occurred: ' + error);
-                    alert('An error occurred while processing your request.');
+                    alert('An error occurred while processing your request.' + response.message);
                 }
             });
         });
